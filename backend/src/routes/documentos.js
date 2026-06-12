@@ -1,0 +1,11 @@
+const express = require('express');
+const multer  = require('multer');
+const router  = express.Router();
+const ctrl    = require('../controllers/documentosController');
+const { autenticar, autorizar } = require('../middleware/auth');
+const upload  = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
+router.use(autenticar);
+router.get ('/',         ctrl.listar);
+router.post('/upload',   upload.single('archivo'), ctrl.subir);
+router.delete('/:id',    autorizar('admin','supervisor'), ctrl.eliminar);
+module.exports = router;

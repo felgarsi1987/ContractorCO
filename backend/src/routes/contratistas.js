@@ -1,0 +1,10 @@
+const express = require('express');
+const router  = express.Router();
+const ctrl    = require('../controllers/contratistasController');
+const { autenticar, autorizar, registrarAuditoria } = require('../middleware/auth');
+router.use(autenticar);
+router.get ('/',    ctrl.listar);
+router.get ('/:id', ctrl.obtener);
+router.post('/',    autorizar('admin'), registrarAuditoria('contratistas','crear'),     ctrl.crear);
+router.put ('/:id', autorizar('admin','supervisor'), registrarAuditoria('contratistas','actualizar'), ctrl.actualizar);
+module.exports = router;

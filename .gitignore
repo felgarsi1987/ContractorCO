@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build
+/frontend/build
+/backend/dist
+
+# Env
+.env
+.env.local
+.env.production
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads (archivos reales en producción van a S3)
+/backend/uploads/
+
+# IDE
+.vscode/
+.idea/

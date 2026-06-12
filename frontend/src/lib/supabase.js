@@ -1,18 +1,15 @@
 import { createClient } from '@supabase/supabase-js'
 
-const SUPABASE_URL  = process.env.REACT_APP_SUPABASE_URL
-const SUPABASE_ANON = process.env.REACT_APP_SUPABASE_ANON_KEY
-
-if (!SUPABASE_URL || !SUPABASE_ANON) {
-  console.error('Faltan variables REACT_APP_SUPABASE_URL y REACT_APP_SUPABASE_ANON_KEY en .env')
-}
-
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession:   true,
-    detectSessionInUrl: false,
-  },
-})
+export const supabase = createClient(
+  'https://kgnagteifewwmzpalomh.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnbmFndGVpZmV3d216cGFsb21oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyODQ3OTYsImV4cCI6MjA5Njg2MDc5Nn0.7XtAhW4cX49IorNvKbxTTElIx6I0_US1PbPIpf2XfVw',
+  {
+    auth: {
+      autoRefreshToken:   true,
+      persistSession:     true,
+      detectSessionInUrl: false,
+    },
+  }
+)
 
 export default supabase

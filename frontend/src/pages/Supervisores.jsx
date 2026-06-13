@@ -1,120 +1,103 @@
 import { useState, useEffect } from 'react';
-import api from '../services/api';
-import EmptyState from '../components/ui/EmptyState';
+import { Plus, Eye, Edit, Trash2, Filter, Mail, Phone } from 'lucide-react';
+import { supervisores as supDB } from '../lib/db';
 import toast from 'react-hot-toast';
 
 export default function Supervisores() {
-  const [data,    setData]    = useState([]);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [modal,   setModal]   = useState(false);
+  const [modal, setModal] = useState(false);
 
   const load = () => {
     setLoading(true);
-    api.get('/supervisores').then(r => setData(r.data || [])).finally(() => setLoading(false));
+    supDB.listar().then(r => setData(r||[])).finally(()=>setLoading(false));
   };
-
   useEffect(() => { load(); }, []);
 
+  const total = data.length;
+  const totalContratos = data.reduce((s,d) => s + (d.contratos_activos?.length||parseInt(d.contratos_activos||0)||0), 0);
+
   return (
-    <>
-      <div className="page-header">
-        <div><h2>Supervisores</h2><p>Funcionarios asignados a la vigilancia de contratos.</p></div>
+    <div className="page">
+      <div className="page-hdr">
+        <div><h1>Supervisores</h1><p>Gestión de supervisores de contratos</p></div>
         <div className="hdr-actions">
-          <button className="btn btn-primary" onClick={() => setModal(true)}>
-            <span className="ms ms-sm">person_add</span>Nuevo Supervisor
-          </button>
+          <button className="btn btn-secondary btn-sm"><Filter size={12}/> Filtros</button>
+          <button className="btn btn-primary" onClick={()=>setModal(true)}><Plus size={13}/> Nuevo Supervisor</button>
         </div>
       </div>
 
-      <div className="card">
+      <div className="grid-4" style={{ flexShrink:0 }}>
+        {[
+          { label:'Supervisores Activos', val:total },
+          { label:'Contratos Asignados',  val:totalContratos },
+          { label:'En Ejecución',         val:totalContratos },
+          { label:'Carga Promedio',       val: total ? (totalContratos/total).toFixed(1) : 0 },
+        ].map(({ label, val }) => (
+          <div key={label} className="card" style={{ padding:'12px 16px' }}>
+            <div style={{ fontSize:10, fontWeight:600, color:'#64748b', letterSpacing:'.06em', textTransform:'uppercase', marginBottom:6 }}>{label}</div>
+            <div style={{ fontSize:24, fontWeight:600, color:'#1d4ed8' }}>{val}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="card" style={{ flex:1, minHeight:0, overflow:'auto' }}>
         {loading ? (
-          <div style={{ padding:40, textAlign:'center' }}><span className="ms animate-spin">refresh</span></div>
+          <div style={{ padding:40, textAlign:'center', color:'#94a3b8' }}>Cargando...</div>
         ) : data.length === 0 ? (
-          <EmptyState icon="manage_accounts" title="Sin supervisores" description="Registra el primer supervisor con el botón superior." />
+          <div style={{ padding:48, textAlign:'center', color:'#94a3b8', fontSize:13 }}>
+            Sin supervisores registrados.
+          </div>
         ) : (
           <table className="data-table">
-            <thead>
-              <tr>
-                <th>Supervisor</th><th>Cargo</th><th>Dependencia</th>
-                <th>Contratos activos</th><th>Por vencer</th><th>Estado</th>
-              </tr>
-            </thead>
+            <thead><tr><th>Nombre</th><th>Especialidad</th><th>Contacto</th><th>Contratos Asignados</th><th>Activos</th><th>Estado</th><th></th></tr></thead>
             <tbody>
               {data.map(s => (
                 <tr key={s.id}>
                   <td>
-                    <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                      <div style={{ width:30, height:30, borderRadius:'50%', background:'var(--primary-container)', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:600, flexShrink:0 }}>
-                        {s.nombre?.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()}
+                    <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                      <div style={{ width:28, height:28, borderRadius:'50%', background:'#1d4ed8', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:600, flexShrink:0 }}>
+                        {(s.usuario?.nombre||s.nombre||'?').split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase()}
                       </div>
                       <div>
-                        <div style={{ fontWeight:500, color:'var(--primary)' }}>{s.nombre}</div>
-                        <div style={{ fontSize:11, color:'var(--secondary-text)' }}>{s.email}</div>
+                        <div style={{ fontSize:12, fontWeight:500 }}>{s.usuario?.nombre || s.nombre || '—'}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="td-secondary">{s.cargo}</td>
-                  <td className="td-secondary">{s.dependencia}</td>
-                  <td style={{ fontWeight:600, color:'var(--success)' }}>{s.contratos_activos || 0}</td>
-                  <td style={{ fontWeight:600, color: (s.por_vencer||0)>0 ? 'var(--warning)' : 'var(--secondary-text)' }}>
-                    {s.por_vencer || 0}
+                  <td className="td-muted">{s.cargo || '—'}</td>
+                  <td>
+                    <div style={{ display:'flex', flexDirection:'column', gap:2 }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:4, fontSize:11, color:'#64748b' }}>
+                        <Mail size={11}/>{s.usuario?.email || '—'}
+                      </div>
+                      {s.telefono && <div style={{ display:'flex', alignItems:'center', gap:4, fontSize:11, color:'#64748b' }}>
+                        <Phone size={11}/>{s.telefono}
+                      </div>}
+                    </div>
                   </td>
                   <td>
-                    <span className={'tag ' + (s.activo ? 'tag-ok' : 'tag-gray')}>
-                      <span className="tag-dot" style={{ background: s.activo ? 'var(--success)' : 'var(--outline)' }} />
-                      {s.activo ? 'Activo' : 'Inactivo'}
+                    <span style={{ width:24, height:24, borderRadius:'50%', background:'#dbeafe', color:'#1d4ed8', display:'inline-flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:600 }}>
+                      {s.contratos_activos?.length||0}
                     </span>
+                  </td>
+                  <td>
+                    <span style={{ width:24, height:24, borderRadius:'50%', background:'#dcfce7', color:'#16a34a', display:'inline-flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:600 }}>
+                      {s.contratos_activos?.length||0}
+                    </span>
+                  </td>
+                  <td><span className="badge badge-green">{s.activo ? 'Activo':'Inactivo'}</span></td>
+                  <td>
+                    <div style={{ display:'flex', gap:2 }}>
+                      <button className="btn-icon"><Eye size={13}/></button>
+                      <button className="btn-icon"><Edit size={13}/></button>
+                      <button className="btn-icon" style={{ color:'#fca5a5' }}><Trash2 size={13}/></button>
+                    </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
-      </div>
-
-      {modal && <ModalNuevoSupervisor onClose={() => setModal(false)} onCreated={load} />}
-    </>
-  );
-}
-
-function ModalNuevoSupervisor({ onClose, onCreated }) {
-  const [form, setForm]     = useState({ nombre:'', email:'', cargo:'', dependencia:'', telefono:'' });
-  const [loading, setLoading] = useState(false);
-  const set = (k,v) => setForm(f => ({...f, [k]:v}));
-
-  const submit = async () => {
-    if (!form.nombre || !form.email) return toast.error('Nombre y correo requeridos');
-    setLoading(true);
-    try {
-      await api.post('/supervisores', form);
-      toast.success('Supervisor registrado. Contraseña temporal: Supervisor2025*');
-      onCreated(); onClose();
-    } catch(e) { toast.error(e.response?.data?.error || 'Error al guardar'); }
-    finally { setLoading(false); }
-  };
-
-  return (
-    <div className="modal-overlay" onClick={e => e.target===e.currentTarget && onClose()}>
-      <div className="modal">
-        <div className="modal-header"><h3>Nuevo Supervisor</h3><button className="btn-icon" onClick={onClose}><span className="ms ms-sm">close</span></button></div>
-        <div className="modal-body">
-          <div className="grid-2">
-            <div className="field"><label>Nombre completo *</label><input className="input" value={form.nombre} onChange={e=>set('nombre',e.target.value)} /></div>
-            <div className="field"><label>Correo institucional *</label><input className="input" type="email" value={form.email} onChange={e=>set('email',e.target.value)} /></div>
-            <div className="field"><label>Cargo</label><input className="input" value={form.cargo} onChange={e=>set('cargo',e.target.value)} /></div>
-            <div className="field"><label>Dependencia</label><input className="input" value={form.dependencia} onChange={e=>set('dependencia',e.target.value)} /></div>
-            <div className="field"><label>Teléfono</label><input className="input" value={form.telefono} onChange={e=>set('telefono',e.target.value)} /></div>
-          </div>
-          <div style={{ background:'var(--surface-low)', border:'1px solid var(--border)', borderRadius:4, padding:'10px 12px', fontSize:12, color:'var(--secondary-text)' }}>
-            Se creará un usuario en el sistema con rol <strong>Supervisor</strong>. Contraseña temporal: <code>Supervisor2025*</code>
-          </div>
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-          <button className="btn btn-primary" onClick={submit} disabled={loading}>
-            {loading ? <span className="ms animate-spin" style={{fontSize:18}}>refresh</span> : <><span className="ms ms-sm">save</span>Guardar</>}
-          </button>
-        </div>
       </div>
     </div>
   );

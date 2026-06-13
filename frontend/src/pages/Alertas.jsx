@@ -1,123 +1,86 @@
 import { useState, useEffect } from 'react';
-import api from '../services/api';
-import KpiCard from '../components/ui/KpiCard';
+import { AlertCircle, Clock, CheckCircle, XCircle, Filter } from 'lucide-react';
+import { alertas as alertasDB } from '../lib/db';
 import toast from 'react-hot-toast';
 
+const priorityStyle = (tipo) => {
+  if (tipo?.includes('vencido') || tipo?.includes('_5'))
+    return { icon:<XCircle size={14} color="#dc2626"/>, bg:'#fee2e2', label:'Crítica', badgeCls:'badge-red' };
+  if (tipo?.includes('_15'))
+    return { icon:<AlertCircle size={14} color="#c2410c"/>, bg:'#fff7ed', label:'Alta', badgeCls:'badge-orange' };
+  return { icon:<Clock size={14} color="#f59e0b"/>, bg:'#fefce8', label:'Media', badgeCls:'badge-gray' };
+};
+
 export default function Alertas() {
-  const [alertas, setAlertas] = useState([]);
+  const [data,    setData]    = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchAlertas = () => {
-    api.get('/alertas?limit=50').then(r => setAlertas(r.data)).finally(() => setLoading(false));
+  const load = () => {
+    setLoading(true);
+    alertasDB.listar({ limit:50 }).then(r => setData(r||[])).finally(()=>setLoading(false));
   };
+  useEffect(() => { load(); }, []);
 
-  useEffect(() => { fetchAlertas(); }, []);
-
-  const marcarLeida = async (id) => {
-    await api.put(`/alertas/${id}/leer`);
-    setAlertas(prev => prev.map(a => a.id === id ? {...a, leida: true} : a));
+  const marcar = async (id) => {
+    await alertasDB.marcarLeida(id);
+    setData(p => p.map(a => a.id===id ? {...a, leida:true} : a));
     toast.success('Alerta marcada como leída');
   };
 
-  const criticas  = alertas.filter(a => a.tipo_alerta?.includes('vencido') || a.tipo_alerta?.includes('_5'));
-  const warnings  = alertas.filter(a => !criticas.includes(a));
-  const noLeidas  = alertas.filter(a => !a.leida).length;
+  const criticas = data.filter(a => a.tipo_alerta?.includes('vencido') || a.tipo_alerta?.includes('_5'));
+  const altas    = data.filter(a => a.tipo_alerta?.includes('_15'));
+  const noLeidas = data.filter(a => !a.leida).length;
 
   return (
-    <>
-      <div className="page-header">
-        <div><h2>Centro de Alertas</h2><p>Supervisión y cumplimiento normativo de la cartera de contratos.</p></div>
+    <div className="page">
+      <div className="page-hdr">
+        <div><h1>Alertas</h1><p>Notificaciones y alertas del sistema</p></div>
         <div className="hdr-actions">
-          <button className="btn btn-secondary"><span className="ms ms-sm">filter_list</span>Filtrar</button>
-          <button className="btn btn-secondary" onClick={() => api.post('/alertas/procesar').then(() => { fetchAlertas(); toast.success('Alertas actualizadas'); })}>
-            <span className="ms ms-sm">refresh</span>Actualizar
-          </button>
+          <div className="badge badge-red" style={{ padding:'6px 12px' }}><XCircle size={12}/>{criticas.length} Críticas</div>
+          <div className="badge badge-orange" style={{ padding:'6px 12px' }}><Clock size={12}/>{altas.length} Alta prioridad</div>
+          <div className="badge badge-green" style={{ padding:'6px 12px' }}><CheckCircle size={12}/>{data.filter(a=>a.leida).length} Resueltas</div>
+          <button className="btn btn-secondary btn-sm"><Filter size={12}/> Filtros</button>
         </div>
       </div>
 
-      <div className="grid-4" style={{ marginBottom: 20 }}>
-        <KpiCard icon="emergency" iconColor="var(--danger)" iconBg="var(--danger-bg)" label="Total Críticas" value={criticas.length} sub={`+${Math.max(0,criticas.length-5)} desde ayer`} />
-        <KpiCard icon="warning" iconColor="var(--warning)" iconBg="var(--warning-bg)" label="Advertencias" value={warnings.length} sub="Pendiente revisión" />
-        <KpiCard icon="event_busy" iconColor="var(--info)" iconBg="var(--info-bg)" label="Vencimientos (7d)" value={alertas.filter(a=>a.tipo_alerta?.includes('_5')).length} sub="Contratos próximos" />
-        <div className="kpi-card" style={{ background: 'var(--primary)', borderColor: 'var(--primary)' }}>
-          <div className="kpi-label" style={{ color: 'rgba(255,255,255,.6)' }}>Sin Leer</div>
-          <div className="kpi-value" style={{ color: '#fff' }}>{noLeidas}</div>
-          <div className="progress-track" style={{ marginTop: 8, background: 'var(--primary-container)' }}>
-            <div className="progress-fill" style={{ width: `${alertas.length ? (1 - noLeidas/alertas.length)*100 : 100}%`, background: '#fff' }} />
+      <div className="card" style={{ flex:1, minHeight:0, overflow:'auto' }}>
+        {loading ? (
+          <div style={{ padding:40, textAlign:'center', color:'#94a3b8' }}>Cargando...</div>
+        ) : data.length === 0 ? (
+          <div style={{ padding:48, textAlign:'center' }}>
+            <CheckCircle size={32} color="#94a3b8" style={{ margin:'0 auto 12px', display:'block' }}/>
+            <div style={{ fontSize:14, fontWeight:500, color:'#64748b' }}>Sin alertas pendientes</div>
           </div>
-        </div>
-      </div>
-
-      <div className="grid-3">
-        <div className="stack">
-          {criticas.length > 0 && (
-            <div>
-              <div style={{ display:'flex',alignItems:'center',gap:6,marginBottom:10 }}>
-                <span style={{ width:7,height:7,borderRadius:'50%',background:'var(--danger)',display:'inline-block' }} />
-                <span className="text-label c-primary">Prioridad Crítica</span>
+        ) : data.map((a,i) => {
+          const { icon, bg, label, badgeCls } = priorityStyle(a.tipo_alerta);
+          return (
+            <div key={a.id} className="alert-row" style={{ opacity: a.leida ? .6 : 1 }}>
+              <div style={{ width:28, height:28, borderRadius:'50%', background:bg, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                {icon}
               </div>
-              <div className="stack-sm">
-                {criticas.map(a => <AlertCard key={a.id} alerta={a} onLeer={marcarLeida} tipo="danger" />)}
-              </div>
-            </div>
-          )}
-          {warnings.length > 0 && (
-            <div>
-              <div style={{ display:'flex',alignItems:'center',gap:6,marginBottom:10 }}>
-                <span style={{ width:7,height:7,borderRadius:'50%',background:'var(--warning)',display:'inline-block' }} />
-                <span className="text-label c-primary">Advertencias</span>
-              </div>
-              <div className="stack-sm">
-                {warnings.map(a => <AlertCard key={a.id} alerta={a} onLeer={marcarLeida} tipo="warning" />)}
-              </div>
-            </div>
-          )}
-          {alertas.length === 0 && !loading && (
-            <div style={{ padding: 48, textAlign:'center', color:'var(--outline)' }}>
-              <span className="ms ms-lg" style={{ display:'block',marginBottom:8 }}>check_circle</span>
-              No hay alertas pendientes
-            </div>
-          )}
-        </div>
-
-        <div className="stack">
-          <div className="card">
-            <div className="card-header"><h4>Configuración de Alertas</h4></div>
-            <div style={{ padding:'12px 14px',display:'flex',flexDirection:'column' }}>
-              {[['30 días antes','ok'],['15 días antes','ok'],['5 días antes','ok'],['Push móvil','ok'],['Correo electrónico','ok'],['Auditoría automática','ok']].map(([l,s])=>(
-                <div key={l} style={{ display:'flex',justifyContent:'space-between',alignItems:'center',padding:'8px 0',borderBottom:'1px solid var(--border)' }}>
-                  <span style={{ fontSize:12 }}>{l}</span>
-                  <span className="tag tag-ok" style={{ fontSize:10 }}>Activo</span>
+              <div style={{ flex:1, minWidth:0 }}>
+                <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:2 }}>
+                  <span style={{ fontSize:12, fontWeight:600, color:'#1e293b' }}>{a.contratos?.numero_contrato || 'Sistema'}</span>
+                  <span className={`badge ${badgeCls}`}>{label}</span>
+                  {a.leida && <span className="badge badge-green">Resuelta</span>}
                 </div>
-              ))}
+                <p style={{ fontSize:12, color:'#334155', fontWeight:500 }}>{a.mensaje}</p>
+              </div>
+              <div style={{ flexShrink:0, display:'flex', alignItems:'center', gap:8 }}>
+                <div style={{ textAlign:'right' }}>
+                  <p style={{ fontSize:11, color:'#475569' }}>{new Date(a.creado_en).toLocaleDateString('es-CO')}</p>
+                  <p style={{ fontSize:10, color:'#94a3b8' }}>{new Date(a.creado_en).toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})}</p>
+                </div>
+                {!a.leida && (
+                  <div style={{ display:'flex', gap:4 }}>
+                    <button className="btn btn-primary btn-sm" onClick={()=>marcar(a.id)}>Ver</button>
+                    <button className="btn btn-secondary btn-sm" onClick={()=>marcar(a.id)}>Resolver</button>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
-
-function AlertCard({ alerta, onLeer, tipo }) {
-  const icons = { danger: 'report', warning: 'schedule' };
-  return (
-    <div className={`alert-card ${tipo}`} style={{ opacity: alerta.leida ? .5 : 1 }}>
-      <div className={`alert-icon ${tipo === 'warning' ? 'warning' : ''}`}>
-        <span className="ms">{icons[tipo]}</span>
-      </div>
-      <div style={{ flex: 1 }}>
-        <div style={{ display:'flex',justifyContent:'space-between' }}>
-          <p style={{ fontSize:13,fontWeight:500,color:'var(--primary)' }}>{alerta.tipo_alerta?.replace(/_/g,' ')}</p>
-          <span style={{ fontSize:10,color:'var(--outline)',whiteSpace:'nowrap',marginLeft:8 }}>
-            {new Date(alerta.creado_en).toLocaleString('es-CO')}
-          </span>
-        </div>
-        <p style={{ fontSize:12,color:'var(--on-surface-var)',marginTop:3,lineHeight:1.5 }}>{alerta.mensaje}</p>
-        {!alerta.leida && (
-          <div style={{ marginTop:8,display:'flex',gap:8 }}>
-            <button className="btn btn-primary btn-sm" onClick={() => onLeer(alerta.id)}>Marcar leída</button>
-          </div>
-        )}
+          );
+        })}
       </div>
     </div>
   );

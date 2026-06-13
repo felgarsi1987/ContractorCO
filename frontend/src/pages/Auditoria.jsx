@@ -1,125 +1,98 @@
 import { useState, useEffect, useCallback } from 'react';
-import api from '../services/api';
-import EmptyState from '../components/ui/EmptyState';
+import { Shield, User, FileText, Calendar, Clock, Filter } from 'lucide-react';
+import { auditoria as auditoriaDB } from '../lib/db';
 
-const ACCIONES = ['','crear','actualizar','eliminar','consultar','login','logout'];
-const TABLAS   = ['','usuarios','contratos','contratistas','documentos','alertas','adiciones_contratos'];
-
-const badgeClass = { crear:'tag-ok', actualizar:'tag-warning', eliminar:'tag-danger', consultar:'tag-gray', login:'tag-info', logout:'tag-gray' };
+const actionBadge = (a) => {
+  const map = { crear:'badge-green', actualizar:'badge-orange', eliminar:'badge-red', consultar:'badge-gray', login:'badge-blue', logout:'badge-gray' };
+  return <span className={`badge ${map[a]||'badge-gray'}`}>{a}</span>;
+};
 
 export default function Auditoria() {
   const [data,    setData]    = useState([]);
   const [loading, setLoading] = useState(true);
-  const [accion,  setAccion]  = useState('');
-  const [tabla,   setTabla]   = useState('');
-  const [desde,   setDesde]   = useState('');
-  const [hasta,   setHasta]   = useState('');
   const [page,    setPage]    = useState(1);
 
   const load = useCallback(() => {
     setLoading(true);
-    const p = new URLSearchParams({ page, limit:50 });
-    if (accion) p.set('accion', accion);
-    if (tabla)  p.set('tabla',  tabla);
-    if (desde)  p.set('desde',  desde);
-    if (hasta)  p.set('hasta',  hasta);
-    api.get('/auditoria?' + p).then(r => setData(r.data || [])).finally(() => setLoading(false));
-  }, [page, accion, tabla, desde, hasta]);
-
+    auditoriaDB.listar({ page, limit:50 }).then(r=>setData(r||[])).finally(()=>setLoading(false));
+  }, [page]);
   useEffect(() => { load(); }, [load]);
 
-  const exportar = () => {
-    if (!data.length) return;
-    const keys = ['timestamp','usuario_nombre','accion','tabla_afectada','registro_id','ip_origen'];
-    const csv = [keys.join(','), ...data.map(r => keys.map(k => JSON.stringify(r[k]??'')).join(','))].join('\n');
-    const blob = new Blob([csv], { type:'text/csv' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-    a.download = `auditoria_${new Date().toISOString().slice(0,10)}.csv`; a.click();
-  };
+  const kpis = [
+    { label:'Acciones Hoy',   val:data.filter(r=>r.timestamp?.slice(0,10)===new Date().toISOString().slice(0,10)).length, Icon:FileText, bg:'#dbeafe', ic:'#3b82f6', sub:'Actividades registradas' },
+    { label:'Usuarios Activos', val: new Set(data.map(r=>r.usuario_id)).size, Icon:User, bg:'#dcfce7', ic:'#16a34a', sub:'Usuarios únicos' },
+    { label:'Eventos Críticos', val:data.filter(r=>r.accion==='eliminar').length, Icon:Shield, bg:'#fff7ed', ic:'#c2410c', sub:'Esta semana' },
+    { label:'Retención',        val:90, Icon:Calendar, bg:'#f3e8ff', ic:'#7c3aed', sub:'Días de historial' },
+  ];
 
   return (
-    <>
-      <div className="page-header">
-        <div><h2>Auditoría de Cambios</h2><p>Log inmutable de todas las acciones del sistema.</p></div>
-        <div className="hdr-actions">
-          <button className="btn btn-secondary" onClick={exportar}>
-            <span className="ms ms-sm">download</span>Exportar CSV
-          </button>
-        </div>
+    <div className="page">
+      <div className="page-hdr">
+        <div><h1>Auditoría</h1><p>Registro de actividades y trazabilidad del sistema</p></div>
+        <button className="btn btn-secondary btn-sm"><Filter size={12}/> Filtros Avanzados</button>
       </div>
 
-      <div className="card">
-        <div className="toolbar" style={{ flexWrap:'wrap', gap:8 }}>
-          <select className="select" value={accion} onChange={e=>{setAccion(e.target.value);setPage(1);}}>
-            <option value="">Todas las acciones</option>
-            {ACCIONES.filter(a=>a).map(a=><option key={a} value={a}>{a.charAt(0).toUpperCase()+a.slice(1)}</option>)}
-          </select>
-          <select className="select" value={tabla} onChange={e=>{setTabla(e.target.value);setPage(1);}}>
-            <option value="">Todas las tablas</option>
-            {TABLAS.filter(t=>t).map(t=><option key={t} value={t}>{t}</option>)}
-          </select>
-          <div className="field" style={{ flexDirection:'row', alignItems:'center', gap:6, margin:0 }}>
-            <label style={{ fontSize:11, color:'var(--secondary-text)', whiteSpace:'nowrap' }}>Desde</label>
-            <input className="input" type="date" style={{ width:140 }} value={desde} onChange={e=>setDesde(e.target.value)} />
+      <div className="grid-4" style={{ flexShrink:0 }}>
+        {kpis.map(({ label, val, sub, Icon, bg, ic }) => (
+          <div key={label} className="card" style={{ padding:'12px 16px' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:6 }}>
+              <div style={{ padding:6, borderRadius:6, background:bg }}><Icon size={14} style={{ color:ic }}/></div>
+              <span style={{ fontSize:10, fontWeight:600, color:'#64748b', letterSpacing:'.06em', textTransform:'uppercase' }}>{label}</span>
+            </div>
+            <div style={{ fontSize:22, fontWeight:600, color:'#1e293b' }}>{val}</div>
+            <div style={{ fontSize:11, color:'#64748b', marginTop:2 }}>{sub}</div>
           </div>
-          <div className="field" style={{ flexDirection:'row', alignItems:'center', gap:6, margin:0 }}>
-            <label style={{ fontSize:11, color:'var(--secondary-text)', whiteSpace:'nowrap' }}>Hasta</label>
-            <input className="input" type="date" style={{ width:140 }} value={hasta} onChange={e=>setHasta(e.target.value)} />
-          </div>
-          <button className="btn btn-secondary btn-sm" onClick={() => { setAccion(''); setTabla(''); setDesde(''); setHasta(''); setPage(1); }}>
-            <span className="ms ms-sm">filter_alt_off</span>Limpiar
-          </button>
-          <span className="spacer" />
-          <span className="text-caption c-secondary">{data.length} registros</span>
-        </div>
+        ))}
+      </div>
 
-        {loading ? (
-          <div style={{ padding:40, textAlign:'center' }}><span className="ms animate-spin">refresh</span></div>
-        ) : data.length === 0 ? (
-          <EmptyState icon="policy" title="Sin registros" description="No hay entradas de auditoría con los filtros aplicados." />
-        ) : (
-          <div style={{ overflowX:'auto' }}>
+      <div className="card" style={{ flex:1, minHeight:0, display:'flex', flexDirection:'column' }}>
+        <div style={{ padding:'10px 16px', borderBottom:'1px solid #e2e8f0', flexShrink:0 }}>
+          <div style={{ fontSize:12, fontWeight:600 }}>Registro de Actividades</div>
+        </div>
+        <div style={{ flex:1, overflow:'auto' }}>
+          {loading ? (
+            <div style={{ padding:40, textAlign:'center', color:'#94a3b8' }}>Cargando...</div>
+          ) : (
             <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Fecha / Hora</th><th>Usuario</th><th>Acción</th>
-                  <th>Tabla</th><th>Registro</th><th>IP Origen</th>
-                </tr>
-              </thead>
+              <thead><tr><th>Acción</th><th>Detalle</th><th>Usuario</th><th>Tabla</th><th>IP</th><th>Fecha / Hora</th></tr></thead>
               <tbody>
                 {data.map(r => (
                   <tr key={r.id}>
-                    <td className="td-secondary" style={{ whiteSpace:'nowrap' }}>
-                      {new Date(r.timestamp).toLocaleString('es-CO')}
-                    </td>
-                    <td style={{ fontWeight:500 }}>{r.usuario_nombre || 'Sistema'}</td>
                     <td>
-                      <span className={'tag ' + (badgeClass[r.accion] || 'tag-gray')} style={{ borderRadius:4 }}>
-                        {r.accion}
-                      </span>
+                      <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                        <div style={{ padding:4, borderRadius:4, background:'#f1f5f9' }}><Shield size={11} color="#64748b"/></div>
+                        {actionBadge(r.accion)}
+                      </div>
                     </td>
-                    <td className="td-secondary">{r.tabla_afectada}</td>
-                    <td className="td-secondary td-truncate" style={{ maxWidth:180 }}>{r.registro_id || '—'}</td>
-                    <td className="td-mono">{r.ip_origen || '—'}</td>
+                    <td className="td-muted td-truncate">{JSON.stringify(r.datos_nuevos)?.slice(0,60) || '—'}</td>
+                    <td>
+                      <div style={{ fontSize:12, fontWeight:500 }}>{r.usuario?.nombre || 'Sistema'}</div>
+                    </td>
+                    <td className="td-muted">{r.tabla_afectada}</td>
+                    <td style={{ fontSize:11, fontFamily:'monospace', color:'#64748b' }}>{r.ip_origen || '—'}</td>
+                    <td>
+                      <div style={{ display:'flex', alignItems:'center', gap:4, fontSize:11, color:'#475569' }}>
+                        <Calendar size={11} color="#94a3b8"/>{new Date(r.timestamp).toLocaleDateString('es-CO')}
+                      </div>
+                      <div style={{ display:'flex', alignItems:'center', gap:4, fontSize:10, color:'#94a3b8' }}>
+                        <Clock size={10}/>{new Date(r.timestamp).toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})}
+                      </div>
+                    </td>
                   </tr>
                 ))}
+                {data.length===0 && <tr><td colSpan={6} style={{ textAlign:'center', padding:40, color:'#94a3b8' }}>Sin registros.</td></tr>}
               </tbody>
             </table>
-          </div>
-        )}
-
-        <div style={{ padding:'12px 16px', borderTop:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-          <span className="text-caption c-secondary">Página {page}</span>
+          )}
+        </div>
+        <div style={{ padding:'10px 16px', borderTop:'1px solid #e2e8f0', display:'flex', justifyContent:'space-between', alignItems:'center', flexShrink:0 }}>
+          <span style={{ fontSize:12, color:'#64748b' }}>Página {page}</span>
           <div style={{ display:'flex', gap:6 }}>
-            <button className="btn btn-secondary btn-sm" disabled={page===1} onClick={()=>setPage(p=>p-1)}>
-              <span className="ms ms-sm">chevron_left</span>
-            </button>
-            <button className="btn btn-secondary btn-sm" disabled={data.length < 50} onClick={()=>setPage(p=>p+1)}>
-              <span className="ms ms-sm">chevron_right</span>
-            </button>
+            <button className="btn btn-secondary btn-sm" disabled={page===1} onClick={()=>setPage(p=>p-1)}>Anterior</button>
+            <button className="btn btn-primary btn-sm" disabled={data.length<50} onClick={()=>setPage(p=>p+1)}>Siguiente</button>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

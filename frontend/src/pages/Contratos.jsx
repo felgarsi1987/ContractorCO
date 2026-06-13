@@ -1,180 +1,114 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Eye, Edit, Filter, Download, Plus } from 'lucide-react';
 import api from '../services/api';
-import StatusTag from '../components/ui/StatusTag';
-import { formatCOP, diasRestantes, clasesDias } from '../utils/format';
-import ModalNuevoContrato from '../components/modules/ModalNuevoContrato';
 
 const TABS = [
-  { label: 'Todos',       value: '',              count: null },
-  { label: 'Vigentes',    value: 'vigente',       count: null },
-  { label: 'Por Vencer',  value: 'proximo',       count: null },
-  { label: 'Vencidos',    value: 'vencido',       count: null, danger: true },
-  { label: 'Liquidados',  value: 'liquidado',     count: null },
+  { key:'',        label:'Todos'     },
+  { key:'vigente', label:'Vigentes'  },
+  { key:'proximo', label:'Por Vencer'},
+  { key:'vencido', label:'Vencidos'  },
 ];
 
-const TIPOS = ['', 'prestacion_servicios', 'obra', 'suministro', 'consultoria', 'interadministrativo'];
-const TIPO_LABELS = { '': 'Todos los tipos', prestacion_servicios: 'Prest. Servicios', obra: 'Obra', suministro: 'Suministro', consultoria: 'Consultoría', interadministrativo: 'Interadministrativo' };
+const statusBadge = (semaforo) => {
+  const map = { vigente:['badge-green','Vigente'], proximo:['badge-orange','Por Vencer'], vencido:['badge-red','Vencido'] };
+  const [cls, lbl] = map[semaforo] || ['badge-gray', semaforo];
+  return <span className={`badge ${cls}`}>{lbl}</span>;
+};
 
 export default function Contratos() {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [contratos, setContratos] = useState([]);
-  const [total, setTotal] = useState(0);
+  const [sp, setSp] = useSearchParams();
+  const [data,    setData]    = useState([]);
+  const [total,   setTotal]   = useState(0);
   const [loading, setLoading] = useState(true);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [page, setPage] = useState(1);
+  const [page,    setPage]    = useState(1);
+  const tab    = sp.get('semaforo') || '';
+  const buscar = sp.get('buscar')   || '';
 
-  const semaforo = searchParams.get('semaforo') || '';
-  const buscar   = searchParams.get('buscar')   || '';
-  const tipo     = searchParams.get('tipo')     || '';
-
-  const fetchContratos = useCallback(async () => {
+  const load = useCallback(() => {
     setLoading(true);
-    try {
-      const params = new URLSearchParams({ page, limit: 15 });
-      if (semaforo) params.set('semaforo', semaforo);
-      if (buscar)   params.set('buscar',   buscar);
-      if (tipo)     params.set('tipo_contrato', tipo);
-      const { data } = await api.get(`/contratos?${params}`);
-      setContratos(data.data || []);
-      setTotal(data.total || 0);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, semaforo, buscar, tipo]);
+    const p = new URLSearchParams({ page, limit:15 });
+    if (tab)    p.set('semaforo', tab);
+    if (buscar) p.set('buscar',   buscar);
+    api.get(`/contratos?${p}`)
+      .then(r => { setData(r.data.data || []); setTotal(r.data.total || 0); })
+      .finally(() => setLoading(false));
+  }, [page, tab, buscar]);
 
-  useEffect(() => { fetchContratos(); }, [fetchContratos]);
+  useEffect(() => { load(); }, [load]);
 
-  const setFilter = (key, val) => {
-    const sp = new URLSearchParams(searchParams);
-    val ? sp.set(key, val) : sp.delete(key);
-    setSearchParams(sp);
-    setPage(1);
-  };
+  const setTab = (key) => { const n = new URLSearchParams(sp); key ? n.set('semaforo',key) : n.delete('semaforo'); setSp(n); setPage(1); };
+
+  const formatCOP = v => new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(v||0);
 
   return (
-    <>
-      <div className="page-header">
-        <div>
-          <h2>Gestión de Contratos</h2>
-          <p>Administración del ciclo de vida contractual.</p>
-        </div>
-        <div className="hdr-actions">
-          <button className="btn btn-secondary">
-            <span className="ms ms-sm">download</span>Exportar
-          </button>
-          <button className="btn btn-primary" onClick={() => setModalOpen(true)}>
-            <span className="ms ms-sm">add</span>Nuevo Contrato
-          </button>
-        </div>
+    <div className="page">
+      <div className="page-hdr">
+        <div><h1>Contratos</h1><p>Gestión y seguimiento de contratos administrativos</p></div>
+        <button className="btn btn-primary" onClick={() => navigate('/contratos/nuevo')}><Plus size={14}/>Nuevo Contrato</button>
       </div>
 
-      <div className="card">
-        {/* Tabs */}
-        <div className="tabs">
-          {TABS.map(tab => (
-            <div
-              key={tab.value}
-              className={`tab ${semaforo === tab.value ? 'active' : ''} ${tab.danger ? 'tab-danger' : ''}`}
-              onClick={() => setFilter('semaforo', tab.value)}
-            >
-              {tab.label} {total > 0 && semaforo === tab.value ? `(${total})` : ''}
-            </div>
+      <div style={{ display:'flex', alignItems:'center', gap:10, flexShrink:0 }}>
+        <div className="tab-group">
+          {TABS.map(t => (
+            <button key={t.key} className={`tab-btn ${tab===t.key?'active':''}`} onClick={() => setTab(t.key)}>
+              {t.label} {tab===t.key && total > 0 ? `(${total})` : ''}
+            </button>
           ))}
         </div>
+        <div className="spacer"/>
+        <button className="btn btn-secondary btn-sm"><Filter size={12}/> Filtros</button>
+        <button className="btn btn-secondary btn-sm"><Download size={12}/> Exportar</button>
+      </div>
 
-        {/* Toolbar */}
-        <div className="toolbar">
-          <div className="search-box" style={{ flex: 1, maxWidth: 300 }}>
-            <span className="ms">search</span>
-            <input
-              className="input"
-              placeholder="Número, contratista, objeto..."
-              defaultValue={buscar}
-              onKeyDown={e => e.key === 'Enter' && setFilter('buscar', e.target.value)}
-            />
-          </div>
-          <select className="select" value={tipo} onChange={e => setFilter('tipo', e.target.value)}>
-            {TIPOS.map(t => <option key={t} value={t}>{TIPO_LABELS[t]}</option>)}
-          </select>
-          <button className="btn btn-secondary"><span className="ms ms-sm">filter_list</span>Filtrar</button>
-          <span className="spacer" />
-          <span className="text-caption c-secondary">{total} contratos</span>
-        </div>
-
-        {/* Tabla */}
+      <div className="card" style={{ flex:1, minHeight:0, display:'flex', flexDirection:'column' }}>
         {loading ? (
-          <div style={{ padding: 40, textAlign: 'center', color: 'var(--outline)' }}>
-            <span className="ms animate-spin">refresh</span>
-          </div>
+          <div style={{ padding:48, textAlign:'center', color:'#94a3b8' }}>Cargando...</div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
+          <div style={{ flex:1, overflow:'auto' }}>
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>N° Contrato</th>
-                  <th>Contratista</th>
-                  <th>Tipo</th>
-                  <th>Objeto</th>
-                  <th>Valor</th>
-                  <th>Fecha Fin</th>
-                  <th>Días</th>
-                  <th>Estado</th>
-                  <th>Docs</th>
+                  <th>N° Contrato</th><th>Contratista</th><th>Tipo</th>
+                  <th>Valor</th><th>Inicio</th><th>Fin</th><th>Estado</th><th></th>
                 </tr>
               </thead>
               <tbody>
-                {contratos.map(c => {
-                  const dias = diasRestantes(c.fecha_fin);
-                  return (
-                    <tr key={c.id} onClick={() => navigate(`/contratos/${c.id}`)}>
-                      <td className="td-primary">{c.numero_contrato}</td>
-                      <td>{c.contratista_nombre}</td>
-                      <td><span className="tag tag-gray" style={{ borderRadius: 4 }}>{TIPO_LABELS[c.tipo_contrato] || c.tipo_contrato}</span></td>
-                      <td className="td-secondary td-truncate">{c.objeto}</td>
-                      <td className="td-secondary">{formatCOP(c.valor_actual)}</td>
-                      <td className="td-secondary">{new Date(c.fecha_fin).toLocaleDateString('es-CO')}</td>
-                      <td className={clasesDias(dias)} style={{ fontWeight: 600 }}>{dias}d</td>
-                      <td><StatusTag value={c.semaforo} /></td>
-                      <td className="td-secondary">
-                        <span style={{ color: c.docs_vencidos > 0 ? 'var(--danger)' : 'inherit' }}>
-                          {c.total_documentos}
-                          {c.docs_vencidos > 0 && <span style={{ fontSize: 10, marginLeft: 4 }}>({c.docs_vencidos}✗)</span>}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })}
-                {contratos.length === 0 && (
-                  <tr><td colSpan={9} style={{ textAlign: 'center', padding: 40, color: 'var(--outline)' }}>
-                    No se encontraron contratos con los filtros aplicados.
-                  </td></tr>
+                {data.map(c => (
+                  <tr key={c.id} onClick={() => navigate(`/contratos/${c.id}`)}>
+                    <td className="td-strong">{c.numero_contrato}</td>
+                    <td>{c.contratista_nombre}</td>
+                    <td className="td-muted">{c.tipo_contrato?.replace(/_/g,' ')}</td>
+                    <td style={{ fontWeight:500 }}>{formatCOP(c.valor_actual)}</td>
+                    <td className="td-muted">{c.fecha_inicio ? new Date(c.fecha_inicio).toLocaleDateString('es-CO') : '—'}</td>
+                    <td className="td-muted">{new Date(c.fecha_fin).toLocaleDateString('es-CO')}</td>
+                    <td>{statusBadge(c.semaforo)}</td>
+                    <td onClick={e => e.stopPropagation()}>
+                      <div style={{ display:'flex', gap:2 }}>
+                        <button className="btn-icon" onClick={() => navigate(`/contratos/${c.id}`)}><Eye size={13}/></button>
+                        <button className="btn-icon"><Edit size={13}/></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {data.length === 0 && (
+                  <tr><td colSpan={8} style={{ textAlign:'center', padding:40, color:'#94a3b8' }}>Sin contratos.</td></tr>
                 )}
               </tbody>
             </table>
           </div>
         )}
-
-        {/* Paginación */}
         {total > 15 && (
-          <div style={{ padding: '12px 16px', borderTop: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span className="text-caption c-secondary">
-              Mostrando {Math.min((page-1)*15+1, total)}–{Math.min(page*15, total)} de {total}
-            </span>
-            <div style={{ display: 'flex', gap: 6 }}>
-              <button className="btn btn-secondary btn-sm" disabled={page === 1} onClick={() => setPage(p => p-1)}>
-                <span className="ms ms-sm">chevron_left</span>
-              </button>
-              <button className="btn btn-secondary btn-sm" disabled={page * 15 >= total} onClick={() => setPage(p => p+1)}>
-                <span className="ms ms-sm">chevron_right</span>
-              </button>
+          <div style={{ padding:'10px 16px', borderTop:'1px solid #f1f5f9', display:'flex', justifyContent:'space-between', alignItems:'center', flexShrink:0 }}>
+            <span style={{ fontSize:12, color:'#64748b' }}>Mostrando {Math.min((page-1)*15+1,total)}–{Math.min(page*15,total)} de {total}</span>
+            <div style={{ display:'flex', gap:6 }}>
+              <button className="btn btn-secondary btn-sm" disabled={page===1} onClick={()=>setPage(p=>p-1)}>Anterior</button>
+              <button className="btn btn-secondary btn-sm" disabled={page*15>=total} onClick={()=>setPage(p=>p+1)}>Siguiente</button>
             </div>
           </div>
         )}
       </div>
-
-      {modalOpen && <ModalNuevoContrato onClose={() => setModalOpen(false)} onCreated={fetchContratos} />}
-    </>
+    </div>
   );
 }

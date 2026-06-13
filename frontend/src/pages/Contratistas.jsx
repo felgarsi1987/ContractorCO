@@ -1,168 +1,138 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Eye, Edit, Trash2, Filter, Download, Plus, CheckCircle } from 'lucide-react';
 import api from '../services/api';
-import StatusTag from '../components/ui/StatusTag';
-import EmptyState from '../components/ui/EmptyState';
 import toast from 'react-hot-toast';
 
 export default function Contratistas() {
-  const navigate = useNavigate();
   const [data,    setData]    = useState([]);
   const [total,   setTotal]   = useState(0);
   const [loading, setLoading] = useState(true);
-  const [buscar,  setBuscar]  = useState('');
-  const [estado,  setEstado]  = useState('');
-  const [page,    setPage]    = useState(1);
+  const [filter,  setFilter]  = useState('all');
   const [modal,   setModal]   = useState(false);
+  const [page,    setPage]    = useState(1);
 
   const load = useCallback(() => {
     setLoading(true);
     const p = new URLSearchParams({ page, limit:15 });
-    if (buscar) p.set('buscar', buscar);
-    if (estado) p.set('estado', estado);
+    if (filter === 'verified') p.set('estado', 'activo');
     api.get('/contratistas?' + p)
-      .then(r => { setData(r.data.data || []); setTotal(r.data.total || 0); })
+      .then(r => { setData(r.data.data||[]); setTotal(r.data.total||0); })
       .finally(() => setLoading(false));
-  }, [page, buscar, estado]);
+  }, [page, filter]);
 
   useEffect(() => { load(); }, [load]);
 
+  const verified = data.filter(c => c.estado === 'activo').length;
+  const pending  = data.filter(c => c.estado !== 'activo').length;
+
   return (
-    <>
-      <div className="page-header">
-        <div><h2>Contratistas</h2><p>Registro y gestión de personas naturales y jurídicas.</p></div>
+    <div className="page">
+      <div className="page-hdr">
+        <div><h1>Contratistas</h1><p>Registro y verificación de contratistas</p></div>
         <div className="hdr-actions">
-          <button className="btn btn-secondary"><span className="ms ms-sm">download</span>Exportar</button>
-          <button className="btn btn-primary" onClick={() => setModal(true)}>
-            <span className="ms ms-sm">person_add</span>Nuevo Contratista
-          </button>
+          {[['all','Todos',total],['verified','Verificados',verified],['pending','Pendientes',pending]].map(([k,l,n])=>(
+            <button key={k} className="btn btn-secondary btn-sm"
+              style={filter===k?{background:'#dbeafe',color:'#1d4ed8',borderColor:'#bfdbfe'}:{}}
+              onClick={()=>{setFilter(k);setPage(1);}}>
+              {l} ({n})
+            </button>
+          ))}
+          <button className="btn btn-secondary btn-sm"><Filter size={12}/> Filtros</button>
+          <button className="btn btn-secondary btn-sm"><Download size={12}/> Exportar</button>
+          <button className="btn btn-primary" onClick={()=>setModal(true)}><Plus size={13}/> Nuevo Contratista</button>
         </div>
       </div>
 
-      <div className="card">
-        <div className="toolbar">
-          <div className="search-box" style={{ flex:1, maxWidth:300 }}>
-            <span className="ms">search</span>
-            <input className="input" placeholder="Nombre, cédula, NIT..."
-              defaultValue={buscar}
-              onKeyDown={e => { if(e.key==='Enter') { setBuscar(e.target.value); setPage(1); } }} />
-          </div>
-          <select className="select" value={estado} onChange={e => { setEstado(e.target.value); setPage(1); }}>
-            <option value="">Todos los estados</option>
-            <option value="activo">Activo</option>
-            <option value="suspendido">Suspendido</option>
-            <option value="inhabilitado">Inhabilitado</option>
-          </select>
-          <span className="spacer" />
-          <span className="text-caption c-secondary">{total} registros</span>
-        </div>
-
+      <div className="card" style={{ flex:1, minHeight:0, overflow:'auto' }}>
         {loading ? (
-          <div style={{ padding:40, textAlign:'center' }}><span className="ms animate-spin">refresh</span></div>
-        ) : data.length === 0 ? (
-          <EmptyState icon="engineering" title="Sin contratistas" description="Registra el primer contratista con el botón superior." />
+          <div style={{ padding:40, textAlign:'center', color:'#94a3b8' }}>Cargando...</div>
         ) : (
-          <div style={{ overflowX:'auto' }}>
-            <table className="data-table">
-              <thead>
-                <tr><th>Nombre / Razón Social</th><th>Identificación</th><th>Tipo</th><th>Municipio</th><th>Contratos</th><th>Estado</th><th></th></tr>
-              </thead>
-              <tbody>
-                {data.map(c => (
-                  <tr key={c.id} onClick={() => navigate('/contratos?contratista=' + c.id)}>
-                    <td>
-                      <div style={{ fontWeight:500, color:'var(--primary)' }}>
-                        {c.nombres} {c.apellidos || ''}{c.razon_social ? ` (${c.razon_social})` : ''}
-                      </div>
-                      {c.email && <div style={{ fontSize:11, color:'var(--secondary-text)' }}>{c.email}</div>}
-                    </td>
-                    <td className="td-secondary">{c.cedula || c.nit || '—'}</td>
-                    <td><span className={'tag ' + (c.tipo_persona==='natural'?'tag-info':'tag-gray')}>{c.tipo_persona}</span></td>
-                    <td className="td-secondary">{c.municipio || '—'}</td>
-                    <td><span style={{ fontWeight:600, color:c.contratos_activos>0?'var(--success)':'var(--secondary-text)' }}>{c.contratos_activos||0} activos</span></td>
-                    <td><StatusTag value={c.estado} /></td>
-                    <td><span className="ms ms-sm" style={{ color:'var(--secondary-text)' }}>chevron_right</span></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {total > 15 && (
-          <div style={{ padding:'12px 16px', borderTop:'1px solid var(--border)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-            <span className="text-caption c-secondary">
-              Mostrando {Math.min((page-1)*15+1,total)}–{Math.min(page*15,total)} de {total}
-            </span>
-            <div style={{ display:'flex', gap:6 }}>
-              <button className="btn btn-secondary btn-sm" disabled={page===1} onClick={()=>setPage(p=>p-1)}><span className="ms ms-sm">chevron_left</span></button>
-              <button className="btn btn-secondary btn-sm" disabled={page*15>=total} onClick={()=>setPage(p=>p+1)}><span className="ms ms-sm">chevron_right</span></button>
-            </div>
-          </div>
+          <table className="data-table">
+            <thead><tr><th>Nombre / Razón Social</th><th>Tipo</th><th>Documento</th><th>Email</th><th>Contratos</th><th>Estado</th><th></th></tr></thead>
+            <tbody>
+              {data.map(c => (
+                <tr key={c.id}>
+                  <td>
+                    <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                      <span style={{ fontSize:12, fontWeight:500 }}>{c.nombres} {c.apellidos||''}{c.razon_social?` (${c.razon_social})`:''}</span>
+                      {c.estado === 'activo' && <CheckCircle size={12} color="#16a34a"/>}
+                    </div>
+                  </td>
+                  <td className="td-muted">{c.tipo_persona === 'natural' ? 'Persona Natural' : 'Persona Jurídica'}</td>
+                  <td className="td-muted">{c.cedula ? `CC ${c.cedula}` : c.nit ? `NIT ${c.nit}` : '—'}</td>
+                  <td className="td-muted">{c.email || '—'}</td>
+                  <td>
+                    <span style={{ width:24, height:24, borderRadius:'50%', background:'#dbeafe', color:'#1d4ed8', display:'inline-flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:600 }}>
+                      {c.contratos_activos || 0}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={c.estado==='activo'?'badge badge-green':'badge badge-orange'}>
+                      {c.estado==='activo' ? 'Activo' : 'Pendiente'}
+                    </span>
+                  </td>
+                  <td>
+                    <div style={{ display:'flex', gap:2 }}>
+                      <button className="btn-icon"><Eye size={13}/></button>
+                      <button className="btn-icon"><Edit size={13}/></button>
+                      <button className="btn-icon" style={{ color:'#fca5a5' }}><Trash2 size={13}/></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {data.length===0 && <tr><td colSpan={7} style={{ textAlign:'center', padding:40, color:'#94a3b8' }}>Sin contratistas registrados.</td></tr>}
+            </tbody>
+          </table>
         )}
       </div>
 
-      {modal && <ModalNuevoContratista onClose={() => setModal(false)} onCreated={load} />}
-    </>
+      {modal && <ModalContratista onClose={()=>setModal(false)} onCreated={load}/>}
+    </div>
   );
 }
 
-function ModalNuevoContratista({ onClose, onCreated }) {
-  const [form, setForm] = useState({
-    nombres:'', apellidos:'', cedula:'', nit:'', tipo_persona:'natural',
-    razon_social:'', telefono:'', email:'', municipio:'', departamento:'',
-    banco:'', numero_cuenta:''
-  });
+function ModalContratista({ onClose, onCreated }) {
+  const [form, setForm] = useState({ nombres:'', apellidos:'', cedula:'', nit:'', tipo_persona:'natural', email:'', telefono:'', municipio:'', departamento:'' });
   const [loading, setLoading] = useState(false);
-  const set = (k,v) => setForm(f => ({...f,[k]:v}));
+  const set = (k,v) => setForm(f=>({...f,[k]:v}));
 
   const submit = async () => {
     if (!form.nombres) return toast.error('Nombre requerido');
     setLoading(true);
     try {
       await api.post('/contratistas', form);
-      toast.success('Contratista registrado correctamente');
+      toast.success('Contratista registrado');
       onCreated(); onClose();
     } catch(e) { toast.error(e.response?.data?.error || 'Error al guardar'); }
     finally { setLoading(false); }
   };
 
   return (
-    <div className="modal-overlay" onClick={e => e.target===e.currentTarget && onClose()}>
-      <div className="modal" style={{ maxWidth:620 }}>
-        <div className="modal-header">
-          <h3>Nuevo Contratista</h3>
-          <button className="btn-icon" onClick={onClose}><span className="ms ms-sm">close</span></button>
-        </div>
-        <div className="modal-body" style={{ maxHeight:'60vh', overflowY:'auto' }}>
+    <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal" style={{ maxWidth:560 }}>
+        <div className="modal-header"><h3>Nuevo Contratista</h3><button className="btn-icon" onClick={onClose}>✕</button></div>
+        <div className="modal-body">
           <div className="grid-2">
-            <div className="field"><label>Tipo de persona *</label>
-              <select className="select" style={{ width:'100%' }} value={form.tipo_persona} onChange={e=>set('tipo_persona',e.target.value)}>
-                <option value="natural">Natural</option>
-                <option value="juridica">Jurídica</option>
+            <div className="field"><label>Tipo *</label>
+              <select className="select-field" value={form.tipo_persona} onChange={e=>set('tipo_persona',e.target.value)}>
+                <option value="natural">Persona Natural</option>
+                <option value="juridica">Persona Jurídica</option>
               </select>
             </div>
-            {form.tipo_persona === 'juridica'
-              ? <div className="field"><label>Razón Social *</label><input className="input" value={form.razon_social} onChange={e=>set('razon_social',e.target.value)} /></div>
-              : <div className="field"><label>Apellidos</label><input className="input" value={form.apellidos} onChange={e=>set('apellidos',e.target.value)} /></div>}
-            <div className="field"><label>Nombres *</label><input className="input" value={form.nombres} onChange={e=>set('nombres',e.target.value)} /></div>
-            <div className="field"><label>{form.tipo_persona==='natural'?'Cédula':'NIT'}</label>
-              <input className="input" value={form.tipo_persona==='natural'?form.cedula:form.nit}
-                onChange={e=>set(form.tipo_persona==='natural'?'cedula':'nit',e.target.value)} />
-            </div>
-            <div className="field"><label>Teléfono</label><input className="input" value={form.telefono} onChange={e=>set('telefono',e.target.value)} /></div>
-            <div className="field"><label>Correo</label><input className="input" type="email" value={form.email} onChange={e=>set('email',e.target.value)} /></div>
-            <div className="field"><label>Municipio</label><input className="input" value={form.municipio} onChange={e=>set('municipio',e.target.value)} /></div>
-            <div className="field"><label>Departamento</label><input className="input" value={form.departamento} onChange={e=>set('departamento',e.target.value)} /></div>
-            <div className="field"><label>Banco</label><input className="input" value={form.banco} onChange={e=>set('banco',e.target.value)} /></div>
-            <div className="field"><label>N° Cuenta</label><input className="input" value={form.numero_cuenta} onChange={e=>set('numero_cuenta',e.target.value)} /></div>
+            <div className="field"><label>Nombres *</label><input className="input-field" value={form.nombres} onChange={e=>set('nombres',e.target.value)}/></div>
+            {form.tipo_persona==='natural'
+              ? <div className="field"><label>Apellidos</label><input className="input-field" value={form.apellidos} onChange={e=>set('apellidos',e.target.value)}/></div>
+              : <div className="field"><label>NIT</label><input className="input-field" value={form.nit} onChange={e=>set('nit',e.target.value)}/></div>}
+            <div className="field"><label>Cédula</label><input className="input-field" value={form.cedula} onChange={e=>set('cedula',e.target.value)}/></div>
+            <div className="field"><label>Email</label><input className="input-field" type="email" value={form.email} onChange={e=>set('email',e.target.value)}/></div>
+            <div className="field"><label>Teléfono</label><input className="input-field" value={form.telefono} onChange={e=>set('telefono',e.target.value)}/></div>
+            <div className="field"><label>Municipio</label><input className="input-field" value={form.municipio} onChange={e=>set('municipio',e.target.value)}/></div>
+            <div className="field"><label>Departamento</label><input className="input-field" value={form.departamento} onChange={e=>set('departamento',e.target.value)}/></div>
           </div>
         </div>
         <div className="modal-footer">
           <button className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-          <button className="btn btn-primary" onClick={submit} disabled={loading}>
-            {loading ? <span className="ms animate-spin" style={{fontSize:18}}>refresh</span> : <><span className="ms ms-sm">save</span>Guardar</>}
-          </button>
+          <button className="btn btn-primary" onClick={submit} disabled={loading}>{loading?'Guardando...':'Guardar'}</button>
         </div>
       </div>
     </div>

@@ -35,7 +35,7 @@
   --ok:            #059669;
   --ok-bg:         #D1FAE5;
   --warn:          #D97706;
-  --warn-bg:       #FEF3C7;
+  --warn-bg:       #FEF9C3;
   --danger:        #DC2626;
   --danger-bg:     #FEE2E2;
   --info:          #2563EB;
@@ -199,7 +199,7 @@ a { text-decoration: none; color: inherit; }
   letter-spacing: 0.01em;
 }
 .badge-green  { background: var(--ok-bg);      color: var(--ok);     }
-.badge-orange { background: var(--warn-bg);    color: var(--warn);   }
+.badge-orange { background: #FEF9C3;            color: #A16207;       }
 .badge-red    { background: var(--danger-bg);  color: var(--danger); }
 .badge-blue   { background: var(--info-bg);    color: var(--info);   }
 .badge-gray   { background: #F3F4F6;           color: #374151;       }

@@ -88,9 +88,9 @@ export default function Supervisores() {
                   <td><span className="badge badge-green">{s.activo ? 'Activo':'Inactivo'}</span></td>
                   <td>
                     <div style={{ display:'flex', gap:2 }}>
-                      <button className="btn-icon"><Eye size={13}/></button>
-                      <button className="btn-icon"><Edit size={13}/></button>
-                      <button className="btn-icon" style={{ color:'#fca5a5' }}><Trash2 size={13}/></button>
+                      <button className="btn-icon" title="Ver contratos" onClick={()=>window.location='/contratos?supervisor='+s.id}><Eye size={13}/></button>
+                      <button className="btn-icon" title="Editar"><Edit size={13}/></button>
+                      <button className="btn-icon" title="Desactivar" style={{ color:'#DC2626' }}><Trash2 size={13}/></button>
                     </div>
                   </td>
                 </tr>

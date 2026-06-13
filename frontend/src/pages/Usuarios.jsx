@@ -24,7 +24,7 @@ export default function Usuarios() {
     { label:'Usuarios Totales',  val:data.length,                               bg:'#dbeafe', ic:'#3b82f6', sub:'Registrados' },
     { label:'Usuarios Activos',  val:data.filter(u=>u.activo).length,           bg:'#dcfce7', ic:'#16a34a', sub:'Con acceso' },
     { label:'Administradores',   val:data.filter(u=>u.rol==='admin').length,     bg:'#f3e8ff', ic:'#7c3aed', sub:'Permisos completos' },
-    { label:'Supervisores',      val:data.filter(u=>u.rol==='supervisor').length,bg:'#fff7ed', ic:'#c2410c', sub:'Usuarios operativos' },
+    { label:'Supervisores',      val:data.filter(u=>u.rol==='supervisor').length,bg:'#FEE2E2', ic:'#DC2626', sub:'Usuarios operativos' },
   ];
 
   return (
@@ -77,8 +77,8 @@ export default function Usuarios() {
                   <td><span className={`badge ${u.activo ? 'badge-green':'badge-gray'}`}>{u.activo ? 'Activo':'Inactivo'}</span></td>
                   <td>
                     <div style={{ display:'flex', gap:2 }}>
-                      <button className="btn-icon"><Eye size={13}/></button>
-                      <button className="btn-icon"><Edit size={13}/></button>
+                      <button className="btn-icon" title="Ver usuario"><Eye size={13}/></button>
+                      <button className="btn-icon" title="Editar" onClick={()=>{setEditing(u);setModal(true);}}><Edit size={13}/></button>
                     </div>
                   </td>
                 </tr>

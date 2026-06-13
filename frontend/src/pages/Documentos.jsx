@@ -78,8 +78,12 @@ export default function Documentos() {
                     <td><span className={statusStyle(d.estado_vence)}>{statusLabel(d.estado_vence)}</span></td>
                     <td>
                       <div style={{ display:'flex', gap:2 }}>
-                        <button className="btn-icon"><Eye size={13}/></button>
-                        <button className="btn-icon"><Download size={13}/></button>
+                        <a href={d.url_archivo} target="_blank" rel="noreferrer" style={{textDecoration:'none'}}>
+                          <button className="btn-icon" title="Ver documento"><Eye size={13}/></button>
+                        </a>
+                        <a href={d.url_archivo} download={d.nombre_archivo||d.nombre} style={{textDecoration:'none'}}>
+                          <button className="btn-icon" title="Descargar"><Download size={13}/></button>
+                        </a>
                       </div>
                     </td>
                   </tr>

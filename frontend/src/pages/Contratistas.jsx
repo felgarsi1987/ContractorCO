@@ -1,7 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Eye, Edit, Trash2, Filter, Download, Plus, CheckCircle, Search, Users, UserCheck, Clock } from 'lucide-react';
 import { contratistas as contratistasDB } from '../lib/db';
 import toast from 'react-hot-toast';
+import ConfirmModal from '../components/ui/ConfirmModal';
+import { exportarCSV } from '../utils/export';
 
 // helper seguro para contratos_activos (puede venir como number, array, o null)
 const getContratosActivos = (c) => {
@@ -13,12 +16,15 @@ const getContratosActivos = (c) => {
 };
 
 export default function Contratistas() {
+  const navigate = useNavigate();
   const [data,    setData]    = useState([]);
   const [total,   setTotal]   = useState(0);
   const [loading, setLoading] = useState(true);
   const [buscar,  setBuscar]  = useState('');
   const [tab,     setTab]     = useState('todos');
   const [modal,   setModal]   = useState(false);
+  const [editando, setEditando] = useState(null);
+  const [confirmSuspender, setConfirmSuspender] = useState(null);
   const [page,    setPage]    = useState(1);
   const [error,   setError]   = useState(null);
 
@@ -48,7 +54,7 @@ export default function Contratistas() {
   const kpis = [
     { label: 'Total registrados', val: total,                                                    color: '#3b82f6', bg: '#eff6ff' },
     { label: 'Activos',           val: data.filter(c => c.estado === 'activo').length,            color: '#16a34a', bg: '#f0fdf4' },
-    { label: 'Pendientes',        val: data.filter(c => c.estado === 'suspendido').length,        color: '#c2410c', bg: '#fff7ed' },
+    { label: 'Pendientes',        val: data.filter(c => c.estado === 'suspendido').length,        color: '#DC2626', bg: '#FEE2E2' },
     { label: 'Jurídicas',         val: data.filter(c => c.tipo_persona === 'juridica').length,    color: '#7c3aed', bg: '#f3e8ff' },
   ];
 
@@ -61,7 +67,10 @@ export default function Contratistas() {
           <p>Registro y verificación de personas naturales y jurídicas</p>
         </div>
         <div className="hdr-actions">
-          <button className="btn btn-secondary btn-sm"><Download size={12}/> Exportar</button>
+          <button className="btn btn-secondary btn-sm" onClick={async()=>{
+          const r=await contratistasDB.listar({limit:1000});
+          exportarCSV(r.data,'contratistas');toast.success('Exportado');
+        }}><Download size={12}/> Exportar</button>
           <button className="btn btn-primary" onClick={() => setModal(true)}>
             <Plus size={13}/> Nuevo Contratista
           </button>
@@ -165,9 +174,9 @@ export default function Contratistas() {
                       </td>
                       <td>
                         <div style={{ display: 'flex', gap: 2 }}>
-                          <button className="btn-icon" title="Ver detalle"><Eye size={13}/></button>
-                          <button className="btn-icon" title="Editar"><Edit size={13}/></button>
-                          <button className="btn-icon" title="Inhabilitar" style={{ color: '#fca5a5' }}><Trash2 size={13}/></button>
+                          <button className="btn-icon" title="Ver contratos" onClick={e=>{e.stopPropagation();navigate('/contratos?contratista_id='+c.id);}}><Eye size={13}/></button>
+                          <button className="btn-icon" title="Editar" onClick={e=>{e.stopPropagation();setEditando(c);setModal(true);}}><Edit size={13}/></button>
+                          <button className="btn-icon" title="Suspender" style={{ color:'#DC2626' }} onClick={e=>{e.stopPropagation();setConfirmSuspender(c.id);}}><Trash2 size={13}/></button>
                         </div>
                       </td>
                     </tr>
@@ -203,7 +212,21 @@ export default function Contratistas() {
         )}
       </div>
 
-      {modal && <ModalNuevoContratista onClose={() => setModal(false)} onCreated={load}/>}
+      {modal && <ModalNuevoContratista onClose={() => { setModal(false); setEditando(null); }} onCreated={load} inicial={editando}/>}
+      {confirmSuspender && (
+        <ConfirmModal
+          titulo="Suspender contratista"
+          mensaje="¿Confirmas la suspensión de este contratista? Podrá rehabilitarse después."
+          confirmLabel="Suspender"
+          danger
+          onConfirm={async()=>{
+            await contratistasDB.actualizar(confirmSuspender,{estado:'suspendido'});
+            toast.success('Contratista suspendido');
+            setConfirmSuspender(null); load();
+          }}
+          onCancel={()=>setConfirmSuspender(null)}
+        />
+      )}
     </div>
   );
 }

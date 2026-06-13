@@ -7,7 +7,7 @@ const priorityStyle = (tipo) => {
   if (tipo?.includes('vencido') || tipo?.includes('_5'))
     return { icon:<XCircle size={14} color="#dc2626"/>, bg:'#fee2e2', label:'Crítica', badgeCls:'badge-red' };
   if (tipo?.includes('_15'))
-    return { icon:<AlertCircle size={14} color="#c2410c"/>, bg:'#fff7ed', label:'Alta', badgeCls:'badge-orange' };
+    return { icon:<AlertCircle size={14} color="#F59E0B"/>, bg:'#FEF9C3', label:'Alta', badgeCls:'badge-orange' };
   return { icon:<Clock size={14} color="#f59e0b"/>, bg:'#fefce8', label:'Media', badgeCls:'badge-gray' };
 };
 

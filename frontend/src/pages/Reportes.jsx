@@ -47,7 +47,7 @@ export default function Reportes() {
   const kpis = [
     { label:'TOTAL CONTRATOS', val:'36', sub:'+15% vs mes anterior', Icon:FileText, bg:'#dbeafe', ic:'#3b82f6', trend:true },
     { label:'VALOR TOTAL',     val:'$673M', sub:'+8% vs mes anterior', Icon:DollarSign, bg:'#dcfce7', ic:'#16a34a', trend:true },
-    { label:'CUMPLIMIENTO PROM.', val:'87%', sub:'+18.4% este trimestre', Icon:BarChart3, bg:'#fff7ed', ic:'#c2410c', trend:true },
+    { label:'CUMPLIMIENTO PROM.', val:'87%', sub:'+18.4% este trimestre', Icon:BarChart3, bg:'#FEE2E2', ic:'#DC2626', trend:true },
     { label:'DOCS. PROCESADOS', val:'124', sub:'Este mes', Icon:FileText, bg:'#f3e8ff', ic:'#7c3aed' },
   ];
 
@@ -56,7 +56,11 @@ export default function Reportes() {
       <div className="page-hdr">
         <div><h1>Reportes</h1><p>Análisis y estadísticas del sistema</p></div>
         <div className="hdr-actions">
-          <button className="btn btn-secondary"><Calendar size={12}/> Período</button>
+          <button className="btn btn-secondary" onClick={()=>{
+          const desde = prompt('Fecha desde (YYYY-MM-DD):');
+          const hasta = prompt('Fecha hasta (YYYY-MM-DD):');
+          if(desde&&hasta) toast.success(`Filtrando: ${desde} → ${hasta}`);
+        }}><Calendar size={12}/> Período</button>
           <button className="btn btn-primary" onClick={() => descargar('Reporte_General','/reportes/contratos')}><Download size={13}/> Exportar Reporte</button>
         </div>
       </div>

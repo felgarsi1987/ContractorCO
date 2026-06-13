@@ -1,20 +1,22 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Leaf, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const DEMO = [
-  ['Administrador', 'admin@contractorco.gov.co',    'Admin2025*'],
-  ['Supervisor',    'p.suarez@contractorco.gov.co', 'Super2025*'],
-  ['Auditor',       'auditor@contraloria.gov.co',   'Audit2025*'],
+  { rol:'Admin',      email:'admin@contractorco.gov.co',    pass:'Admin2025*', color:'#059669' },
+  { rol:'Supervisor', email:'p.suarez@contractorco.gov.co', pass:'Super2025*', color:'#2563EB' },
+  { rol:'Auditor',    email:'auditor@contraloria.gov.co',   pass:'Audit2025*', color:'#7C3AED' },
 ];
 
 export default function Login() {
   const { login }   = useAuth();
   const navigate    = useNavigate();
   const [form, setForm] = useState({ email:'', password:'' });
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState('');
+  const [showPass, setShowPass] = useState(false);
+  const [loading, setLoading]   = useState(false);
+  const [err, setErr]           = useState('');
 
   const submit = async (e) => {
     e.preventDefault();
@@ -24,63 +26,164 @@ export default function Login() {
       navigate('/');
     } catch (ex) {
       const m = ex?.message || 'Error al iniciar sesión';
-      const t = { 'Invalid login credentials':'Correo o contraseña incorrectos.', 'Email not confirmed':'Confirma tu correo antes de ingresar.' };
+      const t = {
+        'Invalid login credentials': 'Correo o contraseña incorrectos.',
+        'Email not confirmed':        'Confirma tu correo antes de ingresar.',
+        'Too many requests':          'Demasiados intentos. Espera un momento.',
+      };
       setErr(t[m] || m);
       toast.error(t[m] || m);
     } finally { setLoading(false); }
   };
 
   return (
-    <div style={{ minHeight:'100vh', background:'linear-gradient(135deg, #0d1f3c 0%, #1a3460 100%)', display:'flex', alignItems:'center', justifyContent:'center', padding:24 }}>
-      <div style={{ width:'100%', maxWidth:400 }}>
-
-        {/* Logo */}
-        <div style={{ textAlign:'center', marginBottom:28 }}>
-          <div style={{ width:52, height:52, borderRadius:12, background:'linear-gradient(135deg,#3b82f6,#1d4ed8)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 14px' }}>
-            <svg width="26" height="26" viewBox="0 0 20 20" fill="none">
-              <path d="M10 2L3 6v4c0 4.4 3 8.5 7 9.5C14 18.5 17 14.4 17 10V6L10 2z" fill="white" fillOpacity="0.95"/>
-              <path d="M7 10l2 2 4-4" stroke="#1d4ed8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+    <div style={{
+      minHeight:'100vh', display:'flex',
+      background:'linear-gradient(135deg, #0D3321 0%, #0A2A1B 50%, #064E3B 100%)',
+    }}>
+      {/* Panel izquierdo — contexto institucional */}
+      <div style={{ display:'none', flex:1, padding:'48px', flexDirection:'column', justifyContent:'space-between', '@media(min-width:1024px)':{display:'flex'} }}>
+        <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+          <div style={{ width:36, height:36, borderRadius:8, background:'linear-gradient(135deg,#059669,#34D399)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <Leaf size={18} color="#fff" fill="rgba(255,255,255,0.3)"/>
           </div>
-          <div style={{ color:'#fff', fontSize:20, fontWeight:700, letterSpacing:'-.01em' }}>ContralControl</div>
-          <div style={{ color:'rgba(147,197,253,0.7)', fontSize:11, marginTop:4, letterSpacing:'.08em', textTransform:'uppercase' }}>Sistema de Control de Contratistas</div>
+          <span style={{ color:'#fff', fontSize:16, fontWeight:700, letterSpacing:'-0.02em' }}>ContralControl</span>
         </div>
+        <div>
+          <div style={{ color:'#34D399', fontSize:12, fontWeight:600, letterSpacing:'.08em', textTransform:'uppercase', marginBottom:12 }}>Sistema Institucional</div>
+          <div style={{ color:'#fff', fontSize:28, fontWeight:700, letterSpacing:'-0.03em', lineHeight:1.25, marginBottom:14 }}>
+            Control de Contratistas<br/>para Entidades Públicas
+          </div>
+          <div style={{ color:'rgba(167,243,208,0.7)', fontSize:14, lineHeight:1.6 }}>
+            Gestiona contratos, vencimientos y documentación desde un solo lugar.
+          </div>
+        </div>
+        <div style={{ color:'rgba(167,243,208,0.3)', fontSize:11 }}>© 2025 ContralControl · Colombia 🇨🇴</div>
+      </div>
 
-        {/* Form card */}
-        <div style={{ background:'#fff', borderRadius:14, padding:28, boxShadow:'0 20px 60px rgba(0,0,0,0.3)' }}>
-          <form onSubmit={submit} style={{ display:'flex', flexDirection:'column', gap:16 }}>
-            <div className="field">
-              <label>Correo institucional</label>
-              <input className="input-field" type="email" placeholder="usuario@entidad.gov.co"
-                value={form.email} onChange={e=>setForm(f=>({...f,email:e.target.value}))} required autoComplete="email"/>
+      {/* Panel derecho — formulario */}
+      <div style={{
+        width:'100%', maxWidth:440,
+        display:'flex', alignItems:'center', justifyContent:'center',
+        padding:'32px 24px',
+        background:'rgba(0,0,0,0.25)',
+        backdropFilter:'blur(12px)',
+        borderLeft:'1px solid rgba(52,211,153,0.1)',
+      }}>
+        <div style={{ width:'100%', maxWidth:380 }}>
+
+          {/* Mobile logo */}
+          <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:32 }}>
+            <div style={{ width:36, height:36, borderRadius:8, background:'linear-gradient(135deg,#059669,#34D399)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+              <Leaf size={18} color="#fff" fill="rgba(255,255,255,0.3)"/>
             </div>
-            <div className="field">
-              <label>Contraseña</label>
-              <input className="input-field" type="password" placeholder="••••••••"
-                value={form.password} onChange={e=>setForm(f=>({...f,password:e.target.value}))} required autoComplete="current-password"/>
+            <div>
+              <div style={{ color:'#fff', fontSize:15, fontWeight:700, letterSpacing:'-0.02em' }}>ContralControl</div>
+              <div style={{ color:'rgba(167,243,208,0.5)', fontSize:10, letterSpacing:'.06em', textTransform:'uppercase' }}>Gestión de Contratistas</div>
             </div>
+          </div>
+
+          <div style={{ color:'#fff', fontSize:22, fontWeight:700, letterSpacing:'-0.03em', marginBottom:6 }}>
+            Bienvenido de vuelta
+          </div>
+          <div style={{ color:'rgba(167,243,208,0.6)', fontSize:13, marginBottom:28 }}>
+            Ingresa tus credenciales institucionales para continuar.
+          </div>
+
+          {/* Form */}
+          <form onSubmit={submit} style={{ display:'flex', flexDirection:'column', gap:14 }}>
+            <div>
+              <label style={{ display:'block', fontSize:10, fontWeight:700, color:'rgba(167,243,208,0.6)', letterSpacing:'.07em', textTransform:'uppercase', marginBottom:5 }}>
+                Correo institucional
+              </label>
+              <input
+                type="email"
+                value={form.email}
+                onChange={e => setForm(f=>({...f,email:e.target.value}))}
+                placeholder="usuario@entidad.gov.co"
+                required
+                autoComplete="email"
+                style={{
+                  width:'100%', padding:'10px 12px',
+                  borderRadius:7, fontSize:13,
+                  border:'1px solid rgba(52,211,153,0.2)',
+                  background:'rgba(255,255,255,0.07)',
+                  color:'#ECFDF5', outline:'none',
+                }}
+                onFocus={e => { e.target.style.borderColor='#34D399'; e.target.style.boxShadow='0 0 0 3px rgba(52,211,153,0.15)'; }}
+                onBlur={e  => { e.target.style.borderColor='rgba(52,211,153,0.2)'; e.target.style.boxShadow='none'; }}
+              />
+            </div>
+
+            <div>
+              <label style={{ display:'block', fontSize:10, fontWeight:700, color:'rgba(167,243,208,0.6)', letterSpacing:'.07em', textTransform:'uppercase', marginBottom:5 }}>
+                Contraseña
+              </label>
+              <div style={{ position:'relative' }}>
+                <input
+                  type={showPass ? 'text' : 'password'}
+                  value={form.password}
+                  onChange={e => setForm(f=>({...f,password:e.target.value}))}
+                  placeholder="••••••••"
+                  required
+                  autoComplete="current-password"
+                  style={{
+                    width:'100%', padding:'10px 40px 10px 12px',
+                    borderRadius:7, fontSize:13,
+                    border:'1px solid rgba(52,211,153,0.2)',
+                    background:'rgba(255,255,255,0.07)',
+                    color:'#ECFDF5', outline:'none',
+                  }}
+                  onFocus={e => { e.target.style.borderColor='#34D399'; e.target.style.boxShadow='0 0 0 3px rgba(52,211,153,0.15)'; }}
+                  onBlur={e  => { e.target.style.borderColor='rgba(52,211,153,0.2)'; e.target.style.boxShadow='none'; }}
+                />
+                <button type="button" onClick={() => setShowPass(s=>!s)} style={{ position:'absolute', right:10, top:'50%', transform:'translateY(-50%)', background:'none', border:'none', color:'rgba(167,243,208,0.5)', cursor:'pointer' }}>
+                  {showPass ? <EyeOff size={15}/> : <Eye size={15}/>}
+                </button>
+              </div>
+            </div>
+
             {err && (
-              <div style={{ background:'#fef2f2', border:'1px solid #fca5a5', borderRadius:6, padding:'8px 12px', fontSize:12, color:'#dc2626' }}>{err}</div>
+              <div style={{ background:'rgba(220,38,38,0.15)', border:'1px solid rgba(220,38,38,0.3)', borderRadius:6, padding:'9px 12px', fontSize:12, color:'#FCA5A5', display:'flex', gap:6 }}>
+                ⚠ {err}
+              </div>
             )}
-            <button className="btn btn-primary" type="submit" disabled={loading}
-              style={{ justifyContent:'center', padding:'10px', marginTop:4, opacity:loading?.9:1 }}>
+
+            <button type="submit" disabled={loading} style={{
+              width:'100%', padding:'11px',
+              borderRadius:7, border:'none',
+              background: loading ? '#047857' : 'linear-gradient(135deg,#059669,#10B981)',
+              color:'#fff', fontSize:13, fontWeight:600,
+              cursor: loading ? 'not-allowed' : 'pointer',
+              boxShadow:'0 2px 8px rgba(5,150,105,0.35)',
+              transition:'all .15s',
+              display:'flex', alignItems:'center', justifyContent:'center', gap:8,
+              marginTop:4,
+            }}>
               {loading ? 'Verificando...' : 'Ingresar al sistema'}
             </button>
           </form>
-        </div>
 
-        {/* Demo credentials */}
-        <div style={{ marginTop:16, background:'rgba(255,255,255,0.08)', borderRadius:10, padding:'12px 16px', border:'1px solid rgba(255,255,255,0.12)' }}>
-          <div style={{ fontSize:10, fontWeight:600, color:'rgba(147,197,253,0.6)', letterSpacing:'.08em', textTransform:'uppercase', marginBottom:8 }}>Acceso de demo</div>
-          {DEMO.map(([rol, email, pass]) => (
-            <div key={email}
-              style={{ display:'flex', alignItems:'center', gap:8, padding:'6px 0', borderBottom:'1px solid rgba(255,255,255,0.08)', cursor:'pointer' }}
-              onClick={() => setForm({ email, password: pass })}>
-              <span style={{ background:'rgba(59,130,246,0.4)', color:'#93c5fd', fontSize:9, fontWeight:700, padding:'2px 6px', borderRadius:99, minWidth:72, textAlign:'center' }}>{rol}</span>
-              <span style={{ fontSize:11, color:'rgba(255,255,255,0.75)', flex:1 }}>{email}</span>
+          {/* Demo */}
+          <div style={{ marginTop:24, border:'1px solid rgba(52,211,153,0.15)', borderRadius:8, overflow:'hidden' }}>
+            <div style={{ padding:'8px 12px', background:'rgba(52,211,153,0.06)', borderBottom:'1px solid rgba(52,211,153,0.1)' }}>
+              <div style={{ fontSize:10, fontWeight:700, color:'rgba(167,243,208,0.5)', letterSpacing:'.08em' }}>ACCESO DE DEMOSTRACIÓN</div>
             </div>
-          ))}
-          <div style={{ fontSize:10, color:'rgba(147,197,253,0.5)', marginTop:6 }}>Haz clic en una fila para autocompletar</div>
+            {DEMO.map(({ rol, email, pass, color }, i) => (
+              <div key={email}
+                style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', cursor:'pointer', borderBottom: i < DEMO.length-1 ? '1px solid rgba(52,211,153,0.08)' : 'none', transition:'background .1s' }}
+                onClick={() => setForm({ email, password: pass })}
+                onMouseEnter={e => e.currentTarget.style.background='rgba(52,211,153,0.06)'}
+                onMouseLeave={e => e.currentTarget.style.background='transparent'}
+              >
+                <span style={{ background:color+'22', color, fontSize:9, fontWeight:700, padding:'2px 7px', borderRadius:99, letterSpacing:'.04em', minWidth:68, textAlign:'center', flexShrink:0 }}>
+                  {rol.toUpperCase()}
+                </span>
+                <span style={{ fontSize:11, color:'rgba(167,243,208,0.65)', flex:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{email}</span>
+                <span style={{ fontSize:10, color:'rgba(167,243,208,0.3)', flexShrink:0 }}>↗</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -1,21 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  FileText, Calendar, FolderOpen, Users, TrendingUp,
-  AlertCircle, Eye, Download, FileBarChart, ArrowUpRight
+  FileText, Calendar, FolderOpen, Users,
+  TrendingUp, AlertCircle, Eye, Download,
+  FileBarChart, ArrowUpRight, CheckCircle
 } from 'lucide-react';
 import { dashboard, contratos as contratosDB, alertas as alertasDB } from '../lib/db';
 
-const formatCOP = v =>
+const fCOP = v =>
   new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(v||0);
 
-const semaforo2badge = (s) => {
-  const m = { vigente:'badge-green', proximo:'badge-orange', vencido:'badge-red' };
-  const l = { vigente:'Vigente', proximo:'Por Vencer', vencido:'Vencido' };
-  return <span className={`badge ${m[s]||'badge-gray'}`}>{l[s]||s}</span>;
+const SemaforoTag = ({ s }) => {
+  const m = { vigente:['badge-green','Vigente'], proximo:['badge-orange','Por Vencer'], vencido:['badge-red','Vencido'] };
+  const [cls, lbl] = m[s] || ['badge-gray', s];
+  return <span className={`badge ${cls}`}>{lbl}</span>;
 };
-
-const alertColor = { critical:'#ef4444', high:'#f97316', medium:'#f59e0b' };
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -29,31 +28,28 @@ export default function Dashboard() {
       dashboard.getStats(),
       contratosDB.listar({ limit:5 }),
       alertasDB.listar({ leida:false, limit:4 }),
-    ]).then(([s, c, a]) => {
-      setStats(s);
-      setContratos(c.data || []);
-      setAlertas(a || []);
-    }).catch(console.error)
-      .finally(() => setLoading(false));
+    ]).then(([s,c,a]) => {
+      setStats(s); setContratos(c.data||[]); setAlertas(a||[]);
+    }).catch(console.error).finally(() => setLoading(false));
   }, []);
 
   const kpis = [
-    { label:'CONTRATOS ACTIVOS', value:stats?.contratos_activos??'—', sub:'En ejecución', Icon:FileText, trend:'+12%', grad:'linear-gradient(135deg,#1d4ed8,#3b82f6)', light:'#eff6ff', ic:'#2563eb' },
-    { label:'PRÓXIMOS A VENCER', value:stats?.contratos_proximos_vencer??'—', sub:'Próximos 30 días', Icon:Calendar, badge:'Crítico', grad:'linear-gradient(135deg,#c2410c,#f97316)', light:'#fff7ed', ic:'#ea580c' },
-    { label:'DOCS. PENDIENTES',  value:stats?.documentos_vencidos??'—', sub:'Requieren acción', Icon:FolderOpen, badge:'Atraso', grad:'linear-gradient(135deg,#b91c1c,#ef4444)', light:'#fef2f2', ic:'#dc2626' },
-    { label:'CONTRATISTAS',      value:stats?.contratistas_activos??'—', sub:'94% verificados', Icon:Users, trend:'+2', grad:'linear-gradient(135deg,#0f766e,#14b8a6)', light:'#f0fdfa', ic:'#0d9488' },
+    { label:'Contratos Activos',  value:stats?.contratos_activos??'—',          sub:'En ejecución',     Icon:FileText,   ic:'#059669', bg:'#D1FAE5', bar:'#059669' },
+    { label:'Por Vencer',         value:stats?.contratos_proximos_vencer??'—',  sub:'Próximos 30 días', Icon:Calendar,   ic:'#D97706', bg:'#FEF3C7', bar:'#D97706' },
+    { label:'Docs. Pendientes',   value:stats?.documentos_vencidos??'—',        sub:'Acción requerida', Icon:FolderOpen, ic:'#DC2626', bg:'#FEE2E2', bar:'#DC2626' },
+    { label:'Contratistas',       value:stats?.contratistas_activos??'—',       sub:'Registrados',      Icon:Users,      ic:'#2563EB', bg:'#DBEAFE', bar:'#2563EB' },
   ];
 
   const compliance = [
-    { type:'Prestación de servicios', pct:87, color:'#2563eb' },
-    { type:'Obra',                    pct:72, color:'#0d9488' },
-    { type:'Suministro',              pct:61, color:'#f97316' },
-    { type:'Consultoría',             pct:95, color:'#7c3aed' },
+    { type:'Prestación de servicios', pct:87, color:'#059669' },
+    { type:'Obra',                    pct:72, color:'#D97706' },
+    { type:'Suministro',              pct:61, color:'#2563EB' },
+    { type:'Consultoría',             pct:95, color:'#7C3AED' },
   ];
 
   if (loading) return (
     <div className="page" style={{ alignItems:'center', justifyContent:'center', minHeight:400 }}>
-      <div style={{ color:'#94a3b8', fontSize:13 }}>Cargando dashboard...</div>
+      <div style={{ color:'#6B7280', fontSize:13 }}>Cargando panel...</div>
     </div>
   );
 
@@ -63,11 +59,13 @@ export default function Dashboard() {
       <div className="page-hdr">
         <div>
           <h1>Resumen General</h1>
-          <p>Panel de control de contratos y cumplimiento administrativo</p>
+          <p>Panel de control · {new Date().toLocaleDateString('es-CO',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</p>
         </div>
         <div className="hdr-actions">
-          <button className="btn btn-secondary"><Download size={13}/> Exportar</button>
-          <button className="btn btn-primary" onClick={()=>navigate('/reportes')}>
+          <button className="btn btn-secondary" onClick={() => navigate('/reportes')}>
+            <Download size={13}/> Exportar
+          </button>
+          <button className="btn btn-primary" onClick={() => navigate('/reportes')}>
             <FileBarChart size={13}/> Reporte Mensual
           </button>
         </div>
@@ -75,63 +73,64 @@ export default function Dashboard() {
 
       {/* KPIs */}
       <div className="grid-4">
-        {kpis.map(({ label, value, sub, Icon, trend, badge, grad, light, ic }) => (
+        {kpis.map(({ label, value, sub, Icon, ic, bg, bar }) => (
           <div key={label} className="kpi-card">
             <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between' }}>
-              <div className="kpi-icon" style={{ background:light }}>
-                <Icon size={18} style={{ color:ic }}/>
+              <div className="kpi-icon" style={{ background:bg }}>
+                <Icon size={16} style={{ color:ic }}/>
               </div>
-              {trend && (
-                <span style={{ fontSize:11, color:'#10b981', fontWeight:500, display:'flex', alignItems:'center', gap:2 }}>
-                  <TrendingUp size={11}/>{trend}
-                </span>
-              )}
-              {badge && (
-                <span style={{ fontSize:10, fontWeight:500, padding:'2px 6px', borderRadius:4, background:'#fef2f2', color:'#dc2626' }}>
-                  {badge}
-                </span>
-              )}
+              <TrendingUp size={13} style={{ color:'#10B981', marginTop:2 }}/>
             </div>
             <div className="kpi-label">{label}</div>
             <div className="kpi-value">{value}</div>
             <div className="kpi-sub">{sub}</div>
-            <div className="kpi-card-bar" style={{ background:grad }}/>
+            <div className="kpi-card-bar" style={{ background:bar }}/>
           </div>
         ))}
       </div>
 
-      {/* Tabla contratos + panel derecho */}
+      {/* Contenido principal */}
       <div className="grid-5-2">
-        {/* Contratos recientes */}
+        {/* Tabla contratos */}
         <div className="card">
           <div className="card-header">
-            <h2>Contratos Recientes</h2>
-            <button className="btn-ghost" onClick={()=>navigate('/contratos')}
-              style={{ display:'flex', alignItems:'center', gap:4 }}>
-              Ver todos <ArrowUpRight size={12}/>
+            <h2>Contratos recientes</h2>
+            <button className="btn-ghost" onClick={() => navigate('/contratos')} style={{ display:'flex', alignItems:'center', gap:4 }}>
+              Ver todos <ArrowUpRight size={11}/>
             </button>
           </div>
           <div className="table-wrap">
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>N° Contrato</th><th>Contratista</th><th>Valor</th><th>Estado</th><th></th>
+                  <th>N° Contrato</th>
+                  <th>Contratista</th>
+                  <th>Valor</th>
+                  <th>Estado</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
                 {contratos.map(c => (
-                  <tr key={c.id} onClick={()=>navigate(`/contratos/${c.id}`)}>
+                  <tr key={c.id} onClick={() => navigate(`/contratos/${c.id}`)}>
                     <td className="td-strong">{c.numero_contrato}</td>
                     <td className="td-muted">{c.contratista_nombre}</td>
-                    <td style={{ fontWeight:500 }}>{formatCOP(c.valor_actual)}</td>
-                    <td>{semaforo2badge(c.semaforo)}</td>
-                    <td><button className="btn-icon" onClick={e=>{e.stopPropagation();navigate(`/contratos/${c.id}`);}}><Eye size={13}/></button></td>
+                    <td style={{ fontWeight:600, color:'#059669' }}>{fCOP(c.valor_actual)}</td>
+                    <td><SemaforoTag s={c.semaforo}/></td>
+                    <td>
+                      <button className="btn-icon" onClick={e=>{e.stopPropagation();navigate(`/contratos/${c.id}`);}}>
+                        <Eye size={13}/>
+                      </button>
+                    </td>
                   </tr>
                 ))}
                 {contratos.length === 0 && (
-                  <tr><td colSpan={5} style={{ textAlign:'center', padding:32, color:'#94a3b8', fontSize:12 }}>
-                    Sin contratos registrados aún.
-                  </td></tr>
+                  <tr>
+                    <td colSpan={5} style={{ textAlign:'center', padding:36, color:'#9CA3AF' }}>
+                      <div style={{ marginBottom:8 }}><CheckCircle size={24} style={{ margin:'0 auto', display:'block', opacity:.3 }}/></div>
+                      Sin contratos registrados aún.
+                    </td>
+                  </tr>
                 )}
               </tbody>
             </table>
@@ -140,16 +139,14 @@ export default function Dashboard() {
 
         {/* Columna derecha */}
         <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
-
           {/* Cumplimiento */}
           <div className="card" style={{ padding:16 }}>
-            <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:14 }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
               <div>
-                <div style={{ fontSize:13, fontWeight:600 }}>Cumplimiento por Tipo</div>
-                <div style={{ fontSize:10, color:'#94a3b8', marginTop:2 }}>+18.4% este trimestre</div>
+                <div style={{ fontSize:13, fontWeight:600, color:'var(--forest)', letterSpacing:'-0.01em' }}>Cumplimiento</div>
+                <div style={{ fontSize:11, color:'#6B7280', marginTop:1 }}>por tipo de contrato</div>
               </div>
-              <button className="btn-ghost" onClick={()=>navigate('/reportes')}
-                style={{ display:'flex', alignItems:'center', gap:3, fontSize:11 }}>
+              <button className="btn-ghost" onClick={() => navigate('/reportes')} style={{ display:'flex', alignItems:'center', gap:3, fontSize:11 }}>
                 Informe <ArrowUpRight size={11}/>
               </button>
             </div>
@@ -157,8 +154,8 @@ export default function Dashboard() {
               {compliance.map(({ type, pct, color }) => (
                 <div key={type}>
                   <div style={{ display:'flex', justifyContent:'space-between', fontSize:11, marginBottom:4 }}>
-                    <span style={{ color:'#64748b' }}>{type}</span>
-                    <span style={{ fontWeight:600 }}>{pct}%</span>
+                    <span style={{ color:'#6B7280' }}>{type}</span>
+                    <span style={{ fontWeight:700, color }}>{pct}%</span>
                   </div>
                   <div className="prog-track">
                     <div className="prog-fill" style={{ width:`${pct}%`, background:color }}/>
@@ -169,36 +166,37 @@ export default function Dashboard() {
           </div>
 
           {/* Alertas */}
-          <div className="card">
+          <div className="card" style={{ flex:1 }}>
             <div className="card-header">
-              <h2>Alertas Críticas</h2>
-              <span className="badge badge-red">{stats?.alertas_pendientes ?? alertas.length} activas</span>
+              <h2>Alertas activas</h2>
+              {stats?.alertas_pendientes > 0 && (
+                <span className="badge badge-red">{stats.alertas_pendientes}</span>
+              )}
             </div>
             <div>
               {alertas.map(a => (
-                <div key={a.id} className="alert-row" style={{ cursor:'pointer' }}
-                  onClick={() => navigate('/alertas')}>
-                  <AlertCircle size={14} style={{ color:alertColor.high, flexShrink:0, marginTop:2 }}/>
+                <div key={a.id} className="alert-row" style={{ cursor:'pointer' }} onClick={() => navigate('/alertas')}>
+                  <AlertCircle size={13} style={{ color:'#D97706', flexShrink:0, marginTop:2 }}/>
                   <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ fontSize:11, fontWeight:600, color:'#1e293b' }}>
+                    <div style={{ fontSize:11, fontWeight:600, color:'var(--forest)' }}>
                       {a.contratos?.numero_contrato || 'Sistema'}
                     </div>
-                    <div style={{ fontSize:11, color:'#64748b', marginTop:1, lineHeight:1.4 }}>
+                    <div style={{ fontSize:11, color:'#6B7280', marginTop:1, lineHeight:1.4 }} className="td-truncate">
                       {a.mensaje}
                     </div>
                   </div>
                 </div>
               ))}
               {alertas.length === 0 && (
-                <div style={{ padding:20, textAlign:'center', color:'#94a3b8', fontSize:12 }}>
-                  ✓ Sin alertas pendientes
+                <div style={{ padding:20, textAlign:'center', color:'#9CA3AF', fontSize:12 }}>
+                  <CheckCircle size={18} style={{ margin:'0 auto 6px', display:'block', color:'#10B981' }}/>
+                  Sin alertas pendientes
                 </div>
               )}
             </div>
-            <div style={{ padding:'8px 16px', borderTop:'1px solid #f1f5f9', textAlign:'center' }}>
-              <button className="btn-ghost" onClick={()=>navigate('/alertas')}
-                style={{ display:'inline-flex', alignItems:'center', gap:4, fontSize:12 }}>
-                Ver todas las alertas <ArrowUpRight size={11}/>
+            <div style={{ padding:'8px 16px', borderTop:'1px solid var(--border)', textAlign:'center' }}>
+              <button className="btn-ghost" onClick={() => navigate('/alertas')} style={{ display:'inline-flex', alignItems:'center', gap:4, fontSize:11 }}>
+                Ver todas <ArrowUpRight size={11}/>
               </button>
             </div>
           </div>

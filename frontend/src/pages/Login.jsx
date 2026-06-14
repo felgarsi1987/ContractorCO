@@ -272,9 +272,9 @@ const CSS = `
 .ll-root {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: minmax(340px, 420px) 1fr minmax(300px, 400px);
+  grid-template-columns: minmax(340px, 420px) 480px 1fr;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
   background: radial-gradient(ellipse 80% 80% at 50% 50%, #093d20 0%, #061509 55%, #020a04 100%);
 }
 
@@ -366,7 +366,8 @@ const CSS = `
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 32px 24px;
+  padding: 40px 24px;
+  min-height: 100vh;
   position: relative;
   z-index: 2;
   opacity: 0;
@@ -572,7 +573,7 @@ const CSS = `
   flex-direction: column;
   justify-content: center;
   gap: 22px;
-  padding: 32px 40px 32px 100px;
+  padding: 40px 36px 40px 48px;
   position: relative;
   z-index: 2;
   opacity: 0;

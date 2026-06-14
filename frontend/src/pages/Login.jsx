@@ -572,7 +572,7 @@ const CSS = `
   flex-direction: column;
   justify-content: center;
   gap: 22px;
-  padding: 32px 36px 32px 52px;
+  padding: 32px 40px 32px 100px;
   position: relative;
   z-index: 2;
   opacity: 0;

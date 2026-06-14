@@ -136,7 +136,7 @@ export default function Reportes() {
                   <span style={{ fontWeight:600 }}>{value} contratos</span>
                 </div>
                 <div className="prog-track">
-                  <div className="prog-fill" style={{ width:`${(value/7)*100}%`, background:color }}/>
+                  <div className="prog-fill" style={{ '--w': value / 7, background: color }}/>
                 </div>
               </div>
             ))}

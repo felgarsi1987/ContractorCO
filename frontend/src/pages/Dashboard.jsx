@@ -158,7 +158,7 @@ export default function Dashboard() {
                     <span style={{ fontWeight:700, color }}>{pct}%</span>
                   </div>
                   <div className="prog-track">
-                    <div className="prog-fill" style={{ width:`${pct}%`, background:color }}/>
+                    <div className="prog-fill" style={{ '--w': pct / 100, background: color }}/>
                   </div>
                 </div>
               ))}

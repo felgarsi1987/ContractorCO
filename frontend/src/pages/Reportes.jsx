@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Download, Calendar, TrendingUp, FileText, DollarSign, BarChart3 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  PieChart, Pie, Cell, ResponsiveContainer, Defs, LinearGradient, Stop,
+  PieChart, Pie, Cell, ResponsiveContainer,
 } from 'recharts';
 import api from '../services/api';
 import toast from 'react-hot-toast';
@@ -123,12 +123,12 @@ export default function Reportes() {
           <div style={{ flex:1, minHeight:180 }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={byMonth} margin={{ top:4, right:8, left:0, bottom:0 }} barCategoryGap="32%">
-                <Defs>
-                  <LinearGradient id="barGreen" x1="0" y1="0" x2="0" y2="1">
-                    <Stop offset="0%"   stopColor="#059669" stopOpacity={0.9}/>
-                    <Stop offset="100%" stopColor="#059669" stopOpacity={0.35}/>
-                  </LinearGradient>
-                </Defs>
+                <defs>
+                  <linearGradient id="barGreen" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%"   stopColor="#059669" stopOpacity={0.9}/>
+                    <stop offset="100%" stopColor="#059669" stopOpacity={0.35}/>
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false}/>
                 <XAxis
                   dataKey="month"

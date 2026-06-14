@@ -272,7 +272,7 @@ const CSS = `
 .ll-root {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: minmax(340px, 420px) 1fr minmax(240px, 340px);
+  grid-template-columns: minmax(340px, 420px) 1fr minmax(300px, 400px);
   position: relative;
   overflow: hidden;
   background: radial-gradient(ellipse 80% 80% at 50% 50%, #093d20 0%, #061509 55%, #020a04 100%);
@@ -572,7 +572,7 @@ const CSS = `
   flex-direction: column;
   justify-content: center;
   gap: 22px;
-  padding: 32px 36px 32px 12px;
+  padding: 32px 36px 32px 52px;
   position: relative;
   z-index: 2;
   opacity: 0;

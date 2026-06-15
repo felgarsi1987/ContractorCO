@@ -1,14 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import {
-  ClipboardList, Plus, CheckCircle, Clock, AlertTriangle, FileUp,
+  ClipboardList, Plus, CheckCircle, Clock, AlertTriangle,
   X, ChevronDown, ChevronUp, ThumbsUp, ThumbsDown, Paperclip, Send,
-  Mail, ToggleLeft, ToggleRight, Bell
+  ToggleLeft, ToggleRight, Bell
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { solicitudes as solicitudesDB, plantillas as plantillasDB, contratos as contratosDB, mensajes as mensajesDB } from '../lib/db';
+import { solicitudes as solicitudesDB, contratos as contratosDB, mensajes as mensajesDB } from '../lib/db';
 import { emailService, emailPrefs } from '../lib/emailService';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
+import ChecklistBuilder from '../components/ChecklistBuilder';
+import { CATALOGO_DOCS } from '../lib/docCatalog';
 
 const TIPO_LABEL = {
   precontractual: 'Precontractual',
@@ -37,13 +39,19 @@ const ITEM_CONFIG = {
   rechazado: { label:'Rechazado',cls:'badge-red' },
 };
 
-const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+const MESES_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+function checklistPorDefecto(tipo) {
+  return (CATALOGO_DOCS[tipo] || []).slice(0, 5).map((d, i) => ({
+    nombre: d.nombre, base_legal: d.base_legal, obligatorio: true, orden: i + 1,
+  }));
+}
 
 export default function SolicitudDocumentos() {
   const { usuario } = useAuth();
   const [lista, setLista]           = useState([]);
   const [contratos, setContratos]   = useState([]);
-  const [plantillas, setPlantillas] = useState([]);
   const [loading, setLoading]       = useState(true);
   const [filtroEstado, setFiltroEstado] = useState('');
   const [expandido, setExpandido]   = useState(null);
@@ -56,27 +64,19 @@ export default function SolicitudDocumentos() {
   const [msgChat, setMsgChat]       = useState({});
   const [chatOpen, setChatOpen]     = useState(null);
   const [mensajesChat, setMensajesChat] = useState([]);
-  const fileRefs = useRef({});
+  const fileRefs = useRef({}); // eslint-disable-line no-unused-vars
 
   const [form, setForm] = useState({
     contrato_id:'', titulo:'', tipo_solicitud:'mensual',
     fecha_limite:'', periodo_mes:'', periodo_anio: new Date().getFullYear(),
-    notas:'', plantilla_id:'', items_custom:[],
+    notas:'', checklist: checklistPorDefecto('mensual'),
   });
   const [comentarioRechazo, setComentarioRechazo] = useState('');
 
   useEffect(() => {
     cargar();
     contratosDB.listar({ limit: 200 }).then(r => setContratos(r.data || []));
-    plantillasDB.listar().then(setPlantillas);
   }, [filtroEstado]);
-
-  useEffect(() => {
-    if (form.tipo_solicitud && form.tipo_solicitud !== form._lastTipo) {
-      const predeterminada = plantillas.find(p => p.es_predeterminada && p.tipo_solicitud === form.tipo_solicitud);
-      if (predeterminada) setForm(f => ({ ...f, plantilla_id: predeterminada.id, _lastTipo: form.tipo_solicitud }));
-    }
-  }, [form.tipo_solicitud, plantillas]);
 
   async function cargar() {
     setLoading(true);
@@ -88,10 +88,9 @@ export default function SolicitudDocumentos() {
   }
 
   async function guardar() {
-    if (!form.contrato_id || !form.titulo) {
-      toast.error('Selecciona un contrato y escribe el título');
-      return;
-    }
+    if (!form.contrato_id) { toast.error('Selecciona un contrato'); return; }
+    if (!form.titulo.trim()) { toast.error('Escribe el título de la solicitud'); return; }
+    if (form.checklist.length === 0) { toast.error('Agrega al menos un documento al checklist'); return; }
     setGuardando(true);
     try {
       await solicitudesDB.crear({
@@ -102,8 +101,8 @@ export default function SolicitudDocumentos() {
         periodo_mes:    form.periodo_mes   ? parseInt(form.periodo_mes)  : null,
         periodo_anio:   form.periodo_anio  ? parseInt(form.periodo_anio) : null,
         notas:          form.notas,
-        plantilla_id:   form.plantilla_id || null,
-        items_custom:   null,
+        items_custom:   form.checklist,
+        fase:           'contrato',
       });
       toast.success('Solicitud creada y notificada al contratista');
       setModal(false);
@@ -114,7 +113,11 @@ export default function SolicitudDocumentos() {
   }
 
   function resetForm() {
-    setForm({ contrato_id:'', titulo:'', tipo_solicitud:'mensual', fecha_limite:'', periodo_mes:'', periodo_anio: new Date().getFullYear(), notas:'', plantilla_id:'', items_custom:[] });
+    setForm({
+      contrato_id:'', titulo:'', tipo_solicitud:'mensual',
+      fecha_limite:'', periodo_mes:'', periodo_anio: new Date().getFullYear(),
+      notas:'', checklist: checklistPorDefecto('mensual'),
+    });
   }
 
   async function aprobarItem(itemId) {
@@ -280,7 +283,7 @@ export default function SolicitudDocumentos() {
                     <span>Contrato: <strong>{contrato?.numero_contrato || '—'}</strong></span>
                     <span>Contratista: <strong>{ctNombre}</strong></span>
                     {sol.fecha_limite && <span>Límite: <strong>{sol.fecha_limite}</strong></span>}
-                    {sol.periodo_mes && <span>Período: <strong>{MESES[sol.periodo_mes - 1]} {sol.periodo_anio}</strong></span>}
+                    {sol.periodo_mes && <span>Período: <strong>{MESES_ES[sol.periodo_mes - 1]} {sol.periodo_anio}</strong></span>}
                   </div>
                 </div>
                 <div style={{ textAlign:'right', flexShrink:0 }}>
@@ -417,11 +420,11 @@ export default function SolicitudDocumentos() {
       {/* Modal: nueva solicitud */}
       {modal && (
         <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setModal(false)}>
-          <div className="modal" style={{ maxWidth:580 }}>
+          <div className="modal" style={{ maxWidth:660, maxHeight:'90vh', overflow:'auto' }}>
             <div className="modal-hdr">
               <div>
                 <h2>Nueva Solicitud de Documentos</h2>
-                <p style={{ margin:0, fontSize:11, color:'#64748b' }}>El contratista recibirá una notificación inmediata</p>
+                <p style={{ margin:0, fontSize:11, color:'#64748b' }}>Ligada a un contrato vigente — el contratista será notificado</p>
               </div>
               <button className="btn-icon" onClick={() => { setModal(false); resetForm(); }}><X size={16}/></button>
             </div>
@@ -443,8 +446,12 @@ export default function SolicitudDocumentos() {
 
                 <div className="form-group">
                   <label className="form-label">Tipo de solicitud</label>
-                  <select className="form-select" value={form.tipo_solicitud} onChange={e => setForm(f => ({ ...f, tipo_solicitud: e.target.value }))}>
-                    {Object.entries(TIPO_LABEL).map(([v,l]) => <option key={v} value={v}>{l}</option>)}
+                  <select className="form-select" value={form.tipo_solicitud}
+                    onChange={e => {
+                      const tipo = e.target.value;
+                      setForm(f => ({ ...f, tipo_solicitud: tipo, checklist: checklistPorDefecto(tipo) }));
+                    }}>
+                    {Object.entries(TIPO_LABEL).filter(([v]) => v !== 'precontractual').map(([v,l]) => <option key={v} value={v}>{l}</option>)}
                   </select>
                 </div>
 
@@ -458,7 +465,7 @@ export default function SolicitudDocumentos() {
                     <label className="form-label">Mes del período</label>
                     <select className="form-select" value={form.periodo_mes} onChange={e => setForm(f => ({ ...f, periodo_mes: e.target.value }))}>
                       <option value="">— Seleccionar —</option>
-                      {MESES.map((m,i) => <option key={i+1} value={i+1}>{m}</option>)}
+                      {MESES_ES.map((m,i) => <option key={i+1} value={i+1}>{m}</option>)}
                     </select>
                   </div>
                   <div className="form-group">
@@ -466,31 +473,27 @@ export default function SolicitudDocumentos() {
                     <input className="form-input" type="number" value={form.periodo_anio} onChange={e => setForm(f => ({ ...f, periodo_anio: e.target.value }))}/>
                   </div>
                 </>}
+              </div>
 
-                <div className="form-group" style={{ gridColumn:'1/-1' }}>
-                  <label className="form-label">Checklist a usar</label>
-                  <select className="form-select" value={form.plantilla_id} onChange={e => setForm(f => ({ ...f, plantilla_id: e.target.value }))}>
-                    <option value="">Sin checklist (solicitud en blanco)</option>
-                    {plantillas.map(p => (
-                      <option key={p.id} value={p.id}>
-                        {p.es_predeterminada ? '★ ' : ''}{p.nombre} ({TIPO_LABEL[p.tipo_solicitud] || p.tipo_solicitud})
-                      </option>
-                    ))}
-                  </select>
-                  {form.plantilla_id && (
-                    <div style={{ fontSize:10, color:'#059669', marginTop:4 }}>
-                      ✓ Se crearán los ítems del checklist seleccionado automáticamente
-                    </div>
-                  )}
-                </div>
+              {/* ChecklistBuilder */}
+              <div className="form-group">
+                <label className="form-label" style={{ display:'flex', alignItems:'center', gap:6 }}>
+                  Documentos requeridos *
+                  <span style={{ fontSize:10, fontWeight:400, color:'#94a3b8' }}>— ajusta el checklist según lo que necesitas</span>
+                </label>
+                <ChecklistBuilder
+                  items={form.checklist}
+                  onChange={checklist => setForm(f => ({ ...f, checklist }))}
+                  tipo={form.tipo_solicitud === 'precontractual' ? 'mensual' : form.tipo_solicitud}
+                />
+              </div>
 
-                <div className="form-group" style={{ gridColumn:'1/-1' }}>
-                  <label className="form-label">Notas / instrucciones adicionales</label>
-                  <textarea className="form-input" rows={3} value={form.notas}
-                    onChange={e => setForm(f => ({ ...f, notas: e.target.value }))}
-                    placeholder="Instrucciones adicionales para el contratista..."
-                    style={{ resize:'vertical' }}/>
-                </div>
+              <div className="form-group">
+                <label className="form-label">Notas / instrucciones adicionales</label>
+                <textarea className="form-input" rows={3} value={form.notas}
+                  onChange={e => setForm(f => ({ ...f, notas: e.target.value }))}
+                  placeholder="Instrucciones adicionales para el contratista..."
+                  style={{ resize:'vertical' }}/>
               </div>
 
               <div style={{ background:'#EFF6FF', border:'1px solid #BFDBFE', borderRadius:8, padding:'10px 14px', fontSize:11, color:'#1e40af' }}>
@@ -500,7 +503,7 @@ export default function SolicitudDocumentos() {
               <div style={{ display:'flex', gap:8, justifyContent:'flex-end' }}>
                 <button className="btn btn-secondary" onClick={() => { setModal(false); resetForm(); }}>Cancelar</button>
                 <button className="btn btn-primary" onClick={guardar} disabled={guardando}>
-                  {guardando ? 'Creando...' : 'Crear y notificar'}
+                  {guardando ? 'Creando...' : `Crear y notificar (${form.checklist.length} docs)`}
                 </button>
               </div>
             </div>

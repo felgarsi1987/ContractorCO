@@ -683,21 +683,23 @@ export const pagos = {
 
 // ── SOLICITUDES DE DOCUMENTOS ────────────────────────────────
 export const solicitudes = {
-  listar: async ({ contrato_id, estado, contratista_id } = {}) => {
+  listar: async ({ contrato_id, estado, contratista_id, fase } = {}) => {
     let q = supabase
       .from('solicitudes_documentos')
       .select(`
         *,
         contratos(numero_contrato, objeto, contratista_id,
           contratistas(id, nombres, apellidos, usuario_id)),
+        contratistas_pre:contratistas!contratista_id(id, nombres, apellidos, email, usuario_id),
         creado_por_nombre:usuarios(nombre),
         items_checklist(id, nombre, estado, obligatorio, orden, base_legal, descripcion, comentario_rechazo,
           documentos_solicitud(id, nombre_archivo, url_publica, subido_en, version))
       `)
       .order('creado_en', { ascending: false })
 
-    if (contrato_id) q = q.eq('contrato_id', contrato_id)
-    if (estado)      q = q.eq('estado', estado)
+    if (contrato_id)   q = q.eq('contrato_id', contrato_id)
+    if (estado)        q = q.eq('estado', estado)
+    if (fase)          q = q.eq('fase', fase)
 
     const { data, error } = await q
     if (error) throw error
@@ -705,29 +707,34 @@ export const solicitudes = {
     if (contratista_id) {
       return (data || []).filter(s =>
         s.contratos?.contratista_id === contratista_id ||
-        s.contratos?.contratistas?.id === contratista_id
+        s.contratos?.contratistas?.id === contratista_id ||
+        s.contratistas_pre?.id === contratista_id
       )
     }
     return data || []
   },
 
-  crear: async ({ contrato_id, titulo, tipo_solicitud, fecha_limite, periodo_mes, periodo_anio, notas, plantilla_id, items_custom }) => {
+  crear: async ({ contrato_id, contratista_id, titulo, tipo_solicitud, fecha_limite, periodo_mes, periodo_anio, notas, items_custom, fase }) => {
     const { data: { user } } = await supabase.auth.getUser()
 
     const { data: sol, error: solErr } = await supabase
       .from('solicitudes_documentos')
-      .insert({ contrato_id, titulo, tipo_solicitud, fecha_limite: fecha_limite || null, periodo_mes: periodo_mes || null, periodo_anio: periodo_anio || null, notas, plantilla_id: plantilla_id || null, creado_por: user.id })
+      .insert({
+        contrato_id:     contrato_id     || null,
+        contratista_id:  contratista_id  || null,
+        titulo,
+        tipo_solicitud,
+        fecha_limite:    fecha_limite    || null,
+        periodo_mes:     periodo_mes     || null,
+        periodo_anio:    periodo_anio    || null,
+        notas,
+        fase:            fase            || 'contrato',
+        creado_por:      user.id,
+      })
       .select().single()
     if (solErr) throw solErr
 
-    let itemsToInsert = items_custom || []
-    if (plantilla_id && !items_custom) {
-      const { data: plantilla } = await supabase.from('plantillas_checklist').select('items').eq('id', plantilla_id).single()
-      itemsToInsert = (plantilla?.items || []).map(it => ({ ...it, solicitud_id: sol.id }))
-    } else {
-      itemsToInsert = itemsToInsert.map(it => ({ ...it, solicitud_id: sol.id }))
-    }
-
+    const itemsToInsert = (items_custom || []).map(it => ({ ...it, solicitud_id: sol.id }))
     if (itemsToInsert.length > 0) {
       const { error: itemErr } = await supabase.from('items_checklist').insert(itemsToInsert)
       if (itemErr) throw itemErr

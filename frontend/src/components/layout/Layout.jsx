@@ -5,7 +5,7 @@ import {
   UserCog, BarChart3, Shield, UsersRound, Search,
   HelpCircle, Plus, LogOut, ChevronRight, Leaf,
   ShieldCheck, ClipboardList, FileBarChart2, DollarSign,
-  CalendarDays, AlertOctagon, Heart, Wallet, SendHorizontal, Home, Mail
+  CalendarDays, AlertOctagon, Heart, Wallet, SendHorizontal, Home, Mail, UserCheck
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useAlertas } from '../../hooks/useAlertas';
@@ -29,7 +29,8 @@ const NAV_BY_ROL = {
     { to:'/inhabilidades',    label:'Inhabilidades',  Icon:AlertOctagon },
     { to:'/seguridad-social', label:'Seg. Social',    Icon:Heart },
     { to:'/presupuesto',      label:'Presupuesto',    Icon:Wallet },
-    { to:'/solicitudes',      label:'Solicitar Docs', Icon:SendHorizontal },
+    { to:'/precontrato',      label:'Precontractual', Icon:UserCheck },
+    { to:'/solicitudes',      label:'Docs Contrato',  Icon:SendHorizontal },
   ],
   supervisor: [
     { to:'/',                 label:'Resumen',        Icon:LayoutDashboard },
@@ -42,7 +43,8 @@ const NAV_BY_ROL = {
     { to:'/pagos',            label:'Pagos',          Icon:DollarSign },
     { to:'/inhabilidades',    label:'Inhabilidades',  Icon:AlertOctagon },
     { to:'/seguridad-social', label:'Seg. Social',    Icon:Heart },
-    { to:'/solicitudes',      label:'Solicitar Docs', Icon:SendHorizontal },
+    { to:'/precontrato',      label:'Precontractual', Icon:UserCheck },
+    { to:'/solicitudes',      label:'Docs Contrato',  Icon:SendHorizontal },
   ],
   auditor: [
     { to:'/',             label:'Resumen',      Icon:LayoutDashboard },

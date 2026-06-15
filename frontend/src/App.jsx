@@ -22,7 +22,8 @@ import PAA                 from './pages/PAA';
 import Inhabilidades       from './pages/Inhabilidades';
 import SeguridadSocial     from './pages/SeguridadSocial';
 import Presupuesto         from './pages/Presupuesto';
-import SolicitudDocumentos from './pages/SolicitudDocumentos';
+import SolicitudDocumentos  from './pages/SolicitudDocumentos';
+import SolicitudPrecontrato from './pages/SolicitudPrecontrato';
 import PortalContratista   from './pages/PortalContratista';
 import ConfigEmail         from './pages/ConfigEmail';
 import './styles/globals.css';
@@ -30,7 +31,7 @@ import './styles/globals.css';
 // Rutas permitidas por rol
 const ROL_RUTAS = {
   admin:       /.*/,  // todo
-  supervisor:  /^\/(contratos|documentos|alertas|garantias|actas|informes|pagos|inhabilidades|seguridad-social|solicitudes)($|\/)/,
+  supervisor:  /^\/(contratos|documentos|alertas|garantias|actas|informes|pagos|inhabilidades|seguridad-social|solicitudes|precontrato)($|\/)/,
   auditor:     /^\/(contratos|contratistas|reportes)($|\/)/,
   contratista: /^\/(contratos|documentos|alertas|portal)($|\/)/,
 };
@@ -81,6 +82,7 @@ function AppRoutes() {
         <Route path="inhabilidades"         element={<RolRoute path="inhabilidades"><Inhabilidades/></RolRoute>}/>
         <Route path="seguridad-social"      element={<RolRoute path="seguridad-social"><SeguridadSocial/></RolRoute>}/>
         <Route path="solicitudes"           element={<RolRoute path="solicitudes"><SolicitudDocumentos/></RolRoute>}/>
+        <Route path="precontrato"           element={<RolRoute path="precontrato"><SolicitudPrecontrato/></RolRoute>}/>
         {/* Portal contratista */}
         <Route path="portal"               element={<PrivateRoute roles={['contratista']}><PortalContratista/></PrivateRoute>}/>
         {/* Solo Admin */}

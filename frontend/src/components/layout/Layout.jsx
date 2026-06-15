@@ -5,7 +5,7 @@ import {
   UserCog, BarChart3, Shield, UsersRound, Search,
   HelpCircle, Plus, LogOut, ChevronRight, Leaf,
   ShieldCheck, ClipboardList, FileBarChart2, DollarSign,
-  CalendarDays, AlertOctagon, Heart, Wallet
+  CalendarDays, AlertOctagon, Heart, Wallet, SendHorizontal, Home
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useAlertas } from '../../hooks/useAlertas';
@@ -29,6 +29,7 @@ const NAV_BY_ROL = {
     { to:'/inhabilidades',    label:'Inhabilidades',  Icon:AlertOctagon },
     { to:'/seguridad-social', label:'Seg. Social',    Icon:Heart },
     { to:'/presupuesto',      label:'Presupuesto',    Icon:Wallet },
+    { to:'/solicitudes',      label:'Solicitar Docs', Icon:SendHorizontal },
   ],
   supervisor: [
     { to:'/',                 label:'Resumen',        Icon:LayoutDashboard },
@@ -41,6 +42,7 @@ const NAV_BY_ROL = {
     { to:'/pagos',            label:'Pagos',          Icon:DollarSign },
     { to:'/inhabilidades',    label:'Inhabilidades',  Icon:AlertOctagon },
     { to:'/seguridad-social', label:'Seg. Social',    Icon:Heart },
+    { to:'/solicitudes',      label:'Solicitar Docs', Icon:SendHorizontal },
   ],
   auditor: [
     { to:'/',             label:'Resumen',      Icon:LayoutDashboard },
@@ -49,10 +51,11 @@ const NAV_BY_ROL = {
     { to:'/reportes',     label:'Reportes',     Icon:BarChart3 },
   ],
   contratista: [
-    { to:'/',          label:'Resumen',       Icon:LayoutDashboard },
-    { to:'/contratos', label:'Mis Contratos', Icon:FileText },
-    { to:'/documentos',label:'Documentos',    Icon:FolderOpen },
-    { to:'/alertas',   label:'Alertas',       Icon:Bell, badge:true },
+    { to:'/',          label:'Resumen',         Icon:LayoutDashboard },
+    { to:'/portal',    label:'Mi Portal',       Icon:Home, badge:true },
+    { to:'/contratos', label:'Mis Contratos',   Icon:FileText },
+    { to:'/documentos',label:'Documentos',      Icon:FolderOpen },
+    { to:'/alertas',   label:'Alertas',         Icon:Bell },
   ],
 };
 const ADMIN_NAV = [

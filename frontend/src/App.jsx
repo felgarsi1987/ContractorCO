@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+﻿import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Layout          from './components/layout/Layout';
@@ -22,14 +22,16 @@ import PAA                 from './pages/PAA';
 import Inhabilidades       from './pages/Inhabilidades';
 import SeguridadSocial     from './pages/SeguridadSocial';
 import Presupuesto         from './pages/Presupuesto';
+import SolicitudDocumentos from './pages/SolicitudDocumentos';
+import PortalContratista   from './pages/PortalContratista';
 import './styles/globals.css';
 
 // Rutas permitidas por rol
 const ROL_RUTAS = {
   admin:       /.*/,  // todo
-  supervisor:  /^\/(contratos|documentos|alertas|garantias|actas|informes|pagos|inhabilidades|seguridad-social)($|\/)/,
+  supervisor:  /^\/(contratos|documentos|alertas|garantias|actas|informes|pagos|inhabilidades|seguridad-social|solicitudes)($|\/)/,
   auditor:     /^\/(contratos|contratistas|reportes)($|\/)/,
-  contratista: /^\/(contratos|documentos|alertas)($|\/)/,
+  contratista: /^\/(contratos|documentos|alertas|portal)($|\/)/,
 };
 
 function PrivateRoute({ children, roles }) {
@@ -77,6 +79,9 @@ function AppRoutes() {
         <Route path="pagos"                 element={<RolRoute path="pagos"><Pagos/></RolRoute>}/>
         <Route path="inhabilidades"         element={<RolRoute path="inhabilidades"><Inhabilidades/></RolRoute>}/>
         <Route path="seguridad-social"      element={<RolRoute path="seguridad-social"><SeguridadSocial/></RolRoute>}/>
+        <Route path="solicitudes"           element={<RolRoute path="solicitudes"><SolicitudDocumentos/></RolRoute>}/>
+        {/* Portal contratista */}
+        <Route path="portal"               element={<PrivateRoute roles={['contratista']}><PortalContratista/></PrivateRoute>}/>
         {/* Solo Admin */}
         <Route path="contratistas"          element={<PrivateRoute roles={['admin']}><Contratistas/></PrivateRoute>}/>
         <Route path="supervisores"          element={<PrivateRoute roles={['admin']}><Supervisores/></PrivateRoute>}/>

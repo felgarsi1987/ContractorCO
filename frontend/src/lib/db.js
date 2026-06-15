@@ -681,6 +681,178 @@ export const pagos = {
   },
 }
 
+// ── SOLICITUDES DE DOCUMENTOS ────────────────────────────────
+export const solicitudes = {
+  listar: async ({ contrato_id, estado, contratista_id } = {}) => {
+    let q = supabase
+      .from('solicitudes_documentos')
+      .select(`
+        *,
+        contratos(numero_contrato, objeto, contratista_id,
+          contratistas(id, nombres, apellidos, usuario_id)),
+        creado_por_nombre:usuarios(nombre),
+        items_checklist(id, nombre, estado, obligatorio, orden, base_legal, descripcion, comentario_rechazo,
+          documentos_solicitud(id, nombre_archivo, url_publica, subido_en, version))
+      `)
+      .order('creado_en', { ascending: false })
+
+    if (contrato_id) q = q.eq('contrato_id', contrato_id)
+    if (estado)      q = q.eq('estado', estado)
+
+    const { data, error } = await q
+    if (error) throw error
+
+    if (contratista_id) {
+      return (data || []).filter(s =>
+        s.contratos?.contratista_id === contratista_id ||
+        s.contratos?.contratistas?.id === contratista_id
+      )
+    }
+    return data || []
+  },
+
+  crear: async ({ contrato_id, titulo, tipo_solicitud, fecha_limite, periodo_mes, periodo_anio, notas, plantilla_id, items_custom }) => {
+    const { data: { user } } = await supabase.auth.getUser()
+
+    const { data: sol, error: solErr } = await supabase
+      .from('solicitudes_documentos')
+      .insert({ contrato_id, titulo, tipo_solicitud, fecha_limite: fecha_limite || null, periodo_mes: periodo_mes || null, periodo_anio: periodo_anio || null, notas, plantilla_id: plantilla_id || null, creado_por: user.id })
+      .select().single()
+    if (solErr) throw solErr
+
+    let itemsToInsert = items_custom || []
+    if (plantilla_id && !items_custom) {
+      const { data: plantilla } = await supabase.from('plantillas_checklist').select('items').eq('id', plantilla_id).single()
+      itemsToInsert = (plantilla?.items || []).map(it => ({ ...it, solicitud_id: sol.id }))
+    } else {
+      itemsToInsert = itemsToInsert.map(it => ({ ...it, solicitud_id: sol.id }))
+    }
+
+    if (itemsToInsert.length > 0) {
+      const { error: itemErr } = await supabase.from('items_checklist').insert(itemsToInsert)
+      if (itemErr) throw itemErr
+    }
+
+    return sol
+  },
+
+  aprobarItem: async (itemId, { aprobado, comentario_rechazo } = {}) => {
+    const nuevoEstado = aprobado ? 'aprobado' : 'rechazado'
+    const { data, error } = await supabase
+      .from('items_checklist')
+      .update({ estado: nuevoEstado, comentario_rechazo: comentario_rechazo || null, actualizado_en: new Date().toISOString() })
+      .eq('id', itemId).select().single()
+    if (error) throw error
+    return data
+  },
+
+  subirDocumento: async (itemId, file, comentario = '') => {
+    const { data: { user } } = await supabase.auth.getUser()
+    const ext  = file.name.split('.').pop()
+    const path = `solicitudes/${itemId}/${Date.now()}.${ext}`
+
+    const { error: storageErr } = await supabase.storage
+      .from('documentos')
+      .upload(path, file, { contentType: file.type, upsert: false })
+    if (storageErr) throw storageErr
+
+    const { data: { publicUrl } } = supabase.storage.from('documentos').getPublicUrl(path)
+
+    const { data: prevDocs } = await supabase.from('documentos_solicitud').select('version').eq('item_id', itemId).order('version', { ascending: false }).limit(1)
+    const nextVersion = ((prevDocs?.[0]?.version) || 0) + 1
+
+    const { data, error } = await supabase
+      .from('documentos_solicitud')
+      .insert({ item_id: itemId, subido_por: user.id, nombre_archivo: file.name, storage_path: path, url_publica: publicUrl, tamano_bytes: file.size, tipo_mime: file.type, version: nextVersion, comentario })
+      .select().single()
+    if (error) throw error
+
+    await supabase.from('items_checklist').update({ estado: 'subido', actualizado_en: new Date().toISOString() }).eq('id', itemId)
+
+    return data
+  },
+}
+
+// ── PLANTILLAS CHECKLIST ─────────────────────────────────────
+export const plantillas = {
+  listar: async ({ tipo_solicitud } = {}) => {
+    let q = supabase.from('plantillas_checklist').select('*').order('es_predeterminada', { ascending: false })
+    if (tipo_solicitud) q = q.eq('tipo_solicitud', tipo_solicitud)
+    const { data, error } = await q
+    if (error) throw error
+    return data || []
+  },
+}
+
+// ── NOTIFICACIONES (del contratista) ─────────────────────────
+export const notificaciones = {
+  listar: async ({ leida, limit = 50 } = {}) => {
+    let q = supabase
+      .from('notificaciones')
+      .select('*, contratos(numero_contrato)')
+      .order('creado_en', { ascending: false })
+      .limit(limit)
+    if (leida !== undefined) q = q.eq('leida', leida)
+    const { data, error } = await q
+    if (error) throw error
+    return data || []
+  },
+
+  marcarLeida: async (id) => {
+    await supabase.from('notificaciones').update({ leida: true }).eq('id', id)
+  },
+
+  marcarTodasLeidas: async () => {
+    await supabase.from('notificaciones').update({ leida: true }).eq('leida', false)
+  },
+
+  crear: async ({ usuario_id, contrato_id, tipo, titulo, cuerpo, referencia_id, referencia_tipo }) => {
+    const { error } = await supabase.from('notificaciones').insert({ usuario_id, contrato_id, tipo, titulo, cuerpo, referencia_id, referencia_tipo })
+    if (error) throw error
+  },
+
+  countNoLeidas: async () => {
+    const { count, error } = await supabase.from('notificaciones').select('*', { count: 'exact', head: true }).eq('leida', false)
+    if (error) return 0
+    return count || 0
+  },
+
+  suscribir: (usuarioId, callback) =>
+    supabase
+      .channel(`notif-${usuarioId}`)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notificaciones', filter: `usuario_id=eq.${usuarioId}` }, callback)
+      .subscribe(),
+}
+
+// ── MENSAJES POR CONTRATO ────────────────────────────────────
+export const mensajes = {
+  listar: async (contrato_id) => {
+    const { data, error } = await supabase
+      .from('mensajes_contrato')
+      .select('*, autor:usuarios(nombre, rol)')
+      .eq('contrato_id', contrato_id)
+      .order('creado_en', { ascending: true })
+    if (error) throw error
+    return data || []
+  },
+
+  enviar: async ({ contrato_id, contenido, tipo = 'mensaje', adjunto_url }) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    const { data, error } = await supabase
+      .from('mensajes_contrato')
+      .insert({ contrato_id, autor_id: user.id, contenido, tipo, adjunto_url })
+      .select('*, autor:usuarios(nombre, rol)').single()
+    if (error) throw error
+    return data
+  },
+
+  suscribir: (contrato_id, callback) =>
+    supabase
+      .channel(`msgs-${contrato_id}`)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensajes_contrato', filter: `contrato_id=eq.${contrato_id}` }, callback)
+      .subscribe(),
+}
+
 // ── Helpers ───────────────────────────────────────────────────
 function groupBy(arr = [], key) {
   return Object.entries(

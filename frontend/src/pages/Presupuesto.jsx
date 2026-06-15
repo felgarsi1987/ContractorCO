@@ -1,324 +1,273 @@
-import { useState, useEffect } from 'react'
-import { Wallet, Plus, CheckCircle, AlertTriangle, X, Link2 } from 'lucide-react'
-import toast from 'react-hot-toast'
-import { presupuesto as presDB, contratos as contratosDB } from '../lib/db'
+import { useState, useEffect } from 'react';
+import { Wallet, Plus, X, Link2 } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { presupuesto as presDB, contratos as contratosDB } from '../lib/db';
 
-// Ley 819/2003 Art. 7 — Consistencia fiscal
-// Decreto 111/1996 — Estatuto Orgánico del Presupuesto
 const TIPO_CONFIG = {
-  cdp: {
-    label: 'CDP',
-    full:  'Certificado de Disponibilidad Presupuestal',
-    color: '#6366F1', bg: 'rgba(99,102,241,0.12)',
-    legal: 'Art. 71 Decreto 111/1996',
-    desc:  'Acredita que existe apropiación disponible para comprometer el gasto',
-  },
-  rp: {
-    label: 'RP',
-    full:  'Registro Presupuestal',
-    color: '#059669', bg: 'rgba(5,150,105,0.12)',
-    legal: 'Art. 71 Decreto 111/1996',
-    desc:  'Garantiza que los recursos quedan reservados para el pago del contrato',
-  },
-  op: {
-    label: 'OP',
-    full:  'Orden de Pago',
-    color: '#D97706', bg: 'rgba(217,119,6,0.12)',
-    legal: 'Art. 36 Decreto 111/1996',
-    desc:  'Instrucción de pago al tesorero sobre los recursos apropiados',
-  },
-}
+  cdp: { label:'CDP', full:'Certificado de Disponibilidad Presupuestal', color:'#6366F1', bg:'#EDE9FE', legal:'Art. 71 Decreto 111/1996', desc:'Acredita que existe apropiación disponible para comprometer el gasto' },
+  rp:  { label:'RP',  full:'Registro Presupuestal',                       color:'#059669', bg:'#D1FAE5', legal:'Art. 71 Decreto 111/1996', desc:'Garantiza que los recursos quedan reservados para el pago del contrato' },
+  op:  { label:'OP',  full:'Orden de Pago',                               color:'#D97706', bg:'#FEF9C3', legal:'Art. 36 Decreto 111/1996', desc:'Instrucción de pago al tesorero sobre los recursos apropiados' },
+};
 
-const FUENTES = ['Recursos propios','SGP','SGR','Crédito','Cofinanciación','Recursos de capital','Otros']
-const RUBROS_EJEMPLO = ['2-2-01-01-001','2-2-01-02-001','2-2-02-01-001','3-1-01-01-001']
+const FUENTES = ['Recursos propios','SGP','SGR','Crédito','Cofinanciación','Recursos de capital','Otros'];
+const RUBROS_EJEMPLO = ['2-2-01-01-001','2-2-01-02-001','2-2-02-01-001','3-1-01-01-001'];
+
+const fCOP = v => `$${Number(v || 0).toLocaleString('es-CO')}`;
 
 function TipoBadge({ tipo }) {
-  const cfg = TIPO_CONFIG[tipo]
-  if (!cfg) return null
-  return (
-    <span style={{ fontSize:10, fontWeight:700, padding:'2px 9px', borderRadius:10, background:cfg.bg, color:cfg.color }}>
-      {cfg.label}
-    </span>
-  )
+  const cfg = TIPO_CONFIG[tipo];
+  if (!cfg) return null;
+  const cls = { cdp:'badge-purple', rp:'badge-green', op:'badge-orange' }[tipo] || 'badge-gray';
+  return <span className={`badge ${cls}`}>{cfg.label}</span>;
 }
 
 export default function Presupuesto() {
-  const [lista, setLista]         = useState([])
-  const [contratos, setContratos] = useState([])
-  const [loading, setLoading]     = useState(true)
-  const [modal, setModal]         = useState(false)
-  const [guardando, setGuardando] = useState(false)
-  const [filtroTipo, setFiltroTipo] = useState('')
-  const [filtroContrato, setFiltroContrato] = useState('')
+  const [lista, setLista]         = useState([]);
+  const [contratos, setContratos] = useState([]);
+  const [loading, setLoading]     = useState(true);
+  const [modal, setModal]         = useState(false);
+  const [guardando, setGuardando] = useState(false);
+  const [filtroTipo, setFiltroTipo]         = useState('');
+  const [filtroContrato, setFiltroContrato] = useState('');
 
   const [form, setForm] = useState({
-    tipo: 'cdp', contrato_id: '', numero: '', fecha_expedicion: new Date().toISOString().slice(0,10),
-    vigencia: String(new Date().getFullYear()), rubro_presupuestal: '',
-    fuente_financiacion: '', valor: '', valor_afectado: '',
-    observaciones: '', cdp_id: '',
-  })
+    tipo:'cdp', contrato_id:'', numero:'', fecha_expedicion: new Date().toISOString().slice(0,10),
+    vigencia: String(new Date().getFullYear()), rubro_presupuestal:'',
+    fuente_financiacion:'', valor:'', valor_afectado:'', observaciones:'', cdp_id:'',
+  });
 
-  useEffect(() => { cargar() }, [filtroTipo, filtroContrato])
-  useEffect(() => { contratosDB.listar({ limit:200 }).then(r => setContratos(r.data || [])) }, [])
+  useEffect(() => { cargar(); }, [filtroTipo, filtroContrato]);
+  useEffect(() => { contratosDB.listar({ limit:200 }).then(r => setContratos(r.data || [])); }, []);
 
   async function cargar() {
-    setLoading(true)
+    setLoading(true);
     try {
-      const data = await presDB.listar({ tipo: filtroTipo || undefined, contrato_id: filtroContrato || undefined })
-      setLista(data)
-    } catch { toast.error('Error cargando registros') }
-    finally { setLoading(false) }
+      const data = await presDB.listar({ tipo: filtroTipo || undefined, contrato_id: filtroContrato || undefined });
+      setLista(data);
+    } catch { toast.error('Error cargando registros'); }
+    finally { setLoading(false); }
   }
 
   async function guardar() {
     if (!form.numero || !form.valor || !form.fecha_expedicion) {
-      toast.error('Completa número, valor y fecha')
-      return
+      toast.error('Completa número, valor y fecha');
+      return;
     }
-    setGuardando(true)
+    setGuardando(true);
     try {
-      await presDB.crear({
-        ...form,
-        valor:          parseFloat(form.valor),
-        valor_afectado: parseFloat(form.valor_afectado) || null,
-        cdp_id:         form.cdp_id || null,
-      })
-      toast.success(`${TIPO_CONFIG[form.tipo]?.label} registrado`)
-      setModal(false)
-      setForm({ tipo:'cdp', contrato_id:'', numero:'', fecha_expedicion: new Date().toISOString().slice(0,10), vigencia: String(new Date().getFullYear()), rubro_presupuestal:'', fuente_financiacion:'', valor:'', valor_afectado:'', observaciones:'', cdp_id:'' })
-      cargar()
-    } catch (e) { toast.error(e.message || 'Error') }
-    finally { setGuardando(false) }
+      await presDB.crear({ ...form, valor: parseFloat(form.valor), valor_afectado: parseFloat(form.valor_afectado) || null, cdp_id: form.cdp_id || null });
+      toast.success(`${TIPO_CONFIG[form.tipo]?.label} registrado`);
+      setModal(false);
+      setForm({ tipo:'cdp', contrato_id:'', numero:'', fecha_expedicion: new Date().toISOString().slice(0,10), vigencia: String(new Date().getFullYear()), rubro_presupuestal:'', fuente_financiacion:'', valor:'', valor_afectado:'', observaciones:'', cdp_id:'' });
+      cargar();
+    } catch (e) { toast.error(e.message || 'Error'); }
+    finally { setGuardando(false); }
   }
 
-  const valorCDP = lista.filter(i => i.tipo === 'cdp').reduce((s, i) => s + Number(i.valor || 0), 0)
-  const valorRP  = lista.filter(i => i.tipo === 'rp').reduce((s, i) => s + Number(i.valor || 0), 0)
-  const cdps = lista.filter(i => i.tipo === 'cdp')
+  const valorCDP = lista.filter(i => i.tipo === 'cdp').reduce((s, i) => s + Number(i.valor || 0), 0);
+  const valorRP  = lista.filter(i => i.tipo === 'rp').reduce((s, i) => s + Number(i.valor || 0), 0);
 
   return (
-    <div style={{ padding:'24px 28px', maxWidth:1100, margin:'0 auto' }}>
-
-      {/* Header */}
-      <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:24 }}>
+    <div className="page">
+      <div className="page-hdr">
         <div>
-          <h1 style={{ color:'#ECFDF5', fontSize:20, fontWeight:700, margin:0, letterSpacing:'-0.02em' }}>
-            Gestión Presupuestal
-          </h1>
-          <p style={{ color:'rgba(167,243,208,0.55)', fontSize:12, margin:'3px 0 0' }}>
-            Decreto 111/1996 · Ley 819/2003 — CDP, Registro Presupuestal y Órdenes de Pago
-          </p>
+          <h1>Gestión Presupuestal</h1>
+          <p>Decreto 111/1996 · Ley 819/2003 — CDP, Registro Presupuestal y Órdenes de Pago</p>
         </div>
-        <button onClick={() => setModal(true)} style={{
-          display:'flex', alignItems:'center', gap:6, padding:'8px 16px',
-          background:'#059669', border:'none', borderRadius:7, color:'#fff',
-          fontSize:12, fontWeight:600, cursor:'pointer',
-        }}>
-          <Plus size={14}/> Nuevo registro
+        <button className="btn btn-primary" onClick={() => setModal(true)}>
+          <Plus size={13}/> Nuevo registro
         </button>
       </div>
 
       {/* KPIs */}
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12, marginBottom:20 }}>
+      <div className="grid-4" style={{ flexShrink:0 }}>
         {[
-          { label:'Total CDP',   val:`$${(valorCDP/1e6).toFixed(1)}M`, color:'#6366F1', count: lista.filter(i=>i.tipo==='cdp').length },
-          { label:'Total RP',    val:`$${(valorRP/1e6).toFixed(1)}M`,  color:'#059669', count: lista.filter(i=>i.tipo==='rp').length },
-          { label:'Órdenes pago',val: lista.filter(i=>i.tipo==='op').length, color:'#D97706', count: null },
-          { label:'Sin RP',      val: lista.filter(i=>i.tipo==='cdp' && !lista.some(r=>r.tipo==='rp' && r.cdp_id===i.id)).length, color:'#DC2626', count: null },
-        ].map(({ label, val, color, count }) => (
-          <div key={label} style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(52,211,153,0.1)', borderRadius:10, padding:'14px 16px' }}>
-            <div style={{ fontSize:10, color:'rgba(167,243,208,0.5)', fontWeight:600, textTransform:'uppercase', letterSpacing:'.06em', marginBottom:6 }}>{label}</div>
-            <div style={{ fontSize:22, fontWeight:800, color }}>{val}</div>
-            {count !== null && <div style={{ fontSize:10, color:'rgba(167,243,208,0.35)', marginTop:2 }}>{count} registros</div>}
+          { label:'TOTAL CDP',    val:`$${(valorCDP/1e6).toFixed(1)}M`, ic:'#6366F1', bg:'#EDE9FE', Icon:Wallet },
+          { label:'TOTAL RP',     val:`$${(valorRP/1e6).toFixed(1)}M`,  ic:'#059669', bg:'#D1FAE5', Icon:Wallet },
+          { label:'ÓRDENES PAGO', val: lista.filter(i=>i.tipo==='op').length, ic:'#D97706', bg:'#FEF9C3', Icon:Wallet },
+          { label:'SIN RP',       val: lista.filter(i=>i.tipo==='cdp' && !lista.some(r=>r.tipo==='rp'&&r.cdp_id===i.id)).length, ic:'#DC2626', bg:'#FEE2E2', Icon:Wallet },
+        ].map(({ label, val, ic, bg, Icon }) => (
+          <div key={label} className="kpi-card">
+            <div className="kpi-icon" style={{ background: bg }}><Icon size={16} style={{ color: ic }}/></div>
+            <div className="kpi-label">{label}</div>
+            <div className="kpi-value">{val}</div>
+            <div className="kpi-card-bar" style={{ background: ic }}/>
           </div>
         ))}
       </div>
 
       {/* Info tipos */}
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, marginBottom:20 }}>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, flexShrink:0 }}>
         {Object.entries(TIPO_CONFIG).map(([k, cfg]) => (
-          <div key={k} style={{ background:'rgba(255,255,255,0.03)', border:`1px solid ${cfg.color}33`, borderRadius:8, padding:'12px 14px' }}>
+          <div key={k} className="card" style={{ padding:'12px 14px' }}>
             <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:6 }}>
-              <span style={{ fontSize:11, fontWeight:800, padding:'2px 8px', borderRadius:6, background:cfg.bg, color:cfg.color }}>{cfg.label}</span>
-              <span style={{ fontSize:11, color:'rgba(167,243,208,0.7)', fontWeight:600 }}>{cfg.full}</span>
+              <span className="badge" style={{ background: cfg.bg, color: cfg.color, fontWeight:800 }}>{cfg.label}</span>
+              <span style={{ fontSize:11, fontWeight:600, color:'#1e293b' }}>{cfg.full}</span>
             </div>
-            <p style={{ margin:0, fontSize:11, color:'rgba(167,243,208,0.5)', lineHeight:1.5 }}>{cfg.desc}</p>
-            <div style={{ fontSize:10, color:'rgba(167,243,208,0.3)', marginTop:4 }}>{cfg.legal}</div>
+            <p style={{ margin:0, fontSize:11, color:'#64748b', lineHeight:1.5 }}>{cfg.desc}</p>
+            <div style={{ fontSize:10, color:'#94a3b8', marginTop:4 }}>{cfg.legal}</div>
           </div>
         ))}
       </div>
 
       {/* Alerta normativa */}
-      <div style={{ background:'rgba(99,102,241,0.08)', border:'1px solid rgba(99,102,241,0.2)', borderRadius:8, padding:'10px 14px', marginBottom:20, fontSize:11, color:'rgba(196,181,253,0.9)', lineHeight:1.6 }}>
-        <strong>⚖ Art. 71 Decreto 111/1996:</strong> Ningún compromiso del Presupuesto General de la Nación puede adquirirse sin la expedición previa del CDP. El RP afecta el presupuesto en el momento de la suscripción del contrato y garantiza los recursos para el pago.
+      <div style={{ background:'#EFF6FF', border:'1px solid #BFDBFE', borderRadius:8, padding:'10px 14px', flexShrink:0, fontSize:11, color:'#1e40af', lineHeight:1.6 }}>
+        <strong>Art. 71 Decreto 111/1996:</strong> Ningún compromiso del Presupuesto General de la Nación puede adquirirse sin la expedición previa del CDP. El RP afecta el presupuesto en el momento de la suscripción del contrato y garantiza los recursos para el pago.
       </div>
 
       {/* Filtros */}
-      <div style={{ display:'flex', gap:8, marginBottom:20, flexWrap:'wrap', alignItems:'center' }}>
+      <div style={{ display:'flex', gap:8, flexShrink:0, flexWrap:'wrap', alignItems:'center' }}>
         {[['','Todos'],['cdp','CDP'],['rp','RP'],['op','OP']].map(([v,l]) => (
-          <button key={v} onClick={() => setFiltroTipo(v)} style={{ padding:'5px 14px', borderRadius:20, fontSize:11, fontWeight:600, cursor:'pointer', border:'none', background: filtroTipo === v ? '#059669' : 'rgba(255,255,255,0.06)', color: filtroTipo === v ? '#fff' : 'rgba(167,243,208,0.7)' }}>{l}</button>
+          <button key={v} onClick={() => setFiltroTipo(v)}
+            className={filtroTipo === v ? 'btn btn-primary' : 'btn btn-secondary'}
+            style={{ padding:'5px 14px', fontSize:11 }}>{l}</button>
         ))}
-        <select value={filtroContrato} onChange={e => setFiltroContrato(e.target.value)}
-          style={{ padding:'5px 12px', borderRadius:20, fontSize:11, background:'rgba(255,255,255,0.06)', border:'none', color:'rgba(167,243,208,0.7)', cursor:'pointer', outline:'none' }}>
+        <select className="form-select" style={{ maxWidth:260 }} value={filtroContrato} onChange={e => setFiltroContrato(e.target.value)}>
           <option value="">Todos los contratos</option>
           {contratos.map(c => <option key={c.id} value={c.id}>{c.numero_contrato}</option>)}
         </select>
       </div>
 
-      {/* Lista */}
-      {loading ? (
-        <div style={{ textAlign:'center', padding:40, color:'rgba(167,243,208,0.4)', fontSize:13 }}>Cargando...</div>
-      ) : lista.length === 0 ? (
-        <div style={{ textAlign:'center', padding:60, color:'rgba(167,243,208,0.3)' }}>
-          <Wallet size={32} style={{ marginBottom:12, opacity:.3 }}/>
-          <p style={{ margin:0 }}>No hay registros presupuestales</p>
-          <p style={{ margin:'6px 0 0', fontSize:11 }}>El CDP debe expedirse antes de comprometer cualquier recurso público</p>
-        </div>
-      ) : (
-        <div style={{ overflowX:'auto' }}>
-          <table style={{ width:'100%', borderCollapse:'collapse' }}>
+      {/* Tabla */}
+      <div className="card" style={{ flex:1, minHeight:0, overflow:'auto' }}>
+        {loading ? (
+          <div style={{ padding:40, textAlign:'center', color:'#9CA3AF' }}>Cargando...</div>
+        ) : lista.length === 0 ? (
+          <div style={{ padding:60, textAlign:'center', color:'#9CA3AF' }}>
+            <Wallet size={32} style={{ margin:'0 auto 12px', display:'block', opacity:.25 }}/>
+            <p style={{ fontSize:14, fontWeight:600, marginBottom:4 }}>No hay registros presupuestales</p>
+            <p style={{ fontSize:12 }}>El CDP debe expedirse antes de comprometer cualquier recurso público</p>
+          </div>
+        ) : (
+          <table className="data-table">
             <thead>
-              <tr style={{ fontSize:10, color:'rgba(167,243,208,0.4)', fontWeight:700, letterSpacing:'.06em' }}>
-                {['Tipo','Número','Contrato','Vigencia','Rubro','Fuente','Valor','Fecha','Vinculado a'].map(h => (
-                  <th key={h} style={{ padding:'8px 12px', textAlign:'left', borderBottom:'1px solid rgba(52,211,153,0.1)', whiteSpace:'nowrap' }}>{h}</th>
-                ))}
+              <tr>
+                <th>Tipo</th><th>Número</th><th>Contrato</th><th>Vigencia</th>
+                <th>Rubro</th><th>Fuente</th><th>Valor</th><th>Fecha</th><th>Vinculado a</th>
               </tr>
             </thead>
             <tbody>
               {lista.map(item => {
-                const cfg = TIPO_CONFIG[item.tipo]
-                const cdpVinculado = item.cdp_id ? lista.find(i => i.id === item.cdp_id) : null
+                const cfg = TIPO_CONFIG[item.tipo];
+                const cdpVinculado = item.cdp_id ? lista.find(i => i.id === item.cdp_id) : null;
                 return (
-                  <tr key={item.id} style={{ borderBottom:'1px solid rgba(52,211,153,0.06)' }}>
-                    <td style={{ padding:'10px 12px' }}><TipoBadge tipo={item.tipo}/></td>
-                    <td style={{ padding:'10px 12px', fontSize:12, fontWeight:700, color:'#ECFDF5' }}>{item.numero}</td>
-                    <td style={{ padding:'10px 12px', fontSize:11, color:'rgba(167,243,208,0.7)' }}>
-                      {item.contratos?.numero_contrato || <span style={{ color:'rgba(167,243,208,0.3)', fontStyle:'italic' }}>Sin contrato</span>}
-                    </td>
-                    <td style={{ padding:'10px 12px', fontSize:11, color:'rgba(167,243,208,0.6)' }}>{item.vigencia}</td>
-                    <td style={{ padding:'10px 12px', fontSize:11, color:'rgba(167,243,208,0.6)' }}>{item.rubro_presupuestal || '—'}</td>
-                    <td style={{ padding:'10px 12px', fontSize:11, color:'rgba(167,243,208,0.6)' }}>{item.fuente_financiacion || '—'}</td>
-                    <td style={{ padding:'10px 12px', fontSize:12, fontWeight:700, color: cfg?.color }}>
-                      ${Number(item.valor).toLocaleString('es-CO')}
-                    </td>
-                    <td style={{ padding:'10px 12px', fontSize:11, color:'rgba(167,243,208,0.6)' }}>{item.fecha_expedicion}</td>
-                    <td style={{ padding:'10px 12px' }}>
+                  <tr key={item.id}>
+                    <td><TipoBadge tipo={item.tipo}/></td>
+                    <td className="td-strong">{item.numero}</td>
+                    <td className="td-muted">{item.contratos?.numero_contrato || <em style={{ color:'#cbd5e1' }}>Sin contrato</em>}</td>
+                    <td className="td-muted">{item.vigencia}</td>
+                    <td className="td-muted">{item.rubro_presupuestal || '—'}</td>
+                    <td className="td-muted">{item.fuente_financiacion || '—'}</td>
+                    <td style={{ fontSize:12, fontWeight:700, color: cfg?.color }}>{fCOP(item.valor)}</td>
+                    <td className="td-muted">{item.fecha_expedicion}</td>
+                    <td>
                       {cdpVinculado
                         ? <span style={{ fontSize:10, color:'#6366F1', display:'flex', alignItems:'center', gap:4 }}><Link2 size={10}/> CDP {cdpVinculado.numero}</span>
-                        : item.tipo !== 'cdp' ? <span style={{ fontSize:10, color:'rgba(167,243,208,0.25)' }}>—</span> : null
+                        : <span className="td-muted">—</span>
                       }
                     </td>
                   </tr>
-                )
+                );
               })}
             </tbody>
           </table>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Modal */}
       {modal && (
-        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.7)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:1000 }}>
-          <div style={{ background:'#0D2918', border:'1px solid rgba(52,211,153,0.2)', borderRadius:12, padding:28, width:600, maxHeight:'92vh', overflowY:'auto' }}>
-            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20 }}>
+        <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setModal(false)}>
+          <div className="modal" style={{ maxWidth:600 }}>
+            <div className="modal-hdr">
               <div>
-                <h2 style={{ color:'#ECFDF5', margin:0, fontSize:16, fontWeight:700 }}>Nuevo Registro Presupuestal</h2>
-                <p style={{ color:'rgba(167,243,208,0.5)', fontSize:11, margin:'3px 0 0' }}>Decreto 111/1996 · Ley 819/2003</p>
+                <h2>Nuevo Registro Presupuestal</h2>
+                <p style={{ margin:0, fontSize:11, color:'#64748b' }}>Decreto 111/1996 · Ley 819/2003</p>
               </div>
-              <button onClick={() => setModal(false)} style={{ background:'transparent', border:'none', color:'rgba(167,243,208,0.5)', cursor:'pointer' }}><X size={18}/></button>
+              <button className="btn-icon" onClick={() => setModal(false)}><X size={16}/></button>
             </div>
+            <div style={{ padding:'0 24px 24px', display:'flex', flexDirection:'column', gap:14 }}>
+              {/* Selector tipo */}
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8 }}>
+                {Object.entries(TIPO_CONFIG).map(([k, cfg]) => (
+                  <button key={k} type="button" onClick={() => setForm(f => ({ ...f, tipo: k }))}
+                    style={{ padding:10, borderRadius:8, border:`2px solid ${form.tipo===k ? cfg.color : '#e2e8f0'}`, background: form.tipo===k ? cfg.bg : 'transparent', cursor:'pointer', transition:'all .15s' }}>
+                    <div style={{ fontSize:14, fontWeight:800, color: form.tipo===k ? cfg.color : '#94a3b8', marginBottom:2 }}>{cfg.label}</div>
+                    <div style={{ fontSize:9, color:'#94a3b8' }}>{cfg.full}</div>
+                  </button>
+                ))}
+              </div>
 
-            {/* Selector de tipo */}
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8, marginBottom:18 }}>
-              {Object.entries(TIPO_CONFIG).map(([k, cfg]) => (
-                <button key={k} onClick={() => setForm(f => ({ ...f, tipo: k }))} style={{
-                  padding:'10px', borderRadius:8, border:`2px solid ${form.tipo === k ? cfg.color : 'rgba(52,211,153,0.15)'}`,
-                  background: form.tipo === k ? cfg.bg : 'transparent', cursor:'pointer', transition:'all .15s',
-                }}>
-                  <div style={{ fontSize:14, fontWeight:800, color: form.tipo === k ? cfg.color : 'rgba(167,243,208,0.5)', marginBottom:2 }}>{cfg.label}</div>
-                  <div style={{ fontSize:9, color:'rgba(167,243,208,0.4)' }}>{cfg.full}</div>
-                </button>
-              ))}
-            </div>
-
-            {form.tipo && (
-              <div style={{ background:`${TIPO_CONFIG[form.tipo].bg}`, border:`1px solid ${TIPO_CONFIG[form.tipo].color}44`, borderRadius:7, padding:'8px 12px', marginBottom:16, fontSize:11, color:'rgba(167,243,208,0.8)' }}>
-                {TIPO_CONFIG[form.tipo].desc} — <strong>{TIPO_CONFIG[form.tipo].legal}</strong>
-              </div>
-            )}
-
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:14 }}>
-              <div>
-                <label style={lbl}>Número *</label>
-                <input type="text" placeholder="CDP-2026-001" value={form.numero}
-                  onChange={e => setForm(f => ({ ...f, numero: e.target.value }))} style={inp}/>
-              </div>
-              <div>
-                <label style={lbl}>Fecha expedición *</label>
-                <input type="date" value={form.fecha_expedicion}
-                  onChange={e => setForm(f => ({ ...f, fecha_expedicion: e.target.value }))} style={inp}/>
-              </div>
-              <div>
-                <label style={lbl}>Vigencia</label>
-                <select value={form.vigencia} onChange={e => setForm(f => ({ ...f, vigencia: e.target.value }))} style={sel}>
-                  {[2024,2025,2026,2027].map(y => <option key={y} value={y}>{y}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={lbl}>Valor (COP) *</label>
-                <input type="number" placeholder="0" value={form.valor}
-                  onChange={e => setForm(f => ({ ...f, valor: e.target.value }))} style={inp}/>
-              </div>
-              <div>
-                <label style={lbl}>Rubro presupuestal</label>
-                <input type="text" list="rubros" placeholder="2-2-01-01-001" value={form.rubro_presupuestal}
-                  onChange={e => setForm(f => ({ ...f, rubro_presupuestal: e.target.value }))} style={inp}/>
-                <datalist id="rubros">{RUBROS_EJEMPLO.map(r => <option key={r} value={r}/>)}</datalist>
-              </div>
-              <div>
-                <label style={lbl}>Fuente de financiación</label>
-                <select value={form.fuente_financiacion} onChange={e => setForm(f => ({ ...f, fuente_financiacion: e.target.value }))} style={sel}>
-                  <option value="">Seleccionar...</option>
-                  {FUENTES.map(f => <option key={f} value={f}>{f}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={lbl}>Contrato asociado</label>
-                <select value={form.contrato_id} onChange={e => setForm(f => ({ ...f, contrato_id: e.target.value }))} style={sel}>
-                  <option value="">Sin contrato (pre-contractual)</option>
-                  {contratos.map(c => <option key={c.id} value={c.id}>{c.numero_contrato}</option>)}
-                </select>
-              </div>
-              {form.tipo === 'rp' && (
-                <div>
-                  <label style={lbl}>CDP que afecta</label>
-                  <select value={form.cdp_id} onChange={e => setForm(f => ({ ...f, cdp_id: e.target.value }))} style={sel}>
-                    <option value="">Seleccionar CDP...</option>
-                    {lista.filter(i => i.tipo === 'cdp').map(c => (
-                      <option key={c.id} value={c.id}>CDP {c.numero} — ${Number(c.valor).toLocaleString('es-CO')}</option>
-                    ))}
-                  </select>
+              {form.tipo && (
+                <div style={{ background:'#F1F5F9', border:'1px solid #E2E8F0', borderRadius:7, padding:'8px 12px', fontSize:11, color:'#475569' }}>
+                  {TIPO_CONFIG[form.tipo].desc} — <strong>{TIPO_CONFIG[form.tipo].legal}</strong>
                 </div>
               )}
-              <div style={{ gridColumn:'1/-1' }}>
-                <label style={lbl}>Observaciones</label>
-                <textarea rows={2} value={form.observaciones}
-                  onChange={e => setForm(f => ({ ...f, observaciones: e.target.value }))} style={{ ...inp, resize:'vertical' }}/>
-              </div>
-            </div>
 
-            <div style={{ display:'flex', gap:10, justifyContent:'flex-end', marginTop:20 }}>
-              <button onClick={() => setModal(false)} style={{ padding:'8px 18px', background:'transparent', border:'1px solid rgba(52,211,153,0.2)', borderRadius:7, color:'rgba(167,243,208,0.7)', fontSize:12, cursor:'pointer' }}>Cancelar</button>
-              <button onClick={guardar} disabled={guardando} style={{ padding:'8px 18px', background:'#059669', border:'none', borderRadius:7, color:'#fff', fontSize:12, fontWeight:600, cursor:'pointer', opacity: guardando ? .6 : 1 }}>
-                {guardando ? 'Guardando...' : `Registrar ${TIPO_CONFIG[form.tipo]?.label}`}
-              </button>
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+                <div className="form-group">
+                  <label className="form-label">Número *</label>
+                  <input className="form-input" type="text" placeholder="CDP-2026-001" value={form.numero} onChange={e => setForm(f => ({ ...f, numero: e.target.value }))}/>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Fecha expedición *</label>
+                  <input className="form-input" type="date" value={form.fecha_expedicion} onChange={e => setForm(f => ({ ...f, fecha_expedicion: e.target.value }))}/>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Vigencia</label>
+                  <select className="form-select" value={form.vigencia} onChange={e => setForm(f => ({ ...f, vigencia: e.target.value }))}>
+                    {[2024,2025,2026,2027].map(y => <option key={y} value={y}>{y}</option>)}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Valor (COP) *</label>
+                  <input className="form-input" type="number" placeholder="0" value={form.valor} onChange={e => setForm(f => ({ ...f, valor: e.target.value }))}/>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Rubro presupuestal</label>
+                  <input className="form-input" type="text" list="rubros" placeholder="2-2-01-01-001" value={form.rubro_presupuestal} onChange={e => setForm(f => ({ ...f, rubro_presupuestal: e.target.value }))}/>
+                  <datalist id="rubros">{RUBROS_EJEMPLO.map(r => <option key={r} value={r}/>)}</datalist>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Fuente de financiación</label>
+                  <select className="form-select" value={form.fuente_financiacion} onChange={e => setForm(f => ({ ...f, fuente_financiacion: e.target.value }))}>
+                    <option value="">Seleccionar...</option>
+                    {FUENTES.map(f => <option key={f} value={f}>{f}</option>)}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Contrato asociado</label>
+                  <select className="form-select" value={form.contrato_id} onChange={e => setForm(f => ({ ...f, contrato_id: e.target.value }))}>
+                    <option value="">Sin contrato (pre-contractual)</option>
+                    {contratos.map(c => <option key={c.id} value={c.id}>{c.numero_contrato}</option>)}
+                  </select>
+                </div>
+                {form.tipo === 'rp' && (
+                  <div className="form-group">
+                    <label className="form-label">CDP que afecta</label>
+                    <select className="form-select" value={form.cdp_id} onChange={e => setForm(f => ({ ...f, cdp_id: e.target.value }))}>
+                      <option value="">Seleccionar CDP...</option>
+                      {lista.filter(i => i.tipo === 'cdp').map(c => (
+                        <option key={c.id} value={c.id}>CDP {c.numero} — {fCOP(c.valor)}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                <div className="form-group" style={{ gridColumn:'1/-1' }}>
+                  <label className="form-label">Observaciones</label>
+                  <textarea className="form-input" rows={2} value={form.observaciones} onChange={e => setForm(f => ({ ...f, observaciones: e.target.value }))} style={{ resize:'vertical' }}/>
+                </div>
+              </div>
+
+              <div style={{ display:'flex', gap:8, justifyContent:'flex-end' }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setModal(false)}>Cancelar</button>
+                <button type="button" className="btn btn-primary" onClick={guardar} disabled={guardando}>
+                  {guardando ? 'Guardando...' : `Registrar ${TIPO_CONFIG[form.tipo]?.label}`}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
     </div>
-  )
+  );
 }
-
-const lbl = { display:'block', fontSize:11, color:'rgba(167,243,208,0.55)', fontWeight:600, marginBottom:5, letterSpacing:'.04em' }
-const inp = { width:'100%', padding:'8px 10px', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(52,211,153,0.2)', borderRadius:6, color:'#ECFDF5', fontSize:12, outline:'none', boxSizing:'border-box', fontFamily:'inherit' }
-const sel = { ...inp, cursor:'pointer' }

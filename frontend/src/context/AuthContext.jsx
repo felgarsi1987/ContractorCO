@@ -31,7 +31,14 @@ export function AuthProvider({ children }) {
       .eq('email', authUser.email)
       .single()
 
-    setUsuario(data || { id: authUser.id, email: authUser.email, nombre: authUser.email, rol: 'admin' })
+    // Sin registro en tabla usuarios → acceso denegado (no asignar admin por defecto)
+    if (!data || !data.activo) {
+      await supabase.auth.signOut()
+      setUsuario(null)
+      setLoading(false)
+      return
+    }
+    setUsuario(data)
     setLoading(false)
   }
 

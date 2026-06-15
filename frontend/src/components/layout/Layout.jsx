@@ -3,7 +3,9 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, FileText, Users, FolderOpen, Bell,
   UserCog, BarChart3, Shield, UsersRound, Search,
-  HelpCircle, Plus, LogOut, ChevronRight, Leaf
+  HelpCircle, Plus, LogOut, ChevronRight, Leaf,
+  ShieldCheck, ClipboardList, FileBarChart2, DollarSign,
+  CalendarDays, AlertOctagon, Heart, Wallet
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useAlertas } from '../../hooks/useAlertas';
@@ -19,12 +21,26 @@ const NAV_BY_ROL = {
     { to:'/alertas',      label:'Alertas',      Icon:Bell, badge:true },
     { to:'/supervisores', label:'Supervisores', Icon:UserCog },
     { to:'/reportes',     label:'Reportes',     Icon:BarChart3 },
+    { to:'/garantias',    label:'Garantías',    Icon:ShieldCheck },
+    { to:'/actas',        label:'Actas',        Icon:ClipboardList },
+    { to:'/informes',       label:'Informes',       Icon:FileBarChart2 },
+    { to:'/pagos',          label:'Pagos',          Icon:DollarSign },
+    { to:'/paa',              label:'PAA',            Icon:CalendarDays },
+    { to:'/inhabilidades',    label:'Inhabilidades',  Icon:AlertOctagon },
+    { to:'/seguridad-social', label:'Seg. Social',    Icon:Heart },
+    { to:'/presupuesto',      label:'Presupuesto',    Icon:Wallet },
   ],
   supervisor: [
-    { to:'/',          label:'Resumen',    Icon:LayoutDashboard },
-    { to:'/contratos', label:'Contratos',  Icon:FileText },
-    { to:'/documentos',label:'Documentos', Icon:FolderOpen },
-    { to:'/alertas',   label:'Alertas',    Icon:Bell, badge:true },
+    { to:'/',                 label:'Resumen',        Icon:LayoutDashboard },
+    { to:'/contratos',        label:'Contratos',      Icon:FileText },
+    { to:'/documentos',       label:'Documentos',     Icon:FolderOpen },
+    { to:'/alertas',          label:'Alertas',        Icon:Bell, badge:true },
+    { to:'/garantias',        label:'Garantías',      Icon:ShieldCheck },
+    { to:'/actas',            label:'Actas',          Icon:ClipboardList },
+    { to:'/informes',         label:'Informes',       Icon:FileBarChart2 },
+    { to:'/pagos',            label:'Pagos',          Icon:DollarSign },
+    { to:'/inhabilidades',    label:'Inhabilidades',  Icon:AlertOctagon },
+    { to:'/seguridad-social', label:'Seg. Social',    Icon:Heart },
   ],
   auditor: [
     { to:'/',             label:'Resumen',      Icon:LayoutDashboard },

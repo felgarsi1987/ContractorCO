@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Eye, Edit, Trash2, Filter, Mail, Shield, CheckCircle } from 'lucide-react';
+import { Plus, Edit, Filter, Mail, Shield, X } from 'lucide-react';
 import { usuarios as usuariosDB } from '../lib/db';
 import toast from 'react-hot-toast';
 
@@ -13,12 +13,43 @@ export default function Usuarios() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [form, setForm] = useState({ nombre:'', email:'', rol:'supervisor', activo:true });
+
+  const ROL_OPTS = ['admin','supervisor','auditor','contratista'];
+  const lbl = { fontSize:11, fontWeight:600, color:'#374151', display:'block', marginBottom:3 };
+  const inp = { width:'100%', padding:'7px 10px', borderRadius:6, border:'1px solid #D1D5DB', fontSize:12 };
 
   const load = () => {
     setLoading(true);
     usuariosDB.listar().then(r => setData(r||[])).finally(()=>setLoading(false));
   };
   useEffect(() => { load(); }, []);
+
+  const openEdit = (u) => {
+    setEditing(u);
+    setForm({ nombre: u.nombre, email: u.email, rol: u.rol, activo: u.activo });
+    setModal(true);
+  };
+  const openNew = () => {
+    setEditing(null);
+    setForm({ nombre:'', email:'', rol:'supervisor', activo:true });
+    setModal(true);
+  };
+  const closeModal = () => { setModal(false); setEditing(null); };
+
+  const guardar = async () => {
+    try {
+      if (editing) {
+        await usuariosDB.actualizar(editing.id, { nombre: form.nombre, rol: form.rol, activo: form.activo });
+        toast.success('Usuario actualizado');
+      } else {
+        toast('Para crear usuarios nuevos usa Supabase Auth directamente.', { icon: 'ℹ️' });
+      }
+      closeModal();
+      load();
+    } catch (e) { toast.error(e.message); }
+  };
 
   const kpis = [
     { label:'Usuarios Totales',  val:data.length,                               bg:'#dbeafe', ic:'#3b82f6', sub:'Registrados' },
@@ -33,7 +64,7 @@ export default function Usuarios() {
         <div><h1>Usuarios</h1><p>Gestión de usuarios y permisos del sistema</p></div>
         <div className="hdr-actions">
           <button className="btn btn-secondary btn-sm"><Filter size={12}/> Filtros</button>
-          <button className="btn btn-primary" onClick={()=>setModal(true)}><Plus size={13}/> Nuevo Usuario</button>
+          <button className="btn btn-primary" onClick={openNew}><Plus size={13}/> Nuevo Usuario</button>
         </div>
       </div>
 
@@ -77,8 +108,7 @@ export default function Usuarios() {
                   <td><span className={`badge ${u.activo ? 'badge-green':'badge-gray'}`}>{u.activo ? 'Activo':'Inactivo'}</span></td>
                   <td>
                     <div style={{ display:'flex', gap:2 }}>
-                      <button className="btn-icon" title="Ver usuario"><Eye size={13}/></button>
-                      <button className="btn-icon" title="Editar" onClick={()=>{setEditing(u);setModal(true);}}><Edit size={13}/></button>
+                      <button className="btn-icon" title="Editar" onClick={()=>openEdit(u)}><Edit size={13}/></button>
                     </div>
                   </td>
                 </tr>
@@ -87,6 +117,41 @@ export default function Usuarios() {
           </table>
         )}
       </div>
+      {modal && (
+        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.4)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:100 }}>
+          <div style={{ background:'#fff', borderRadius:12, padding:24, width:380, boxShadow:'0 20px 60px rgba(0,0,0,.2)' }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:16 }}>
+              <h3 style={{ fontSize:14, fontWeight:700, margin:0 }}>{editing ? 'Editar Usuario' : 'Nuevo Usuario'}</h3>
+              <button onClick={closeModal} style={{ background:'none', border:'none', cursor:'pointer' }}><X size={16}/></button>
+            </div>
+            <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
+              <div>
+                <label style={lbl}>Nombre</label>
+                <input style={inp} value={form.nombre} onChange={e=>setForm(f=>({...f,nombre:e.target.value}))}/>
+              </div>
+              <div>
+                <label style={lbl}>Email</label>
+                <input style={{...inp, background: editing ? '#f3f4f6':undefined}} disabled={!!editing} value={form.email} onChange={e=>setForm(f=>({...f,email:e.target.value}))}/>
+                {editing && <div style={{ fontSize:10, color:'#9ca3af', marginTop:2 }}>El email no se puede cambiar</div>}
+              </div>
+              <div>
+                <label style={lbl}>Rol</label>
+                <select style={inp} value={form.rol} onChange={e=>setForm(f=>({...f,rol:e.target.value}))}>
+                  {ROL_OPTS.map(r => <option key={r} value={r}>{r.charAt(0).toUpperCase()+r.slice(1)}</option>)}
+                </select>
+              </div>
+              <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                <input type="checkbox" id="activo_chk" checked={form.activo} onChange={e=>setForm(f=>({...f,activo:e.target.checked}))}/>
+                <label htmlFor="activo_chk" style={{ fontSize:12, cursor:'pointer' }}>Usuario activo</label>
+              </div>
+            </div>
+            <div style={{ display:'flex', gap:8, justifyContent:'flex-end', marginTop:20 }}>
+              <button className="btn btn-secondary btn-sm" onClick={closeModal}>Cancelar</button>
+              <button className="btn btn-primary btn-sm" onClick={guardar}>Guardar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

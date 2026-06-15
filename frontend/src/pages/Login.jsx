@@ -5,9 +5,10 @@ import { Eye, EyeOff, Users, Shield, BarChart2, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const DEMO = [
-  { rol: 'Admin',      email: 'admin@contractorco.gov.co',    pass: 'Admin2025*', color: '#059669' },
-  { rol: 'Supervisor', email: 'p.suarez@contractorco.gov.co', pass: 'Super2025*', color: '#2563EB' },
-  { rol: 'Auditor',    email: 'auditor@contraloria.gov.co',   pass: 'Audit2025*', color: '#7C3AED' },
+  { rol: 'Admin',        email: 'admin@contractorco.gov.co',    pass: 'Admin2025*', color: '#059669' },
+  { rol: 'Supervisor',   email: 'p.suarez@contractorco.gov.co', pass: 'Super2025*', color: '#2563EB' },
+  { rol: 'Auditor',      email: 'auditor@contraloria.gov.co',   pass: 'Audit2025*', color: '#7C3AED' },
+  { rol: 'Contratista',  email: 'contratista@demo.co',          pass: 'Demo1234!',  color: '#D97706' },
 ];
 
 const FEATURES = [
@@ -272,7 +273,7 @@ const CSS = `
 .ll-root {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: minmax(340px, 420px) 480px 1fr;
+  grid-template-columns: minmax(340px, 420px) 360px 1fr;
   position: relative;
   overflow-x: hidden;
   background: radial-gradient(ellipse 80% 80% at 50% 50%, #093d20 0%, #061509 55%, #020a04 100%);
@@ -288,11 +289,11 @@ const CSS = `
   z-index: 0;
 }
 
-/* ── Center rings ── */
+/* ── Center rings — anchored to col-2 center ── */
 .ll-center {
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: calc(420px + 180px); /* center of col-2 (420px col-1 + half of 360px) */
   width: 0;
   height: 0;
   pointer-events: none;
@@ -307,10 +308,10 @@ const CSS = `
   transform: translate(-50%, -50%);
   border: 1px solid rgba(52, 211, 153, 0.13);
 }
-.ll-ring-1 { width: 170px;  height: 170px;  border-color: rgba(52,211,153,0.22); }
-.ll-ring-2 { width: 290px;  height: 290px;  animation: ringPulse 4s ease-in-out infinite 0s; }
-.ll-ring-3 { width: 430px;  height: 430px;  animation: ringPulse 4s ease-in-out infinite 1.2s; }
-.ll-ring-4 { width: 590px;  height: 590px;  animation: ringPulse 4s ease-in-out infinite 2.4s; }
+.ll-ring-1 { width: 140px;  height: 140px;  border-color: rgba(52,211,153,0.22); }
+.ll-ring-2 { width: 230px;  height: 230px;  animation: ringPulse 4s ease-in-out infinite 0s; }
+.ll-ring-3 { width: 330px;  height: 330px;  animation: ringPulse 4s ease-in-out infinite 1.2s; }
+.ll-ring-4 { width: 440px;  height: 440px;  animation: ringPulse 4s ease-in-out infinite 2.4s; }
 
 @keyframes ringPulse {
   0%, 100% { opacity: 0.13; }
@@ -325,9 +326,9 @@ const CSS = `
   left: 50%;
   animation: orbitSpin linear infinite;
 }
-.ll-orbit-a { width: 290px; height: 290px; margin: -145px 0 0 -145px; animation-duration: 22s; }
-.ll-orbit-b { width: 430px; height: 430px; margin: -215px 0 0 -215px; animation-duration: 34s; animation-direction: reverse; }
-.ll-orbit-c { width: 590px; height: 590px; margin: -295px 0 0 -295px; animation-duration: 50s; }
+.ll-orbit-a { width: 230px; height: 230px; margin: -115px 0 0 -115px; animation-duration: 22s; }
+.ll-orbit-b { width: 330px; height: 330px; margin: -165px 0 0 -165px; animation-duration: 34s; animation-direction: reverse; }
+.ll-orbit-c { width: 440px; height: 440px; margin: -220px 0 0 -220px; animation-duration: 50s; }
 
 @keyframes orbitSpin {
   to { transform: rotate(360deg); }
@@ -366,8 +367,9 @@ const CSS = `
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 24px;
+  padding: 20px 24px;
   min-height: 100vh;
+  overflow: hidden;
   position: relative;
   z-index: 2;
   opacity: 0;
@@ -388,7 +390,7 @@ const CSS = `
   background: rgba(3, 16, 8, 0.72);
   border: 1px solid rgba(52, 211, 153, 0.14);
   border-radius: 16px;
-  padding: 26px 24px;
+  padding: 20px 22px;
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
   box-shadow:
@@ -396,29 +398,29 @@ const CSS = `
     inset 0 1px 0 rgba(52, 211, 153, 0.08);
 }
 
-.lc-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
+.lc-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
 .lc-logo-mark {
-  width: 36px; height: 36px;
+  width: 34px; height: 34px;
   border-radius: 8px;
   background: linear-gradient(135deg, #059669, #34D399);
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 4px 12px rgba(5, 150, 105, 0.45);
 }
-.lc-logo-name { color: #fff; font-size: 15px; font-weight: 700; letter-spacing: -0.02em; }
-.lc-logo-sub  { color: rgba(167,243,208,0.45); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; margin-top: 1px; }
+.lc-logo-name { color: #fff; font-size: 14px; font-weight: 700; letter-spacing: -0.02em; }
+.lc-logo-sub  { color: rgba(167,243,208,0.45); font-size: 9px; letter-spacing: .06em; text-transform: uppercase; margin-top: 1px; }
 
-.lc-title  { color: #fff; font-size: 22px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 6px; line-height: 1.2; }
+.lc-title  { color: #fff; font-size: 20px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 4px; line-height: 1.2; }
 .lc-accent { color: #34D399; }
-.lc-sub    { color: rgba(167,243,208,0.55); font-size: 13px; margin-bottom: 22px; line-height: 1.5; }
+.lc-sub    { color: rgba(167,243,208,0.55); font-size: 12px; margin-bottom: 16px; line-height: 1.5; }
 
 /* Form */
-.lc-form  { display: flex; flex-direction: column; gap: 14px; }
-.lc-field { display: flex; flex-direction: column; gap: 5px; }
+.lc-form  { display: flex; flex-direction: column; gap: 10px; }
+.lc-field { display: flex; flex-direction: column; gap: 4px; }
 .lc-label { font-size: 10px; font-weight: 700; color: rgba(167,243,208,0.55); letter-spacing: .08em; text-transform: uppercase; }
 
 .lc-input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 8px 12px;
   border-radius: 8px;
   font-size: 13px;
   font-family: inherit;
@@ -465,8 +467,8 @@ const CSS = `
 
 .lc-btn {
   width: 100%;
-  padding: 11px 16px;
-  margin-top: 4px;
+  padding: 9px 16px;
+  margin-top: 2px;
   border-radius: 8px;
   border: none;
   background: linear-gradient(135deg, #059669 0%, #10b981 100%);
@@ -512,7 +514,7 @@ const CSS = `
 
 /* Demo block */
 .lc-demo {
-  margin-top: 20px;
+  margin-top: 14px;
   border: 1px solid rgba(52, 211, 153, 0.1);
   border-radius: 10px;
   overflow: hidden;
@@ -534,7 +536,7 @@ const CSS = `
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 12px;
+  padding: 7px 12px;
   width: 100%;
   background: transparent;
   border: none;
@@ -569,11 +571,12 @@ const CSS = `
 
 /* ── Right panel ── */
 .ll-right {
+  grid-column: 3;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 22px;
-  padding: 40px 36px 40px 48px;
+  padding: 40px 48px;
   position: relative;
   z-index: 2;
   opacity: 0;

@@ -14,16 +14,46 @@ import Supervisores    from './pages/Supervisores';
 import Reportes        from './pages/Reportes';
 import Auditoria       from './pages/Auditoria';
 import Usuarios        from './pages/Usuarios';
+import Garantias            from './pages/Garantias';
+import Actas               from './pages/Actas';
+import InformesSupervisión  from './pages/InformesSupervisión';
+import Pagos               from './pages/Pagos';
+import PAA                 from './pages/PAA';
+import Inhabilidades       from './pages/Inhabilidades';
+import SeguridadSocial     from './pages/SeguridadSocial';
+import Presupuesto         from './pages/Presupuesto';
 import './styles/globals.css';
 
-function PrivateRoute({ children }) {
+// Rutas permitidas por rol
+const ROL_RUTAS = {
+  admin:       /.*/,  // todo
+  supervisor:  /^\/(contratos|documentos|alertas|garantias|actas|informes|pagos|inhabilidades|seguridad-social)($|\/)/,
+  auditor:     /^\/(contratos|contratistas|reportes)($|\/)/,
+  contratista: /^\/(contratos|documentos|alertas)($|\/)/,
+};
+
+function PrivateRoute({ children, roles }) {
   const { usuario, loading } = useAuth();
   if (loading) return (
     <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#F0FDF4' }}>
       <div style={{ fontSize:13, color:'#6B7280' }}>Cargando...</div>
     </div>
   );
-  return usuario ? children : <Navigate to="/login" replace />;
+  if (!usuario) return <Navigate to="/login" replace />;
+  if (roles) {
+    const allowed = roles.includes(usuario.rol);
+    if (!allowed) return <Navigate to="/" replace />;
+  }
+  return children;
+}
+
+function RolRoute({ children, path }) {
+  const { usuario } = useAuth();
+  if (!usuario) return <Navigate to="/login" replace />;
+  const pattern = ROL_RUTAS[usuario.rol];
+  const allowed = !path || (pattern instanceof RegExp ? pattern.test('/' + path) : true);
+  if (!allowed) return <Navigate to="/" replace />;
+  return children;
 }
 
 function AppRoutes() {
@@ -33,17 +63,28 @@ function AppRoutes() {
       <Route path="/login" element={usuario ? <Navigate to="/" replace/> : <Login/>}/>
       <Route path="/" element={<PrivateRoute><Layout/></PrivateRoute>}>
         <Route index                        element={<Dashboard/>}/>
+        {/* Todos los roles autenticados */}
         <Route path="contratos"             element={<Contratos/>}/>
-        <Route path="contratos/nuevo"       element={<ContratoNuevo/>}/>
         <Route path="contratos/:id"         element={<ContratoDetalle/>}/>
-        <Route path="contratos/:id/editar"  element={<ContratoNuevo/>}/>
-        <Route path="contratistas"          element={<Contratistas/>}/>
         <Route path="documentos"            element={<Documentos/>}/>
         <Route path="alertas"               element={<Alertas/>}/>
-        <Route path="supervisores"          element={<Supervisores/>}/>
-        <Route path="reportes"              element={<Reportes/>}/>
-        <Route path="auditoria"             element={<Auditoria/>}/>
-        <Route path="usuarios"              element={<Usuarios/>}/>
+        {/* Admin + Supervisor */}
+        <Route path="contratos/nuevo"       element={<RolRoute path="contratos/nuevo"><ContratoNuevo/></RolRoute>}/>
+        <Route path="contratos/:id/editar"  element={<RolRoute path="contratos/nuevo"><ContratoNuevo/></RolRoute>}/>
+        <Route path="garantias"             element={<RolRoute path="garantias"><Garantias/></RolRoute>}/>
+        <Route path="actas"                 element={<RolRoute path="actas"><Actas/></RolRoute>}/>
+        <Route path="informes"              element={<RolRoute path="informes"><InformesSupervisión/></RolRoute>}/>
+        <Route path="pagos"                 element={<RolRoute path="pagos"><Pagos/></RolRoute>}/>
+        <Route path="inhabilidades"         element={<RolRoute path="inhabilidades"><Inhabilidades/></RolRoute>}/>
+        <Route path="seguridad-social"      element={<RolRoute path="seguridad-social"><SeguridadSocial/></RolRoute>}/>
+        {/* Solo Admin */}
+        <Route path="contratistas"          element={<PrivateRoute roles={['admin']}><Contratistas/></PrivateRoute>}/>
+        <Route path="supervisores"          element={<PrivateRoute roles={['admin']}><Supervisores/></PrivateRoute>}/>
+        <Route path="paa"                   element={<PrivateRoute roles={['admin']}><PAA/></PrivateRoute>}/>
+        <Route path="presupuesto"           element={<PrivateRoute roles={['admin']}><Presupuesto/></PrivateRoute>}/>
+        <Route path="reportes"              element={<PrivateRoute roles={['admin','auditor']}><Reportes/></PrivateRoute>}/>
+        <Route path="auditoria"             element={<PrivateRoute roles={['admin']}><Auditoria/></PrivateRoute>}/>
+        <Route path="usuarios"              element={<PrivateRoute roles={['admin']}><Usuarios/></PrivateRoute>}/>
       </Route>
       <Route path="*" element={<Navigate to="/" replace/>}/>
     </Routes>

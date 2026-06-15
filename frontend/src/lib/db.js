@@ -415,6 +415,272 @@ export const realtime = {
     supabase.removeChannel(channel),
 }
 
+// ── GARANTÍAS ─────────────────────────────────────────────
+export const garantias = {
+  listar: async ({ contrato_id, estado } = {}) => {
+    let q = supabase.from('v_garantias').select('*').order('fecha_vencimiento')
+    if (contrato_id) q = q.eq('contrato_id', contrato_id)
+    if (estado)      q = q.eq('estado', estado)
+    const { data, error } = await q
+    if (error) throw error
+    return data || []
+  },
+
+  crear: async (payload) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    const { data, error } = await supabase
+      .from('garantias')
+      .insert({ ...payload, creado_por: user.id })
+      .select().single()
+    if (error) throw error
+    return data
+  },
+
+  actualizar: async (id, payload) => {
+    const { data, error } = await supabase
+      .from('garantias').update(payload).eq('id', id).select().single()
+    if (error) throw error
+    return data
+  },
+}
+
+// ── ACTAS ─────────────────────────────────────────────────
+export const actas = {
+  listar: async ({ contrato_id, tipo_acta } = {}) => {
+    let q = supabase.from('actas')
+      .select('*, contratos(numero_contrato, objeto, fecha_fin, valor_actual), creado_por_nombre:usuarios(nombre)')
+      .order('fecha_acta', { ascending: false })
+    if (contrato_id) q = q.eq('contrato_id', contrato_id)
+    if (tipo_acta)   q = q.eq('tipo_acta', tipo_acta)
+    const { data, error } = await q
+    if (error) throw error
+    return data || []
+  },
+
+  crear: async (payload) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    const { data, error } = await supabase
+      .from('actas')
+      .insert({ ...payload, creado_por: user.id })
+      .select().single()
+    if (error) throw error
+    return data
+  },
+
+  firmar: async (id, campo) => {
+    const { data: acta } = await supabase.from('actas').select('*').eq('id', id).single()
+    const fechaCampo = `fecha_firma_${campo.replace('firmada_', '')}`
+    const update = { [campo]: true, [fechaCampo]: new Date().toISOString().slice(0, 10) }
+    const todasFirmadas = {
+      firmada_supervisor:  acta.firmada_supervisor,
+      firmada_contratista: acta.firmada_contratista,
+      firmada_juridica:    acta.firmada_juridica,
+      ...update,
+    }
+    if (todasFirmadas.firmada_supervisor && todasFirmadas.firmada_contratista && todasFirmadas.firmada_juridica) {
+      update.estado = 'firmada'
+    }
+    const { data, error } = await supabase.from('actas').update(update).eq('id', id).select().single()
+    if (error) throw error
+    return data
+  },
+}
+
+// ── SEGURIDAD SOCIAL ────────────────────────────────────────
+export const seguridadSocial = {
+  listar: async ({ contrato_id } = {}) => {
+    let q = supabase
+      .from('verificaciones_ss')
+      .select('*, contratos(numero_contrato, objeto)')
+      .order('periodo_anio', { ascending: false })
+      .order('periodo_mes',  { ascending: false })
+    if (contrato_id) q = q.eq('contrato_id', contrato_id)
+    const { data, error } = await q
+    if (error) throw error
+    return data || []
+  },
+
+  crear: async (payload) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    const { data, error } = await supabase
+      .from('verificaciones_ss')
+      .insert({ ...payload, verificado_por: user.id })
+      .select().single()
+    if (error) throw error
+    return data
+  },
+
+  actualizar: async (id, payload) => {
+    const { data, error } = await supabase
+      .from('verificaciones_ss').update(payload).eq('id', id).select().single()
+    if (error) throw error
+    return data
+  },
+}
+
+// ── PRESUPUESTO (CDP / RP / OP) ──────────────────────────────
+export const presupuesto = {
+  listar: async ({ tipo, contrato_id } = {}) => {
+    let q = supabase
+      .from('registros_presupuestales')
+      .select('*, contratos(numero_contrato)')
+      .order('fecha_expedicion', { ascending: false })
+    if (tipo)        q = q.eq('tipo', tipo)
+    if (contrato_id) q = q.eq('contrato_id', contrato_id)
+    const { data, error } = await q
+    if (error) throw error
+    return data || []
+  },
+
+  crear: async (payload) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    const { data, error } = await supabase
+      .from('registros_presupuestales')
+      .insert({ ...payload, creado_por: user.id })
+      .select().single()
+    if (error) throw error
+    return data
+  },
+
+  actualizar: async (id, payload) => {
+    const { data, error } = await supabase
+      .from('registros_presupuestales').update(payload).eq('id', id).select().single()
+    if (error) throw error
+    return data
+  },
+}
+
+// ── PAA — Plan Anual de Adquisiciones ───────────────────────
+export const paa = {
+  listar: async ({ vigencia, estado } = {}) => {
+    let q = supabase
+      .from('plan_adquisiciones')
+      .select('*')
+      .order('fecha_inicio_proceso', { ascending: true, nullsFirst: false })
+    if (vigencia) q = q.eq('vigencia', vigencia)
+    if (estado)   q = q.eq('estado', estado)
+    const { data, error } = await q
+    if (error) throw error
+    return data || []
+  },
+
+  crear: async (payload) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    const { data, error } = await supabase
+      .from('plan_adquisiciones')
+      .insert({ ...payload, creado_por: user.id })
+      .select().single()
+    if (error) throw error
+    return data
+  },
+
+  actualizar: async (id, payload) => {
+    const { data, error } = await supabase
+      .from('plan_adquisiciones').update(payload).eq('id', id).select().single()
+    if (error) throw error
+    return data
+  },
+}
+
+// ── INHABILIDADES ────────────────────────────────────────────
+export const inhabilidades = {
+  listar: async ({ contratista_id, resultado } = {}) => {
+    let q = supabase
+      .from('consultas_inhabilidades')
+      .select('*, contratistas(id, nombres, apellidos, cedula, nit, tipo_persona)')
+      .order('fecha_consulta', { ascending: false })
+    if (contratista_id) q = q.eq('contratista_id', contratista_id)
+    if (resultado)      q = q.eq('resultado', resultado)
+    const { data, error } = await q
+    if (error) throw error
+    return data || []
+  },
+
+  crear: async (payload) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    const { data, error } = await supabase
+      .from('consultas_inhabilidades')
+      .insert({ ...payload, consultado_por: user.id })
+      .select().single()
+    if (error) throw error
+    return data
+  },
+}
+
+// ── INFORMES SUPERVISIÓN ────────────────────────────────────
+export const informes = {
+  listar: async ({ contrato_id, estado } = {}) => {
+    let q = supabase
+      .from('informes_supervision')
+      .select('*, contratos(numero_contrato, objeto), supervisores(id)')
+      .order('numero_informe', { ascending: false })
+    if (contrato_id) q = q.eq('contrato_id', contrato_id)
+    if (estado)      q = q.eq('estado', estado)
+    const { data, error } = await q
+    if (error) throw error
+    return data || []
+  },
+
+  crear: async (payload) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    const { data, error } = await supabase
+      .from('informes_supervision')
+      .insert({ ...payload })
+      .select().single()
+    if (error) throw error
+    return data
+  },
+
+  aprobar: async (id) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    const { data, error } = await supabase
+      .from('informes_supervision')
+      .update({ estado: 'aprobado', aprobado_por: user.id, fecha_aprobacion: new Date().toISOString().slice(0, 10) })
+      .eq('id', id).select().single()
+    if (error) throw error
+    return data
+  },
+
+  actualizar: async (id, payload) => {
+    const { data, error } = await supabase
+      .from('informes_supervision').update(payload).eq('id', id).select().single()
+    if (error) throw error
+    return data
+  },
+}
+
+// ── PAGOS ───────────────────────────────────────────────────
+export const pagos = {
+  listar: async ({ contrato_id, estado } = {}) => {
+    let q = supabase
+      .from('pagos')
+      .select('*, contratos(numero_contrato, objeto, valor_actual)')
+      .order('creado_en', { ascending: false })
+    if (contrato_id) q = q.eq('contrato_id', contrato_id)
+    if (estado)      q = q.eq('estado', estado)
+    const { data, error } = await q
+    if (error) throw error
+    return data || []
+  },
+
+  crear: async (payload) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    const { data, error } = await supabase
+      .from('pagos')
+      .insert({ ...payload, creado_por: user.id })
+      .select().single()
+    if (error) throw error
+    return data
+  },
+
+  actualizar: async (id, payload) => {
+    const { data, error } = await supabase
+      .from('pagos').update(payload).eq('id', id).select().single()
+    if (error) throw error
+    return data
+  },
+}
+
 // ── Helpers ───────────────────────────────────────────────────
 function groupBy(arr = [], key) {
   return Object.entries(

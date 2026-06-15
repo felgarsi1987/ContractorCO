@@ -5,7 +5,7 @@ import {
   UserCog, BarChart3, Shield, UsersRound, Search,
   HelpCircle, Plus, LogOut, ChevronRight, Leaf,
   ShieldCheck, ClipboardList, FileBarChart2, DollarSign,
-  CalendarDays, AlertOctagon, Heart, Wallet, SendHorizontal, Home
+  CalendarDays, AlertOctagon, Heart, Wallet, SendHorizontal, Home, Mail
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useAlertas } from '../../hooks/useAlertas';
@@ -59,8 +59,9 @@ const NAV_BY_ROL = {
   ],
 };
 const ADMIN_NAV = [
-  { to:'/auditoria', label:'Auditoría', Icon:Shield },
-  { to:'/usuarios',  label:'Usuarios',  Icon:UsersRound },
+  { to:'/auditoria',    label:'Auditoría',   Icon:Shield },
+  { to:'/usuarios',     label:'Usuarios',    Icon:UsersRound },
+  { to:'/config-email', label:'Config Email', Icon:Mail },
 ];
 const ROL_LABEL = { admin:'Administrador', supervisor:'Supervisor', auditor:'Auditor', contratista:'Contratista' };
 

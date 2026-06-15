@@ -1,10 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import {
   ClipboardList, Plus, CheckCircle, Clock, AlertTriangle, FileUp,
-  X, ChevronDown, ChevronUp, ThumbsUp, ThumbsDown, Paperclip, Send
+  X, ChevronDown, ChevronUp, ThumbsUp, ThumbsDown, Paperclip, Send,
+  Mail, ToggleLeft, ToggleRight, Bell
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { solicitudes as solicitudesDB, plantillas as plantillasDB, contratos as contratosDB, mensajes as mensajesDB } from '../lib/db';
+import { emailService, emailPrefs } from '../lib/emailService';
+import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabase';
 
 const TIPO_LABEL = {
   precontractual: 'Precontractual',
@@ -36,6 +40,7 @@ const ITEM_CONFIG = {
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
 export default function SolicitudDocumentos() {
+  const { usuario } = useAuth();
   const [lista, setLista]           = useState([]);
   const [contratos, setContratos]   = useState([]);
   const [plantillas, setPlantillas] = useState([]);
@@ -46,6 +51,8 @@ export default function SolicitudDocumentos() {
   const [modalRechazo, setModalRechazo] = useState(null);
   const [guardando, setGuardando]   = useState(false);
   const [rechazando, setRechazando] = useState(false);
+  const [enviandoEmail, setEnviandoEmail] = useState({});
+  const [emailToggle, setEmailToggle]     = useState({});
   const [msgChat, setMsgChat]       = useState({});
   const [chatOpen, setChatOpen]     = useState(null);
   const [mensajesChat, setMensajesChat] = useState([]);
@@ -116,6 +123,55 @@ export default function SolicitudDocumentos() {
       toast.success('Documento aprobado');
       cargar();
     } catch { toast.error('Error aprobando'); }
+  }
+
+  async function enviarRecordatorio(sol) {
+    setEnviandoEmail(p => ({ ...p, [sol.id]: true }));
+    try {
+      const { data: ctData } = await supabase
+        .from('contratos')
+        .select('contratistas(email, nombres, apellidos)')
+        .eq('id', sol.contrato_id)
+        .single();
+      const email = ctData?.contratistas?.email;
+      if (!email) { toast.error('El contratista no tiene email registrado'); return; }
+
+      const itemsPend = (sol.items_checklist || []).filter(i => ['pendiente','rechazado'].includes(i.estado));
+      const diasRest  = sol.fecha_limite
+        ? Math.ceil((new Date(sol.fecha_limite) - new Date()) / 86400000)
+        : null;
+
+      await emailService.recordatorio({
+        para: email,
+        contratoId: sol.contrato_id,
+        usuarioId:  usuario?.id,
+        datos: {
+          numero_contrato:   sol.contratos?.numero_contrato || '—',
+          titulo_solicitud:  sol.titulo,
+          fecha_limite:      sol.fecha_limite || '—',
+          dias_restantes:    diasRest ?? '—',
+          items_pendientes:  itemsPend,
+          portal_url:        `${window.location.origin}/portal`,
+        },
+      });
+      toast.success(`Recordatorio enviado a ${email}`);
+    } catch (e) { toast.error(e.message || 'Error enviando recordatorio'); }
+    finally { setEnviandoEmail(p => ({ ...p, [sol.id]: false })); }
+  }
+
+  async function toggleEmailSolicitud(sol) {
+    if (!usuario?.id) return;
+    const actual = emailToggle[sol.id] !== false;
+    try {
+      await emailPrefs.toggle({
+        usuarioId:  usuario.id,
+        contratoId: sol.contrato_id,
+        tipoEmail:  `sol_${sol.id}`,
+        habilitado: !actual,
+      });
+      setEmailToggle(p => ({ ...p, [sol.id]: !actual }));
+      toast.success(!actual ? 'Emails activados para esta solicitud' : 'Emails desactivados para esta solicitud');
+    } catch { toast.error('Error cambiando preferencia'); }
   }
 
   async function rechazarItem() {
@@ -239,6 +295,30 @@ export default function SolicitudDocumentos() {
               {/* Detalle expandido */}
               {abierto && (
                 <div style={{ borderTop:'1px solid var(--border)', background:'#F8FAFC' }}>
+
+                  {/* Barra de acciones de email */}
+                  <div style={{ padding:'10px 16px', borderBottom:'1px solid #E2E8F0', display:'flex', gap:8, alignItems:'center', background:'#fff' }}>
+                    <span style={{ fontSize:11, color:'#64748b', fontWeight:600 }}>Emails:</span>
+                    <button
+                      onClick={() => enviarRecordatorio(sol)}
+                      disabled={enviandoEmail[sol.id] || sol.estado === 'completa'}
+                      className="btn btn-secondary"
+                      style={{ padding:'4px 10px', fontSize:11, display:'flex', alignItems:'center', gap:4 }}>
+                      {enviandoEmail[sol.id]
+                        ? <Clock size={10} style={{ animation:'spin 1s linear infinite' }}/>
+                        : <><Bell size={10}/> Enviar recordatorio</>
+                      }
+                    </button>
+                    <button
+                      onClick={() => toggleEmailSolicitud(sol)}
+                      style={{ background:'none', border:'none', cursor:'pointer', padding:0, display:'flex', alignItems:'center', gap:5, fontSize:11, color:'#64748b' }}>
+                      {emailToggle[sol.id] !== false
+                        ? <><ToggleRight size={20} color="#059669"/> <span style={{ color:'#059669', fontWeight:600 }}>Emails ON</span></>
+                        : <><ToggleLeft  size={20} color="#CBD5E1"/> <span>Emails OFF</span></>
+                      }
+                    </button>
+                  </div>
+
                   {/* Checklist items */}
                   <div style={{ padding:'14px 16px', display:'flex', flexDirection:'column', gap:8 }}>
                     <div style={{ fontSize:10, fontWeight:800, color:'#94a3b8', letterSpacing:'.08em', marginBottom:4 }}>DOCUMENTOS REQUERIDOS</div>

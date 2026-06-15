@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "bash",
+            "command": "cd \"C:/tmp/ContractorCO2\" && if [ -n \"$(git status --porcelain)\" ]; then git add -A && git commit -m \"auto: save [$(date +%H:%M:%S)]\" && git push origin main; fi 2>/dev/null || true",
+            "timeout": 30,
+            "statusMessage": "Guardando en git..."
+          }
+        ]
+      }
+    ]
+  }
+}

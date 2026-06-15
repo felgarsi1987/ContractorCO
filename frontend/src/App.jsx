@@ -24,6 +24,7 @@ import SeguridadSocial     from './pages/SeguridadSocial';
 import Presupuesto         from './pages/Presupuesto';
 import SolicitudDocumentos from './pages/SolicitudDocumentos';
 import PortalContratista   from './pages/PortalContratista';
+import ConfigEmail         from './pages/ConfigEmail';
 import './styles/globals.css';
 
 // Rutas permitidas por rol
@@ -90,6 +91,7 @@ function AppRoutes() {
         <Route path="reportes"              element={<PrivateRoute roles={['admin','auditor']}><Reportes/></PrivateRoute>}/>
         <Route path="auditoria"             element={<PrivateRoute roles={['admin']}><Auditoria/></PrivateRoute>}/>
         <Route path="usuarios"              element={<PrivateRoute roles={['admin']}><Usuarios/></PrivateRoute>}/>
+        <Route path="config-email"          element={<PrivateRoute roles={['admin','supervisor']}><ConfigEmail/></PrivateRoute>}/>
       </Route>
       <Route path="*" element={<Navigate to="/" replace/>}/>
     </Routes>

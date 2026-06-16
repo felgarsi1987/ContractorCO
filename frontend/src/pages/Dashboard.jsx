@@ -35,15 +35,15 @@ export default function Dashboard() {
 
   const kpis = [
     { label:'Contratos Activos',  value:stats?.contratos_activos??'—',          sub:'En ejecución',     Icon:FileText,   ic:'#059669', bg:'#D1FAE5', bar:'#059669' },
-    { label:'Por Vencer',         value:stats?.contratos_proximos_vencer??'—',  sub:'Próximos 30 días', Icon:Calendar,   ic:'#7C3AED', bg:'#EDE9FE', bar:'#7C3AED' },
-    { label:'Docs. Pendientes',   value:stats?.documentos_vencidos??'—',        sub:'Acción requerida', Icon:FolderOpen, ic:'#5B21B6', bg:'#DDD6FE', bar:'#5B21B6' },
-    { label:'Contratistas',       value:stats?.contratistas_activos??'—',       sub:'Registrados',      Icon:Users,      ic:'#64748B', bg:'#F1F5F9', bar:'#64748B' },
+    { label:'Por Vencer',         value:stats?.contratos_proximos_vencer??'—',  sub:'Próximos 30 días', Icon:Calendar,   ic:'#C2410C', bg:'#FFEDD5', bar:'#C2410C' },
+    { label:'Docs. Pendientes',   value:stats?.documentos_vencidos??'—',        sub:'Acción requerida', Icon:FolderOpen, ic:'#9A3412', bg:'#FED7AA', bar:'#9A3412' },
+    { label:'Contratistas',       value:stats?.contratistas_activos??'—',       sub:'Registrados',      Icon:Users,      ic:'#78716C', bg:'#F5F5F4', bar:'#78716C' },
   ];
 
   const compliance = [
     { type:'Prestación de servicios', pct:87, color:'#059669' },
-    { type:'Obra',                    pct:72, color:'#7C3AED' },
-    { type:'Suministro',              pct:61, color:'#5B21B6' },
+    { type:'Obra',                    pct:72, color:'#C2410C' },
+    { type:'Suministro',              pct:61, color:'#9A3412' },
     { type:'Consultoría',             pct:95, color:'#059669' },
   ];
 

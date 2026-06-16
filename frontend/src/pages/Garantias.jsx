@@ -134,8 +134,8 @@ export default function Garantias() {
         {[
           { label: 'TOTAL PÓLIZAS',   val: stats.total,     ic: '#059669', bg: '#D1FAE5', bar: '#059669' },
           { label: 'VIGENTES',        val: stats.vigentes,  ic: '#059669', bg: '#D1FAE5', bar: '#059669' },
-          { label: 'POR VENCER',      val: stats.porVencer, ic: '#7C3AED', bg: '#EDE9FE', bar: '#7C3AED' },
-          { label: 'VENCIDAS',        val: stats.vencidas,  ic: '#5B21B6', bg: '#DDD6FE', bar: '#064E3B' },
+          { label: 'POR VENCER',      val: stats.porVencer, ic: '#C2410C', bg: '#FFEDD5', bar: '#C2410C' },
+          { label: 'VENCIDAS',        val: stats.vencidas,  ic: '#9A3412', bg: '#FED7AA', bar: '#064E3B' },
         ].map(({ label, val, ic, bg, bar }) => (
           <div key={label} className="kpi-card">
             <div className="kpi-icon" style={{ background: bg }}>

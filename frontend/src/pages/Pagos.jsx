@@ -128,7 +128,7 @@ export default function Pagos() {
           { label:'TOTAL PAGOS',   val: total,      ic:'#059669', bg:'#D1FAE5', Icon:DollarSign },
           { label:'PENDIENTES',    val: pendientes, ic:'#047857', bg:'#ECFDF5', Icon:Clock },
           { label:'PAGADOS',       val: pagados,    ic:'#059669', bg:'#D1FAE5', Icon:CheckCircle },
-          { label:'VALOR PAGADO',  val: `$${(valorTotal/1e6).toFixed(1)}M`, ic:'#7C3AED', bg:'#EDE9FE', Icon:DollarSign },
+          { label:'VALOR PAGADO',  val: `$${(valorTotal/1e6).toFixed(1)}M`, ic:'#C2410C', bg:'#FFEDD5', Icon:DollarSign },
         ].map(({ label, val, ic, bg, Icon }) => (
           <div key={label} className="kpi-card">
             <div className="kpi-icon" style={{ background: bg }}><Icon size={16} style={{ color: ic }}/></div>

@@ -6,9 +6,9 @@ import toast from 'react-hot-toast';
 
 const DEMO = [
   { rol: 'Admin',        email: 'admin@contractorco.gov.co',    pass: 'Admin2025*', color: '#059669' },
-  { rol: 'Supervisor',   email: 'p.suarez@contractorco.gov.co', pass: 'Super2025*', color: '#7C3AED' },
-  { rol: 'Auditor',      email: 'auditor@contraloria.gov.co',   pass: 'Audit2025*', color: '#5B21B6' },
-  { rol: 'Contratista',  email: 'contratista@demo.co',          pass: 'Demo1234!',  color: '#64748B' },
+  { rol: 'Supervisor',   email: 'p.suarez@contractorco.gov.co', pass: 'Super2025*', color: '#C2410C' },
+  { rol: 'Auditor',      email: 'auditor@contraloria.gov.co',   pass: 'Audit2025*', color: '#9A3412' },
+  { rol: 'Contratista',  email: 'contratista@demo.co',          pass: 'Demo1234!',  color: '#78716C' },
 ];
 
 const FEATURES = [

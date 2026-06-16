@@ -52,10 +52,10 @@ export default function Contratistas() {
   useEffect(() => { load(); }, [load]);
 
   const kpis = [
-    { label: 'Total registrados', val: total,                                                    color: '#64748B', bg: '#F1F5F9' },
+    { label: 'Total registrados', val: total,                                                    color: '#78716C', bg: '#F5F5F4' },
     { label: 'Activos',           val: data.filter(c => c.estado === 'activo').length,            color: '#059669', bg: '#D1FAE5' },
-    { label: 'Pendientes',        val: data.filter(c => c.estado === 'suspendido').length,        color: '#7C3AED', bg: '#EDE9FE' },
-    { label: 'Jurídicas',         val: data.filter(c => c.tipo_persona === 'juridica').length,    color: '#7C3AED', bg: '#EDE9FE' },
+    { label: 'Pendientes',        val: data.filter(c => c.estado === 'suspendido').length,        color: '#C2410C', bg: '#FFEDD5' },
+    { label: 'Jurídicas',         val: data.filter(c => c.tipo_persona === 'juridica').length,    color: '#C2410C', bg: '#FFEDD5' },
   ];
 
   return (
@@ -141,7 +141,7 @@ export default function Contratistas() {
                     <tr key={c.id}>
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div style={{ width: 28, height: 28, borderRadius: '50%', background: c.tipo_persona === 'natural' ? '#F1F5F9' : '#EDE9FE', color: c.tipo_persona === 'natural' ? '#64748B' : '#7C3AED', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>
+                          <div style={{ width: 28, height: 28, borderRadius: '50%', background: c.tipo_persona === 'natural' ? '#F5F5F4' : '#FFEDD5', color: c.tipo_persona === 'natural' ? '#78716C' : '#C2410C', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>
                             {(c.nombres || c.razon_social || '?')[0].toUpperCase()}
                           </div>
                           <div>
@@ -176,7 +176,7 @@ export default function Contratistas() {
                         <div style={{ display: 'flex', gap: 2 }}>
                           <button className="btn-icon" title="Ver contratos" onClick={e=>{e.stopPropagation();navigate('/contratos?contratista_id='+c.id);}}><Eye size={13}/></button>
                           <button className="btn-icon" title="Editar" onClick={e=>{e.stopPropagation();setEditando(c);setModal(true);}}><Edit size={13}/></button>
-                          <button className="btn-icon" title="Suspender" style={{ color:'#5B21B6' }} onClick={e=>{e.stopPropagation();setConfirmSuspender(c.id);}}><Trash2 size={13}/></button>
+                          <button className="btn-icon" title="Suspender" style={{ color:'#9A3412' }} onClick={e=>{e.stopPropagation();setConfirmSuspender(c.id);}}><Trash2 size={13}/></button>
                         </div>
                       </td>
                     </tr>

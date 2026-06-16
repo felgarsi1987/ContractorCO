@@ -228,7 +228,7 @@ export default function SolicitudDocumentos() {
           { label:'PENDIENTES',   val:totalPend, ic:'#047857', bg:'#ECFDF5', Icon:Clock },
           { label:'EN REVISIÓN',  val:totalRev,  ic:'#059669', bg:'#D1FAE5', Icon:ClipboardList },
           { label:'COMPLETADAS',  val:totalComp, ic:'#059669', bg:'#D1FAE5', Icon:CheckCircle },
-          { label:'VENCIDAS',     val:totalVenc, ic:'#5B21B6', bg:'#DDD6FE', Icon:AlertTriangle },
+          { label:'VENCIDAS',     val:totalVenc, ic:'#9A3412', bg:'#FED7AA', Icon:AlertTriangle },
         ].map(({ label, val, ic, bg, Icon }) => (
           <div key={label} className="kpi-card">
             <div className="kpi-icon" style={{ background:bg }}><Icon size={16} style={{ color:ic }}/></div>
@@ -390,7 +390,7 @@ export default function SolicitudDocumentos() {
                               </div>
                               <div>
                                 <div style={{ fontSize:10, color:'#94a3b8', marginBottom:1 }}>{m.autor?.nombre || 'Usuario'} · {new Date(m.creado_en).toLocaleString('es-CO', { hour:'2-digit', minute:'2-digit', day:'2-digit', month:'2-digit' })}</div>
-                                <div style={{ fontSize:12, color:'#064E3B', background:'#F1F5F9', padding:'6px 10px', borderRadius:6 }}>{m.contenido}</div>
+                                <div style={{ fontSize:12, color:'#064E3B', background:'#F5F5F4', padding:'6px 10px', borderRadius:6 }}>{m.contenido}</div>
                               </div>
                             </div>
                           ))}

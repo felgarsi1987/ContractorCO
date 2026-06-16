@@ -31,19 +31,19 @@
   --text-muted:    #6B7280;   /* texto apagado — gris neutro */
   --text-subtle:   #9CA3AF;   /* placeholders */
 
-  /* Semáforo — Paleta B: verde + violeta + pizarra */
+  /* Semáforo — Paleta C: verde + terracota + gris cálido */
   --ok:            #059669;   /* éxito / vigente    — emerald */
   --ok-bg:         #D1FAE5;
-  --warn:          #7C3AED;   /* precaución         — violeta */
-  --warn-bg:       #EDE9FE;
-  --danger:        #5B21B6;   /* crítico / vencido  — violeta oscuro */
-  --danger-bg:     #DDD6FE;
-  --info:          #64748B;   /* informativo        — pizarra */
-  --info-bg:       #F1F5F9;
-  --purple:        #7C3AED;   /* violeta principal */
-  --purple-bg:     #EDE9FE;
-  --purple-dark:   #5B21B6;   /* violeta crítico */
-  --purple-dark-bg:#DDD6FE;
+  --warn:          #C2410C;   /* precaución         — terracota */
+  --warn-bg:       #FFEDD5;
+  --danger:        #9A3412;   /* crítico / vencido  — terracota oscuro */
+  --danger-bg:     #FED7AA;
+  --info:          #78716C;   /* informativo        — gris cálido */
+  --info-bg:       #F5F5F4;
+  --terracota:     #C2410C;   /* terracota principal */
+  --terracota-bg:  #FFEDD5;
+  --terracota-dark:#9A3412;   /* terracota crítico */
+  --terracota-dark-bg:#FED7AA;
 
   /* Geometría */
   --radius-sm:     6px;
@@ -205,8 +205,8 @@ a { text-decoration: none; color: inherit; }
 .badge-red    { background: var(--danger-bg);   color: var(--danger);    }  /* crítico */
 .badge-blue   { background: var(--info-bg);     color: var(--info);      }  /* información */
 .badge-gray   { background: #F3F4F6;            color: #374151;          }  /* neutro */
-.badge-purple { background: var(--teal-bg);     color: var(--teal);      }  /* especial/teal */
-.badge-teal   { background: var(--teal-bg);     color: var(--teal);      }  /* alias */
+.badge-purple { background: var(--terracota-bg); color: var(--terracota); }  /* terracota */
+.badge-teal   { background: var(--info-bg);     color: var(--info);      }  /* gris cálido */
 .badge-emerald{ background: var(--ok-bg);       color: var(--emerald-dark); font-weight:700; }
 
 /* ── KPI card ────────────────────────────────────────────────── */

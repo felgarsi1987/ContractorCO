@@ -115,8 +115,8 @@ export default function SeguridadSocial() {
         {[
           { label:'TOTAL PERÍODOS',  val: lista.length,      ic:'#059669', bg:'#D1FAE5', Icon: Heart },
           { label:'COMPLETOS',       val: totalCompletos,    ic:'#059669', bg:'#D1FAE5', Icon: CheckCircle },
-          { label:'CON PENDIENTES',  val: pendientes,        ic:'#7C3AED', bg:'#EDE9FE', Icon: AlertTriangle },
-          { label:'ESTE MES',        val: lista.filter(v => v.periodo_mes === mesActual).length, ic:'#7C3AED', bg:'#EDE9FE', Icon: Clock },
+          { label:'CON PENDIENTES',  val: pendientes,        ic:'#C2410C', bg:'#FFEDD5', Icon: AlertTriangle },
+          { label:'ESTE MES',        val: lista.filter(v => v.periodo_mes === mesActual).length, ic:'#C2410C', bg:'#FFEDD5', Icon: Clock },
         ].map(({ label, val, ic, bg, Icon }) => (
           <div key={label} className="kpi-card">
             <div className="kpi-icon" style={{ background: bg }}><Icon size={16} style={{ color: ic }}/></div>

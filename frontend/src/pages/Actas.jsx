@@ -15,7 +15,7 @@ const TIPO_COLOR = {
   inicio:      { bg: '#D1FAE5', ic: '#059669' },
   suspension:  { bg: '#ECFDF5', ic: '#047857' },
   reinicio:    { bg: '#D1FAE5', ic: '#059669' },
-  terminacion: { bg: '#F0FDFA', ic: '#7C3AED' },
+  terminacion: { bg: '#F0FDFA', ic: '#C2410C' },
   liquidacion: { bg: '#FFE4E6', ic: '#BE123C' },
 };
 
@@ -166,7 +166,7 @@ export default function Actas() {
 
       {/* Alerta legal — liquidaciones vencidas */}
       {liquidacionesAlerta.length > 0 && (
-        <div style={{ background: '#DDD6FE', border: '1px solid #C4B5FD', borderRadius: 10, padding: '12px 16px', display: 'flex', gap: 12, alignItems: 'flex-start', flexShrink: 0 }}>
+        <div style={{ background: '#FED7AA', border: '1px solid #FDBA74', borderRadius: 10, padding: '12px 16px', display: 'flex', gap: 12, alignItems: 'flex-start', flexShrink: 0 }}>
           <AlertTriangle size={16} style={{ color: '#064E3B', flexShrink: 0, marginTop: 2 }}/>
           <div>
             <div style={{ fontSize: 13, fontWeight: 700, color: '#7F1D1D' }}>
@@ -293,7 +293,7 @@ export default function Actas() {
               )}
 
               {/* Referencia legal */}
-              <div style={{ marginTop: 10, fontSize: 10, color: '#94a3b8', borderTop: '1px solid #F1F5F9', paddingTop: 8 }}>
+              <div style={{ marginTop: 10, fontSize: 10, color: '#94a3b8', borderTop: '1px solid #F5F5F4', paddingTop: 8 }}>
                 📋 {FUNDAMENTO_ACTA[acta.tipo_acta]}
               </div>
             </div>

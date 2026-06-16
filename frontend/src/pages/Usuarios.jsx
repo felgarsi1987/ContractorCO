@@ -54,7 +54,7 @@ export default function Usuarios() {
   const kpis = [
     { label:'Usuarios Totales',  val:data.length,                               bg:'#D1FAE5', ic:'#10B981', sub:'Registrados' },
     { label:'Usuarios Activos',  val:data.filter(u=>u.activo).length,           bg:'#dcfce7', ic:'#16a34a', sub:'Con acceso' },
-    { label:'Administradores',   val:data.filter(u=>u.rol==='admin').length,     bg:'#F0FDFA', ic:'#7C3AED', sub:'Permisos completos' },
+    { label:'Administradores',   val:data.filter(u=>u.rol==='admin').length,     bg:'#F0FDFA', ic:'#C2410C', sub:'Permisos completos' },
     { label:'Supervisores',      val:data.filter(u=>u.rol==='supervisor').length,bg:'#D1FAE5', ic:'#064E3B', sub:'Usuarios operativos' },
   ];
 

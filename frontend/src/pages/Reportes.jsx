@@ -12,15 +12,15 @@ const byMonth = [
   { month:'Abr', contracts:8 },{ month:'May', contracts:7 },{ month:'Jun', contracts:6 },
 ];
 const byType = [
-  { name:'Prestación de servicios', value:35, color:'#059669' },
-  { name:'Obra',                    value:25, color:'#059669' },
-  { name:'Suministro',              value:20, color:'#059669' },
-  { name:'Consultoría',             value:20, color:'#8b5cf6' },
+  { name:'Prestación de servicios', value:35, color:'#059669', bg:'#D1FAE5', contratos:13 },
+  { name:'Obra',                    value:25, color:'#C2410C', bg:'#FFEDD5', contratos:9  },
+  { name:'Suministro',              value:20, color:'#78716C', bg:'#F5F5F4', contratos:7  },
+  { name:'Consultoría',             value:20, color:'#9A3412', bg:'#FED7AA', contratos:7  },
 ];
 const byStatus = [
-  { name:'Vigente',    value:5, color:'#059669' },
-  { name:'Por Vencer', value:1, color:'#059669' },
-  { name:'Vencido',    value:1, color:'#059669' },
+  { name:'Vigente',    value:5, color:'#059669', bg:'#D1FAE5' },
+  { name:'Por Vencer', value:1, color:'#C2410C', bg:'#FFEDD5' },
+  { name:'Vencido',    value:1, color:'#9A3412', bg:'#FED7AA' },
 ];
 const reportList = [
   'Reporte General de Contratos','Reporte de Cumplimiento','Reporte Financiero',
@@ -72,10 +72,10 @@ export default function Reportes() {
   };
 
   const kpis = [
-    { label:'TOTAL CONTRATOS',    val:'36',   sub:'+15% vs mes anterior',    Icon:FileText,   bg:'#D1FAE5', ic:'#059669', bar:'#059669', trend:true },
-    { label:'VALOR TOTAL',        val:'$673M', sub:'+8% vs mes anterior',    Icon:DollarSign, bg:'#dcfce7', ic:'#16a34a', bar:'#16a34a', trend:true },
-    { label:'CUMPLIMIENTO PROM.', val:'87%',  sub:'+18.4% este trimestre',   Icon:BarChart3,  bg:'#D1FAE5', ic:'#064E3B', bar:'#064E3B', trend:true },
-    { label:'DOCS. PROCESADOS',   val:'124',  sub:'Este mes',                Icon:FileText,   bg:'#F0FDFA', ic:'#7C3AED', bar:'#7C3AED', trend:false },
+    { label:'TOTAL CONTRATOS',    val:'36',    sub:'+15% vs mes anterior',  Icon:FileText,   bg:'#D1FAE5', ic:'#059669', bar:'#059669', trend:true  },
+    { label:'VALOR TOTAL',        val:'$673M', sub:'+8% vs mes anterior',   Icon:DollarSign, bg:'#D1FAE5', ic:'#059669', bar:'#059669', trend:true  },
+    { label:'CUMPLIMIENTO PROM.', val:'87%',   sub:'+18.4% este trimestre', Icon:BarChart3,  bg:'#FFEDD5', ic:'#C2410C', bar:'#C2410C', trend:true  },
+    { label:'DOCS. PROCESADOS',   val:'124',   sub:'Este mes',              Icon:FileText,   bg:'#F5F5F4', ic:'#78716C', bar:'#78716C', trend:false },
   ];
 
   return (
@@ -149,32 +149,43 @@ export default function Reportes() {
           </div>
         </div>
 
-        {/* Donut chart — Contratos por Tipo */}
+        {/* Donut chart — Contratos por Tipo / Modalidad */}
         <div className="card" style={{ padding:16, display:'flex', flexDirection:'column' }}>
-          <div style={{ fontSize:12, fontWeight:700, color:'var(--forest)', marginBottom:12 }}>Contratos por Tipo</div>
-          <div style={{ flex:1, minHeight:180, display:'flex', alignItems:'center', gap:16 }}>
-            {/* Donut with center label */}
-            <div style={{ flex:'0 0 52%', height:'100%', position:'relative' }}>
+          <div style={{ display:'flex', alignItems:'baseline', justifyContent:'space-between', marginBottom:12 }}>
+            <div style={{ fontSize:12, fontWeight:700, color:'var(--forest)' }}>Distribución por Modalidad</div>
+            <span style={{ fontSize:10, color:'#94a3b8' }}>36 contratos</span>
+          </div>
+
+          {/* Stacked pill bar — modalidades */}
+          <div style={{ display:'flex', height:8, borderRadius:99, overflow:'hidden', marginBottom:16, gap:1 }}>
+            {byType.map(item => (
+              <div key={item.name} style={{ flex: item.value, background: item.color, transition:'flex .4s ease' }}/>
+            ))}
+          </div>
+
+          <div style={{ flex:1, minHeight:160, display:'flex', alignItems:'center', gap:12 }}>
+            {/* Donut */}
+            <div style={{ flex:'0 0 48%', height:160, position:'relative' }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={byType}
                     cx="50%" cy="50%"
-                    innerRadius="44%"
-                    outerRadius="72%"
+                    innerRadius="42%"
+                    outerRadius="70%"
                     dataKey="value"
                     labelLine={false}
                     strokeWidth={2}
                     stroke="#fff"
                     animationDuration={600}
                     animationEasing="ease-out"
+                    paddingAngle={2}
                   >
                     {byType.map((e, i) => <Cell key={i} fill={e.color}/>)}
                   </Pie>
                   <Tooltip content={<ChartTooltip isPie />}/>
                 </PieChart>
               </ResponsiveContainer>
-              {/* Center label */}
               <div style={{
                 position:'absolute', top:'50%', left:'50%',
                 transform:'translate(-50%,-50%)',
@@ -185,14 +196,25 @@ export default function Reportes() {
               </div>
             </div>
 
-            {/* Legend — circles not squares */}
-            <div style={{ display:'flex', flexDirection:'column', gap:10, flex:1 }}>
+            {/* Legend — chip + bar per modality */}
+            <div style={{ display:'flex', flexDirection:'column', gap:9, flex:1 }}>
               {byType.map(item => (
-                <div key={item.name} style={{ display:'flex', alignItems:'center', gap:8 }}>
-                  <div style={{ width:8, height:8, borderRadius:'50%', background:item.color, flexShrink:0 }}/>
-                  <div>
-                    <div style={{ fontSize:11, fontWeight:600, color:'#334155' }}>{item.value}%</div>
-                    <div style={{ fontSize:10, color:'#94a3b8', lineHeight:1.3 }}>{item.name}</div>
+                <div key={item.name}>
+                  <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:3 }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                      <span style={{
+                        display:'inline-block', padding:'1px 7px', borderRadius:99,
+                        fontSize:9, fontWeight:700, letterSpacing:'.04em',
+                        background: item.bg, color: item.color,
+                      }}>
+                        {item.name.split(' ')[0].toUpperCase()}
+                      </span>
+                      <span style={{ fontSize:10, color:'#64748b' }}>{item.contratos} cttos</span>
+                    </div>
+                    <span style={{ fontSize:11, fontWeight:700, color: item.color }}>{item.value}%</span>
+                  </div>
+                  <div style={{ height:3, background:'#F1F5F9', borderRadius:99, overflow:'hidden' }}>
+                    <div style={{ height:'100%', width:`${item.value}%`, background: item.color, borderRadius:99, transition:'width .5s ease' }}/>
                   </div>
                 </div>
               ))}
@@ -203,13 +225,26 @@ export default function Reportes() {
         {/* Estado de Contratos */}
         <div className="card" style={{ padding:16 }}>
           <div style={{ fontSize:12, fontWeight:700, color:'var(--forest)', marginBottom:14 }}>Estado de Contratos</div>
-          <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
-            {byStatus.map(({ name, value, color }) => (
+
+          {/* Mini chips row */}
+          <div style={{ display:'flex', gap:6, marginBottom:16 }}>
+            {byStatus.map(({ name, value, color, bg }) => (
+              <div key={name} style={{
+                flex:1, padding:'8px 10px', borderRadius:8,
+                background: bg, border:`1px solid ${color}22`, textAlign:'center',
+              }}>
+                <div style={{ fontSize:16, fontWeight:700, color, lineHeight:1 }}>{value}</div>
+                <div style={{ fontSize:9, color, fontWeight:600, opacity:.75, marginTop:2, letterSpacing:'.04em' }}>{name.toUpperCase()}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
+            {byStatus.map(({ name, value, color, bg }) => (
               <div key={name}>
-                <div style={{ display:'flex', justifyContent:'space-between', fontSize:12, marginBottom:6 }}>
-                  <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                    {/* Circle indicator */}
-                    <div style={{ width:8, height:8, borderRadius:'50%', background:color, flexShrink:0 }}/>
+                <div style={{ display:'flex', justifyContent:'space-between', fontSize:11, marginBottom:5 }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:7 }}>
+                    <div style={{ width:10, height:10, borderRadius:3, background: bg, border:`2px solid ${color}`, flexShrink:0 }}/>
                     <span style={{ color:'#475569', fontWeight:500 }}>{name}</span>
                   </div>
                   <span style={{ fontWeight:700, color }}>{value} contratos</span>

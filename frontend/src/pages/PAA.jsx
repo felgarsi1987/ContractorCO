@@ -112,9 +112,9 @@ export default function PAA() {
       {/* KPIs */}
       <div className="grid-4" style={{ flexShrink:0 }}>
         {[
-          { label:'VALOR TOTAL PAA',   val: fM(valorTotal),      ic:'#7C3AED', bg:'#EDE9FE', Icon:CalendarDays },
+          { label:'VALOR TOTAL PAA',   val: fM(valorTotal),      ic:'#C2410C', bg:'#FFEDD5', Icon:CalendarDays },
           { label:'VALOR CONTRATADO',  val: fM(valorContratado), ic:'#059669', bg:'#D1FAE5', Icon:CheckCircle },
-          { label:'PLANEADOS',         val: planeados,           ic:'#7C3AED', bg:'#EEF2FF', Icon:TrendingUp },
+          { label:'PLANEADOS',         val: planeados,           ic:'#C2410C', bg:'#EEF2FF', Icon:TrendingUp },
           { label:'EN PROCESO',        val: enProceso,           ic:'#047857', bg:'#ECFDF5', Icon:AlertTriangle },
         ].map(({ label, val, ic, bg, Icon }) => (
           <div key={label} className="kpi-card">
@@ -161,7 +161,7 @@ export default function PAA() {
             <div key={item.id} className="card" style={{ padding:0, border: atrasado ? '1px solid #A7F3D0' : undefined }}>
               <div onClick={() => setExpandido(abierto ? null : item.id)}
                 style={{ display:'flex', alignItems:'center', gap:12, padding:'12px 16px', cursor:'pointer' }}>
-                <div style={{ width:24, height:24, borderRadius:'50%', background:'#F1F5F9', display:'flex', alignItems:'center', justifyContent:'center', fontSize:10, color:'#64748b', fontWeight:700, flexShrink:0 }}>
+                <div style={{ width:24, height:24, borderRadius:'50%', background:'#F5F5F4', display:'flex', alignItems:'center', justifyContent:'center', fontSize:10, color:'#64748b', fontWeight:700, flexShrink:0 }}>
                   {idx + 1}
                 </div>
                 <div style={{ flex:1, minWidth:0 }}>
@@ -177,7 +177,7 @@ export default function PAA() {
                   </div>
                 </div>
                 <div style={{ textAlign:'right', flexShrink:0 }}>
-                  <div style={{ fontSize:14, fontWeight:800, color:'#7C3AED' }}>{fCOP(item.valor_estimado)}</div>
+                  <div style={{ fontSize:14, fontWeight:800, color:'#C2410C' }}>{fCOP(item.valor_estimado)}</div>
                   {item.duracion_estimada_meses && <div style={{ fontSize:10, color:'#94a3b8' }}>{item.duracion_estimada_meses} meses</div>}
                 </div>
                 {abierto ? <ChevronUp size={14} color="#94a3b8"/> : <ChevronDown size={14} color="#94a3b8"/>}

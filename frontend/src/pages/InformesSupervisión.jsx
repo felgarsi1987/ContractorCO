@@ -102,7 +102,7 @@ export default function InformesSupervisión() {
           { label:'TOTAL INFORMES',   val:total,      ic:'#059669', bg:'#D1FAE5', Icon:FileText },
           { label:'BORRADORES',       val:borradores, ic:'#047857', bg:'#ECFDF5', Icon:Clock },
           { label:'APROBADOS',        val:aprobados,  ic:'#059669', bg:'#D1FAE5', Icon:CheckCircle },
-          { label:'REQUIEREN ACCIÓN', val:requieren,  ic:'#5B21B6', bg:'#DDD6FE', Icon:AlertTriangle },
+          { label:'REQUIEREN ACCIÓN', val:requieren,  ic:'#9A3412', bg:'#FED7AA', Icon:AlertTriangle },
         ].map(({ label, val, ic, bg, Icon }) => (
           <div key={label} className="kpi-card">
             <div className="kpi-icon" style={{ background: bg }}><Icon size={16} style={{ color: ic }}/></div>

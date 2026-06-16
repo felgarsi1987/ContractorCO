@@ -13,7 +13,7 @@ export default function ConfirmModal({ titulo, mensaje, confirmLabel='Confirmar'
           <button className="btn btn-secondary" onClick={onCancel}>Cancelar</button>
           <button
             className="btn btn-primary"
-            style={danger ? { background:'#DC2626' } : {}}
+            style={danger ? { background:'#064E3B' } : {}}
             onClick={onConfirm}
           >
             {confirmLabel}

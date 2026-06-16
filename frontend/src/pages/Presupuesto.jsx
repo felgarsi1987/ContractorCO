@@ -4,9 +4,9 @@ import toast from 'react-hot-toast';
 import { presupuesto as presDB, contratos as contratosDB } from '../lib/db';
 
 const TIPO_CONFIG = {
-  cdp: { label:'CDP', full:'Certificado de Disponibilidad Presupuestal', color:'#6366F1', bg:'#EDE9FE', legal:'Art. 71 Decreto 111/1996', desc:'Acredita que existe apropiación disponible para comprometer el gasto' },
+  cdp: { label:'CDP', full:'Certificado de Disponibilidad Presupuestal', color:'#0D9488', bg:'#CCFBF1', legal:'Art. 71 Decreto 111/1996', desc:'Acredita que existe apropiación disponible para comprometer el gasto' },
   rp:  { label:'RP',  full:'Registro Presupuestal',                       color:'#059669', bg:'#D1FAE5', legal:'Art. 71 Decreto 111/1996', desc:'Garantiza que los recursos quedan reservados para el pago del contrato' },
-  op:  { label:'OP',  full:'Orden de Pago',                               color:'#D97706', bg:'#FEF9C3', legal:'Art. 36 Decreto 111/1996', desc:'Instrucción de pago al tesorero sobre los recursos apropiados' },
+  op:  { label:'OP',  full:'Orden de Pago',                               color:'#047857', bg:'#ECFDF5', legal:'Art. 36 Decreto 111/1996', desc:'Instrucción de pago al tesorero sobre los recursos apropiados' },
 };
 
 const FUENTES = ['Recursos propios','SGP','SGR','Crédito','Cofinanciación','Recursos de capital','Otros'];
@@ -82,10 +82,10 @@ export default function Presupuesto() {
       {/* KPIs */}
       <div className="grid-4" style={{ flexShrink:0 }}>
         {[
-          { label:'TOTAL CDP',    val:`$${(valorCDP/1e6).toFixed(1)}M`, ic:'#6366F1', bg:'#EDE9FE', Icon:Wallet },
+          { label:'TOTAL CDP',    val:`$${(valorCDP/1e6).toFixed(1)}M`, ic:'#0D9488', bg:'#CCFBF1', Icon:Wallet },
           { label:'TOTAL RP',     val:`$${(valorRP/1e6).toFixed(1)}M`,  ic:'#059669', bg:'#D1FAE5', Icon:Wallet },
-          { label:'ÓRDENES PAGO', val: lista.filter(i=>i.tipo==='op').length, ic:'#D97706', bg:'#FEF9C3', Icon:Wallet },
-          { label:'SIN RP',       val: lista.filter(i=>i.tipo==='cdp' && !lista.some(r=>r.tipo==='rp'&&r.cdp_id===i.id)).length, ic:'#DC2626', bg:'#FEE2E2', Icon:Wallet },
+          { label:'ÓRDENES PAGO', val: lista.filter(i=>i.tipo==='op').length, ic:'#047857', bg:'#ECFDF5', Icon:Wallet },
+          { label:'SIN RP',       val: lista.filter(i=>i.tipo==='cdp' && !lista.some(r=>r.tipo==='rp'&&r.cdp_id===i.id)).length, ic:'#064E3B', bg:'#D1FAE5', Icon:Wallet },
         ].map(({ label, val, ic, bg, Icon }) => (
           <div key={label} className="kpi-card">
             <div className="kpi-icon" style={{ background: bg }}><Icon size={16} style={{ color: ic }}/></div>
@@ -102,7 +102,7 @@ export default function Presupuesto() {
           <div key={k} className="card" style={{ padding:'12px 14px' }}>
             <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:6 }}>
               <span className="badge" style={{ background: cfg.bg, color: cfg.color, fontWeight:800 }}>{cfg.label}</span>
-              <span style={{ fontSize:11, fontWeight:600, color:'#1e293b' }}>{cfg.full}</span>
+              <span style={{ fontSize:11, fontWeight:600, color:'#064E3B' }}>{cfg.full}</span>
             </div>
             <p style={{ margin:0, fontSize:11, color:'#64748b', lineHeight:1.5 }}>{cfg.desc}</p>
             <div style={{ fontSize:10, color:'#94a3b8', marginTop:4 }}>{cfg.legal}</div>
@@ -111,7 +111,7 @@ export default function Presupuesto() {
       </div>
 
       {/* Alerta normativa */}
-      <div style={{ background:'#EFF6FF', border:'1px solid #BFDBFE', borderRadius:8, padding:'10px 14px', flexShrink:0, fontSize:11, color:'#1e40af', lineHeight:1.6 }}>
+      <div style={{ background:'#ECFDF5', border:'1px solid #A7F3D0', borderRadius:8, padding:'10px 14px', flexShrink:0, fontSize:11, color:'#065F46', lineHeight:1.6 }}>
         <strong>Art. 71 Decreto 111/1996:</strong> Ningún compromiso del Presupuesto General de la Nación puede adquirirse sin la expedición previa del CDP. El RP afecta el presupuesto en el momento de la suscripción del contrato y garantiza los recursos para el pago.
       </div>
 
@@ -162,7 +162,7 @@ export default function Presupuesto() {
                     <td className="td-muted">{item.fecha_expedicion}</td>
                     <td>
                       {cdpVinculado
-                        ? <span style={{ fontSize:10, color:'#6366F1', display:'flex', alignItems:'center', gap:4 }}><Link2 size={10}/> CDP {cdpVinculado.numero}</span>
+                        ? <span style={{ fontSize:10, color:'#0D9488', display:'flex', alignItems:'center', gap:4 }}><Link2 size={10}/> CDP {cdpVinculado.numero}</span>
                         : <span className="td-muted">—</span>
                       }
                     </td>

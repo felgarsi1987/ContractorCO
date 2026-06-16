@@ -105,17 +105,17 @@ export default function PAA() {
         </div>
         <div style={{ height:6, background:'#E2E8F0', borderRadius:99, overflow:'hidden', display:'flex' }}>
           <div style={{ height:'100%', width:`${pctEj}%`, background:'#059669', transition:'width .5s' }}/>
-          <div style={{ height:'100%', width:`${lista.length > 0 ? (enProceso/lista.length*100) : 0}%`, background:'#F59E0B', transition:'width .5s' }}/>
+          <div style={{ height:'100%', width:`${lista.length > 0 ? (enProceso/lista.length*100) : 0}%`, background:'#059669', transition:'width .5s' }}/>
         </div>
       </div>
 
       {/* KPIs */}
       <div className="grid-4" style={{ flexShrink:0 }}>
         {[
-          { label:'VALOR TOTAL PAA',   val: fM(valorTotal),      ic:'#7C3AED', bg:'#EDE9FE', Icon:CalendarDays },
+          { label:'VALOR TOTAL PAA',   val: fM(valorTotal),      ic:'#0D9488', bg:'#CCFBF1', Icon:CalendarDays },
           { label:'VALOR CONTRATADO',  val: fM(valorContratado), ic:'#059669', bg:'#D1FAE5', Icon:CheckCircle },
-          { label:'PLANEADOS',         val: planeados,           ic:'#6366F1', bg:'#EEF2FF', Icon:TrendingUp },
-          { label:'EN PROCESO',        val: enProceso,           ic:'#D97706', bg:'#FEF9C3', Icon:AlertTriangle },
+          { label:'PLANEADOS',         val: planeados,           ic:'#0D9488', bg:'#EEF2FF', Icon:TrendingUp },
+          { label:'EN PROCESO',        val: enProceso,           ic:'#047857', bg:'#ECFDF5', Icon:AlertTriangle },
         ].map(({ label, val, ic, bg, Icon }) => (
           <div key={label} className="kpi-card">
             <div className="kpi-icon" style={{ background: bg }}><Icon size={16} style={{ color: ic }}/></div>
@@ -127,7 +127,7 @@ export default function PAA() {
       </div>
 
       {/* Alerta normativa */}
-      <div style={{ background:'#EFF6FF', border:'1px solid #BFDBFE', borderRadius:8, padding:'10px 14px', flexShrink:0, fontSize:11, color:'#1e40af', lineHeight:1.6 }}>
+      <div style={{ background:'#ECFDF5', border:'1px solid #A7F3D0', borderRadius:8, padding:'10px 14px', flexShrink:0, fontSize:11, color:'#065F46', lineHeight:1.6 }}>
         <strong>Decreto 1082/2015 Art. 2.2.1.1.1.1.1:</strong> Las entidades estatales deben elaborar el Plan Anual de Adquisiciones para cada vigencia fiscal, publicarlo en el SECOP II a más tardar el 31 de enero, y actualizarlo cada vez que se modifique.
       </div>
 
@@ -158,7 +158,7 @@ export default function PAA() {
           const abierto = expandido === item.id;
           const atrasado = item.fecha_inicio_proceso && new Date(item.fecha_inicio_proceso) < new Date() && item.estado === 'planeado';
           return (
-            <div key={item.id} className="card" style={{ padding:0, border: atrasado ? '1px solid #FECACA' : undefined }}>
+            <div key={item.id} className="card" style={{ padding:0, border: atrasado ? '1px solid #A7F3D0' : undefined }}>
               <div onClick={() => setExpandido(abierto ? null : item.id)}
                 style={{ display:'flex', alignItems:'center', gap:12, padding:'12px 16px', cursor:'pointer' }}>
                 <div style={{ width:24, height:24, borderRadius:'50%', background:'#F1F5F9', display:'flex', alignItems:'center', justifyContent:'center', fontSize:10, color:'#64748b', fontWeight:700, flexShrink:0 }}>
@@ -166,7 +166,7 @@ export default function PAA() {
                 </div>
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:3, flexWrap:'wrap' }}>
-                    <span style={{ color:'#1e293b', fontSize:13, fontWeight:600, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{item.objeto}</span>
+                    <span style={{ color:'#064E3B', fontSize:13, fontWeight:600, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{item.objeto}</span>
                     <span className={`badge ${cfg.cls}`}>{cfg.label}</span>
                     {atrasado && <span className="badge badge-red">Atrasado</span>}
                   </div>
@@ -177,7 +177,7 @@ export default function PAA() {
                   </div>
                 </div>
                 <div style={{ textAlign:'right', flexShrink:0 }}>
-                  <div style={{ fontSize:14, fontWeight:800, color:'#7C3AED' }}>{fCOP(item.valor_estimado)}</div>
+                  <div style={{ fontSize:14, fontWeight:800, color:'#0D9488' }}>{fCOP(item.valor_estimado)}</div>
                   {item.duracion_estimada_meses && <div style={{ fontSize:10, color:'#94a3b8' }}>{item.duracion_estimada_meses} meses</div>}
                 </div>
                 {abierto ? <ChevronUp size={14} color="#94a3b8"/> : <ChevronDown size={14} color="#94a3b8"/>}
@@ -193,7 +193,7 @@ export default function PAA() {
                     ].filter(([,v]) => v).map(([k, v]) => (
                       <div key={k}>
                         <div style={{ fontSize:10, color:'#94a3b8', fontWeight:700, letterSpacing:'.06em', marginBottom:3 }}>{k}</div>
-                        <div style={{ fontSize:12, color:'#1e293b' }}>{v}</div>
+                        <div style={{ fontSize:12, color:'#064E3B' }}>{v}</div>
                       </div>
                     ))}
                   </div>
@@ -212,7 +212,7 @@ export default function PAA() {
                         <button className="btn btn-primary" style={{ padding:'5px 12px', fontSize:11 }} onClick={() => cambiarEstado(item.id, 'contratado')}>Marcar contratado</button>
                       )}
                       {(item.estado === 'planeado' || item.estado === 'en_proceso') && (
-                        <button className="btn btn-secondary" style={{ padding:'5px 12px', fontSize:11, color:'#DC2626', borderColor:'#FECACA' }} onClick={() => cambiarEstado(item.id, 'desierto')}>Declarar desierto</button>
+                        <button className="btn btn-secondary" style={{ padding:'5px 12px', fontSize:11, color:'#064E3B', borderColor:'#A7F3D0' }} onClick={() => cambiarEstado(item.id, 'desierto')}>Declarar desierto</button>
                       )}
                     </div>
                   </div>

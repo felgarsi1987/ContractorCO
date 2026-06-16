@@ -87,14 +87,14 @@ export default function ChecklistBuilder({ items = [], onChange, tipo = 'mensual
             {/* Contenido */}
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ display:'flex', alignItems:'center', gap:6, flexWrap:'wrap' }}>
-                <span style={{ fontSize:12, fontWeight:600, color:'#1e293b' }}>{item.nombre}</span>
+                <span style={{ fontSize:12, fontWeight:600, color:'#064E3B' }}>{item.nombre}</span>
                 {!readOnly && (
                   <button
                     onClick={() => toggleObligatorio(idx)}
                     style={{
                       fontSize:9, fontWeight:700, padding:'2px 6px', borderRadius:4,
                       border:'none', cursor:'pointer', flexShrink:0,
-                      background: item.obligatorio ? '#FEE2E2' : '#D1FAE5',
+                      background: item.obligatorio ? '#D1FAE5' : '#D1FAE5',
                       color:      item.obligatorio ? '#991b1b' : '#065f46',
                     }}>
                     {item.obligatorio ? 'Obligatorio' : 'Opcional'}
@@ -112,7 +112,7 @@ export default function ChecklistBuilder({ items = [], onChange, tipo = 'mensual
             {/* Eliminar */}
             {!readOnly && (
               <button onClick={() => eliminar(idx)} title="Quitar documento"
-                style={{ background:'none', border:'none', cursor:'pointer', color:'#DC2626', padding:2, flexShrink:0, marginTop:1 }}>
+                style={{ background:'none', border:'none', cursor:'pointer', color:'#064E3B', padding:2, flexShrink:0, marginTop:1 }}>
                 <X size={13}/>
               </button>
             )}
@@ -156,7 +156,7 @@ export default function ChecklistBuilder({ items = [], onChange, tipo = 'mensual
                   key={i}
                   onMouseDown={() => agregarDoc(d)}
                   style={{ padding:'8px 12px', cursor:'pointer', borderBottom:'1px solid #F8FAFC' }}>
-                  <div style={{ fontSize:12, fontWeight:600, color:'#1e293b', display:'flex', alignItems:'center', gap:6 }}>
+                  <div style={{ fontSize:12, fontWeight:600, color:'#064E3B', display:'flex', alignItems:'center', gap:6 }}>
                     <Plus size={11} color="#059669"/> {d.nombre}
                   </div>
                   {d.base_legal && <div style={{ fontSize:10, color:'#94a3b8', marginTop:1 }}>{d.base_legal}</div>}
@@ -165,8 +165,8 @@ export default function ChecklistBuilder({ items = [], onChange, tipo = 'mensual
               {busqueda.trim() && (
                 <div
                   onMouseDown={agregarPersonalizado}
-                  style={{ padding:'8px 12px', cursor:'pointer', background:'#EFF6FF', borderTop:'1px solid #BFDBFE' }}>
-                  <div style={{ fontSize:12, fontWeight:700, color:'#2563EB', display:'flex', alignItems:'center', gap:6 }}>
+                  style={{ padding:'8px 12px', cursor:'pointer', background:'#ECFDF5', borderTop:'1px solid #A7F3D0' }}>
+                  <div style={{ fontSize:12, fontWeight:700, color:'#059669', display:'flex', alignItems:'center', gap:6 }}>
                     <Plus size={11}/> Agregar como personalizado: &quot;{busqueda.trim()}&quot;
                   </div>
                   <div style={{ fontSize:10, color:'#60a5fa', marginTop:1 }}>No está en el catálogo — se añadirá sin base legal</div>

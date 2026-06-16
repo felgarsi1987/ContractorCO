@@ -31,17 +31,19 @@
   --text-muted:    #6B7280;   /* texto apagado — gris neutro */
   --text-subtle:   #9CA3AF;   /* placeholders */
 
-  /* Semáforo — sin cambios (tienen que ser reconocibles) */
-  --ok:            #059669;
+  /* Semáforo — espectro monocromático verde */
+  --ok:            #059669;   /* éxito / vigente   — emerald puro */
   --ok-bg:         #D1FAE5;
-  --warn:          #D97706;
-  --warn-bg:       #FEF9C3;
-  --danger:        #DC2626;
-  --danger-bg:     #FEE2E2;
-  --info:          #2563EB;
-  --info-bg:       #DBEAFE;
-  --purple:        #7C3AED;
-  --purple-bg:     #EDE9FE;
+  --warn:          #047857;   /* precaución         — emerald oscuro */
+  --warn-bg:       #ECFDF5;
+  --danger:        #064E3B;   /* crítico / vencido  — forest muy oscuro */
+  --danger-bg:     #F0FDF4;   /* bg más suave para contrastar con --ok-bg */
+  --info:          #10B981;   /* informativo        — emerald medio */
+  --info-bg:       #ECFDF5;
+  --teal:          #0D9488;   /* especial / teal    — categoría distinta */
+  --teal-bg:       #CCFBF1;
+  --purple:        #0D9488;   /* alias → teal */
+  --purple-bg:     #CCFBF1;
 
   /* Geometría */
   --radius-sm:     6px;
@@ -198,13 +200,14 @@ a { text-decoration: none; color: inherit; }
   white-space: nowrap;
   letter-spacing: 0.01em;
 }
-.badge-green  { background: var(--ok-bg);      color: var(--ok);     }
-.badge-orange { background: #FEF9C3;            color: #A16207;       }
-.badge-red    { background: var(--danger-bg);  color: var(--danger); }
-.badge-blue   { background: var(--info-bg);    color: var(--info);   }
-.badge-gray   { background: #F3F4F6;           color: #374151;       }
-.badge-purple { background: var(--purple-bg);  color: var(--purple); }
-.badge-emerald { background: var(--ok-bg);     color: var(--emerald-dark); font-weight:700; }
+.badge-green  { background: var(--ok-bg);       color: var(--ok);        }  /* éxito */
+.badge-orange { background: var(--warn-bg);     color: var(--warn);      }  /* precaución */
+.badge-red    { background: var(--danger-bg);   color: var(--danger);    }  /* crítico */
+.badge-blue   { background: var(--info-bg);     color: var(--info);      }  /* información */
+.badge-gray   { background: #F3F4F6;            color: #374151;          }  /* neutro */
+.badge-purple { background: var(--teal-bg);     color: var(--teal);      }  /* especial/teal */
+.badge-teal   { background: var(--teal-bg);     color: var(--teal);      }  /* alias */
+.badge-emerald{ background: var(--ok-bg);       color: var(--emerald-dark); font-weight:700; }
 
 /* ── KPI card ────────────────────────────────────────────────── */
 .kpi-card {

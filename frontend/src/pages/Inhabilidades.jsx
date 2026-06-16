@@ -105,9 +105,9 @@ export default function Inhabilidades() {
       <div className="grid-4" style={{ flexShrink:0 }}>
         {[
           { label:'TOTAL CONSULTAS',  val:total,         ic:'#059669', bg:'#D1FAE5', Icon:Shield },
-          { label:'INHABILITADOS',    val:inhabilitados, ic:'#DC2626', bg:'#FEE2E2', Icon:AlertTriangle },
-          { label:'POR VENCER (30D)', val:porVencer,     ic:'#D97706', bg:'#FEF9C3', Icon:Clock },
-          { label:'VENCIDAS',         val:vencidas,      ic:'#6366F1', bg:'#EDE9FE', Icon:AlertTriangle },
+          { label:'INHABILITADOS',    val:inhabilitados, ic:'#064E3B', bg:'#D1FAE5', Icon:AlertTriangle },
+          { label:'POR VENCER (30D)', val:porVencer,     ic:'#047857', bg:'#ECFDF5', Icon:Clock },
+          { label:'VENCIDAS',         val:vencidas,      ic:'#0D9488', bg:'#CCFBF1', Icon:AlertTriangle },
         ].map(({ label, val, ic, bg, Icon }) => (
           <div key={label} className="kpi-card">
             <div className="kpi-icon" style={{ background: bg }}><Icon size={16} style={{ color: ic }}/></div>
@@ -120,7 +120,7 @@ export default function Inhabilidades() {
 
       {/* Alerta inhabilitados */}
       {inhabilitados > 0 && (
-        <div style={{ background:'#FEF2F2', border:'1px solid #FECACA', borderRadius:8, padding:'12px 16px', flexShrink:0, fontSize:12, color:'#991B1B', lineHeight:1.6 }}>
+        <div style={{ background:'#F0FDF4', border:'1px solid #A7F3D0', borderRadius:8, padding:'12px 16px', flexShrink:0, fontSize:12, color:'#991B1B', lineHeight:1.6 }}>
           <strong>⛔ ALERTA — Art. 8 Ley 80/93:</strong> Hay {inhabilitados} contratista(s) con inhabilidades activas. La celebración de contratos con personas inhabilitadas constituye causal de nulidad absoluta y puede generar responsabilidad disciplinaria y fiscal.
         </div>
       )}
@@ -169,7 +169,7 @@ export default function Inhabilidades() {
                 {(contratista?.nombres || '?')[0]}
               </div>
               <div style={{ flex:1 }}>
-                <div style={{ fontSize:13, fontWeight:600, color:'#1e293b' }}>{contratista?.nombres} {contratista?.apellidos}</div>
+                <div style={{ fontSize:13, fontWeight:600, color:'#064E3B' }}>{contratista?.nombres} {contratista?.apellidos}</div>
                 <div style={{ fontSize:11, color:'#64748b' }}>{contratista?.cedula || contratista?.nit} · {contratista?.tipo_persona === 'juridica' ? 'Persona jurídica' : 'Persona natural'}</div>
               </div>
               <SemaforoContratista consultas={cs}/>
@@ -183,11 +183,11 @@ export default function Inhabilidades() {
                 const proxima = c.vigente_hasta && !vencida && new Date(c.vigente_hasta) < new Date(Date.now() + 30*864e5);
                 const fuente  = FUENTES.find(f => f.value === c.fuente);
                 return (
-                  <div key={c.id} style={{ display:'flex', alignItems:'center', gap:12, padding:'8px 10px', background:'#F8FAFC', borderRadius:7, border: vencida ? '1px solid #FECACA' : '1px solid var(--border)' }}>
-                    <cfg.Icon size={13} style={{ color: cfg.cls.includes('red') ? '#DC2626' : cfg.cls.includes('orange') ? '#D97706' : '#059669', flexShrink:0 }}/>
+                  <div key={c.id} style={{ display:'flex', alignItems:'center', gap:12, padding:'8px 10px', background:'#F8FAFC', borderRadius:7, border: vencida ? '1px solid #A7F3D0' : '1px solid var(--border)' }}>
+                    <cfg.Icon size={13} style={{ color: cfg.cls.includes('red') ? '#064E3B' : cfg.cls.includes('orange') ? '#047857' : '#059669', flexShrink:0 }}/>
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
-                        <span style={{ fontSize:12, color:'#1e293b', fontWeight:500 }}>{fuente?.label || c.fuente}</span>
+                        <span style={{ fontSize:12, color:'#064E3B', fontWeight:500 }}>{fuente?.label || c.fuente}</span>
                         <span className={`badge ${cfg.cls}`}>{cfg.label}</span>
                         {vencida && <span className="badge badge-red">Vencida</span>}
                         {proxima && <span className="badge badge-orange">Vence pronto</span>}
@@ -196,7 +196,7 @@ export default function Inhabilidades() {
                     </div>
                     <div style={{ textAlign:'right', fontSize:10, color:'#94a3b8', flexShrink:0 }}>
                       <div>Consultado: {c.fecha_consulta}</div>
-                      {c.vigente_hasta && <div style={{ color: vencida ? '#DC2626' : proxima ? '#D97706' : '#94a3b8' }}>Vigente hasta: {c.vigente_hasta}</div>}
+                      {c.vigente_hasta && <div style={{ color: vencida ? '#064E3B' : proxima ? '#047857' : '#94a3b8' }}>Vigente hasta: {c.vigente_hasta}</div>}
                     </div>
                   </div>
                 );
@@ -221,7 +221,7 @@ export default function Inhabilidades() {
               <button className="btn-icon" onClick={() => setModal(false)}><X size={16}/></button>
             </div>
             <div style={{ padding:'0 24px 24px', display:'flex', flexDirection:'column', gap:14 }}>
-              <div style={{ background:'#FEF2F2', border:'1px solid #FECACA', borderRadius:8, padding:'10px 14px', fontSize:11, color:'#991B1B', lineHeight:1.6 }}>
+              <div style={{ background:'#F0FDF4', border:'1px solid #A7F3D0', borderRadius:8, padding:'10px 14px', fontSize:11, color:'#991B1B', lineHeight:1.6 }}>
                 <strong>Art. 8 Ley 80/93:</strong> Antes de suscribir cualquier contrato, la entidad debe verificar que el contratista no se encuentre incurso en inhabilidades o incompatibilidades.
               </div>
 
@@ -262,7 +262,7 @@ export default function Inhabilidades() {
                 <label className="form-label">Resultado *</label>
                 <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
                   {Object.entries(RESULTADO_CONFIG).map(([v, cfg]) => {
-                    const colorMap = { 'badge-green':'#059669', 'badge-red':'#DC2626', 'badge-orange':'#D97706', 'badge-purple':'#7C3AED' };
+                    const colorMap = { 'badge-green':'#059669', 'badge-red':'#064E3B', 'badge-orange':'#047857', 'badge-purple':'#0D9488' };
                     const color = colorMap[cfg.cls] || '#64748b';
                     const active = form.resultado === v;
                     return (

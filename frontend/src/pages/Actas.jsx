@@ -13,9 +13,9 @@ const TIPO_LABEL = {
 
 const TIPO_COLOR = {
   inicio:      { bg: '#D1FAE5', ic: '#059669' },
-  suspension:  { bg: '#FEF9C3', ic: '#B45309' },
-  reinicio:    { bg: '#DBEAFE', ic: '#2563EB' },
-  terminacion: { bg: '#F3E8FF', ic: '#7C3AED' },
+  suspension:  { bg: '#ECFDF5', ic: '#047857' },
+  reinicio:    { bg: '#D1FAE5', ic: '#059669' },
+  terminacion: { bg: '#F0FDFA', ic: '#0D9488' },
   liquidacion: { bg: '#FFE4E6', ic: '#BE123C' },
 };
 
@@ -166,8 +166,8 @@ export default function Actas() {
 
       {/* Alerta legal — liquidaciones vencidas */}
       {liquidacionesAlerta.length > 0 && (
-        <div style={{ background: '#FEE2E2', border: '1px solid #FECACA', borderRadius: 10, padding: '12px 16px', display: 'flex', gap: 12, alignItems: 'flex-start', flexShrink: 0 }}>
-          <AlertTriangle size={16} style={{ color: '#DC2626', flexShrink: 0, marginTop: 2 }}/>
+        <div style={{ background: '#D1FAE5', border: '1px solid #A7F3D0', borderRadius: 10, padding: '12px 16px', display: 'flex', gap: 12, alignItems: 'flex-start', flexShrink: 0 }}>
+          <AlertTriangle size={16} style={{ color: '#064E3B', flexShrink: 0, marginTop: 2 }}/>
           <div>
             <div style={{ fontSize: 13, fontWeight: 700, color: '#7F1D1D' }}>
               {liquidacionesAlerta.length} contrato{liquidacionesAlerta.length > 1 ? 's' : ''} con plazo de liquidación vencido
@@ -255,7 +255,7 @@ export default function Actas() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                         {val
                           ? <CheckCircle size={12} style={{ color: '#059669' }}/>
-                          : <Clock size={12} style={{ color: '#F59E0B' }}/>}
+                          : <Clock size={12} style={{ color: '#059669' }}/>}
                         <span style={{ fontSize: 11, color: val ? '#059669' : '#92400E' }}>{label}</span>
                       </div>
                       {!val && acta.estado !== 'firmada' && acta.estado !== 'unilateral' && (
@@ -272,7 +272,7 @@ export default function Actas() {
 
               {/* Detalles extra: suspensión o liquidación */}
               {acta.tipo_acta === 'suspension' && acta.causa_suspension && (
-                <div style={{ marginTop: 12, padding: '8px 12px', background: '#FEF9C3', borderRadius: 6, fontSize: 12, color: '#78350F' }}>
+                <div style={{ marginTop: 12, padding: '8px 12px', background: '#ECFDF5', borderRadius: 6, fontSize: 12, color: '#064E3B' }}>
                   <strong>Causa:</strong> {acta.causa_suspension}
                   {acta.dias_suspension > 0 && <span> · <strong>{acta.dias_suspension} días</strong> de suspensión</span>}
                 </div>
@@ -342,7 +342,7 @@ export default function Actas() {
                   {contratos.map(c => <option key={c.id} value={c.id}>{c.numero_contrato} · {c.objeto?.slice(0, 50)}</option>)}
                 </select>
                 {contratoSeleccionado && form.tipo_acta === 'liquidacion' && (
-                  <div style={{ marginTop: 6, padding: '6px 10px', background: '#FEF9C3', borderRadius: 6, fontSize: 11, color: '#78350F' }}>
+                  <div style={{ marginTop: 6, padding: '6px 10px', background: '#ECFDF5', borderRadius: 6, fontSize: 11, color: '#064E3B' }}>
                     ⚠ Plazo máximo de liquidación: {new Date(new Date(contratoSeleccionado.fecha_fin).setMonth(new Date(contratoSeleccionado.fecha_fin).getMonth() + 4)).toLocaleDateString('es-CO')} (4 meses desde terminación)
                   </div>
                 )}

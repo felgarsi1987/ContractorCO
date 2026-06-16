@@ -178,10 +178,10 @@ export default function SolicitudPrecontrato() {
 
       <div className="grid-4" style={{ flexShrink:0 }}>
         {[
-          { label:'PENDIENTES',  val:totalPend, ic:'#D97706', bg:'#FEF9C3', Icon:Clock },
-          { label:'EN REVISIÓN', val:totalRev,  ic:'#2563EB', bg:'#DBEAFE', Icon:UserCheck },
+          { label:'PENDIENTES',  val:totalPend, ic:'#047857', bg:'#ECFDF5', Icon:Clock },
+          { label:'EN REVISIÓN', val:totalRev,  ic:'#059669', bg:'#D1FAE5', Icon:UserCheck },
           { label:'COMPLETADAS', val:totalComp, ic:'#059669', bg:'#D1FAE5', Icon:CheckCircle },
-          { label:'VENCIDAS',    val:totalVenc, ic:'#DC2626', bg:'#FEE2E2', Icon:AlertTriangle },
+          { label:'VENCIDAS',    val:totalVenc, ic:'#064E3B', bg:'#D1FAE5', Icon:AlertTriangle },
         ].map(({ label, val, ic, bg, Icon }) => (
           <div key={label} className="kpi-card">
             <div className="kpi-icon" style={{ background:bg }}><Icon size={16} style={{ color:ic }}/></div>
@@ -226,15 +226,15 @@ export default function SolicitudPrecontrato() {
               <div onClick={() => setExpandido(abierto ? null : sol.id)}
                 style={{ display:'flex', alignItems:'center', gap:12, padding:'13px 16px', cursor:'pointer' }}>
                 {/* Avatar contratista */}
-                <div style={{ width:36, height:36, borderRadius:'50%', background:'linear-gradient(135deg,#7C3AED,#A78BFA)', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontSize:13, fontWeight:700, flexShrink:0 }}>
+                <div style={{ width:36, height:36, borderRadius:'50%', background:'linear-gradient(135deg,#0D9488,#A78BFA)', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontSize:13, fontWeight:700, flexShrink:0 }}>
                   {ctNombre.charAt(0).toUpperCase() || <User size={14}/>}
                 </div>
 
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:3, flexWrap:'wrap' }}>
-                    <span style={{ fontSize:13, fontWeight:700, color:'#1e293b' }}>{sol.titulo}</span>
+                    <span style={{ fontSize:13, fontWeight:700, color:'#064E3B' }}>{sol.titulo}</span>
                     <span className={`badge ${cfg.cls}`}>{cfg.label}</span>
-                    <span className="badge" style={{ background:'#EDE9FE', color:'#7C3AED', fontSize:9, fontWeight:700 }}>Precontractual</span>
+                    <span className="badge" style={{ background:'#CCFBF1', color:'#0D9488', fontSize:9, fontWeight:700 }}>Precontractual</span>
                   </div>
                   <div style={{ fontSize:11, color:'#64748b', display:'flex', gap:12, flexWrap:'wrap' }}>
                     <span>Contratista: <strong>{ctNombre}</strong></span>
@@ -246,7 +246,7 @@ export default function SolicitudPrecontrato() {
                 <div style={{ textAlign:'right', flexShrink:0 }}>
                   <div style={{ fontSize:12, fontWeight:700, color: pct === 100 ? '#059669' : '#475569' }}>{aprobados}/{total} aprobados</div>
                   <div style={{ width:80, height:4, background:'#E2E8F0', borderRadius:99, overflow:'hidden', marginTop:4 }}>
-                    <div style={{ height:'100%', width:`${pct}%`, background: pct === 100 ? '#059669' : '#7C3AED', borderRadius:99, transition:'width .4s' }}/>
+                    <div style={{ height:'100%', width:`${pct}%`, background: pct === 100 ? '#059669' : '#0D9488', borderRadius:99, transition:'width .4s' }}/>
                   </div>
                 </div>
                 {abierto ? <ChevronUp size={14} color="#94a3b8"/> : <ChevronDown size={14} color="#94a3b8"/>}
@@ -301,19 +301,19 @@ export default function SolicitudPrecontrato() {
                         }}>
                           <div style={{ flex:1, minWidth:0 }}>
                             <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:item.base_legal ? 2 : 0, flexWrap:'wrap' }}>
-                              <span style={{ fontSize:12, fontWeight:600, color:'#1e293b' }}>{item.nombre}</span>
+                              <span style={{ fontSize:12, fontWeight:600, color:'#064E3B' }}>{item.nombre}</span>
                               <span className={`badge ${icfg.cls}`}>{icfg.label}</span>
                               {!item.obligatorio && <span style={{ fontSize:9, color:'#94a3b8', fontWeight:600 }}>Opcional</span>}
                             </div>
                             {item.base_legal && <div style={{ fontSize:10, color:'#94a3b8', marginBottom:2 }}>{item.base_legal}</div>}
                             {item.comentario_rechazo && (
-                              <div style={{ fontSize:11, color:'#DC2626', marginTop:4, background:'#FEF2F2', padding:'4px 8px', borderRadius:5 }}>
+                              <div style={{ fontSize:11, color:'#064E3B', marginTop:4, background:'#F0FDF4', padding:'4px 8px', borderRadius:5 }}>
                                 ✗ {item.comentario_rechazo}
                               </div>
                             )}
                             {ultimo && (
                               <a href={ultimo.url_publica} target="_blank" rel="noreferrer"
-                                style={{ fontSize:10, color:'#2563EB', display:'flex', alignItems:'center', gap:4, marginTop:4, textDecoration:'none' }}>
+                                style={{ fontSize:10, color:'#059669', display:'flex', alignItems:'center', gap:4, marginTop:4, textDecoration:'none' }}>
                                 <Paperclip size={10}/> {ultimo.nombre_archivo} (v{ultimo.version})
                               </a>
                             )}
@@ -325,7 +325,7 @@ export default function SolicitudPrecontrato() {
                                 <ThumbsUp size={11}/> Aprobar
                               </button>
                               <button onClick={() => setModalRechazo(item.id)}
-                                className="btn btn-secondary" style={{ padding:'5px 10px', fontSize:11, display:'flex', alignItems:'center', gap:4, borderColor:'#FECACA', color:'#DC2626' }}>
+                                className="btn btn-secondary" style={{ padding:'5px 10px', fontSize:11, display:'flex', alignItems:'center', gap:4, borderColor:'#A7F3D0', color:'#064E3B' }}>
                                 <ThumbsDown size={11}/> Rechazar
                               </button>
                             </div>
@@ -412,7 +412,7 @@ export default function SolicitudPrecontrato() {
               <div style={{ display:'flex', gap:8, justifyContent:'flex-end' }}>
                 <button className="btn btn-secondary" onClick={() => { setModal(false); resetForm(); }}>Cancelar</button>
                 <button className="btn btn-primary" onClick={guardar} disabled={guardando}
-                  style={{ background:'#7C3AED', borderColor:'#7C3AED' }}>
+                  style={{ background:'#0D9488', borderColor:'#0D9488' }}>
                   {guardando ? 'Creando...' : `Crear y notificar (${form.checklist.length} docs)`}
                 </button>
               </div>
@@ -440,7 +440,7 @@ export default function SolicitudPrecontrato() {
               </div>
               <div style={{ display:'flex', gap:8, justifyContent:'flex-end' }}>
                 <button className="btn btn-secondary" onClick={() => setModalRechazo(null)}>Cancelar</button>
-                <button className="btn btn-primary" style={{ background:'#DC2626', borderColor:'#DC2626' }} onClick={rechazarItem} disabled={rechazando}>
+                <button className="btn btn-primary" style={{ background:'#064E3B', borderColor:'#064E3B' }} onClick={rechazarItem} disabled={rechazando}>
                   {rechazando ? 'Rechazando...' : 'Rechazar documento'}
                 </button>
               </div>

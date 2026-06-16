@@ -115,8 +115,8 @@ export default function SeguridadSocial() {
         {[
           { label:'TOTAL PERÍODOS',  val: lista.length,      ic:'#059669', bg:'#D1FAE5', Icon: Heart },
           { label:'COMPLETOS',       val: totalCompletos,    ic:'#059669', bg:'#D1FAE5', Icon: CheckCircle },
-          { label:'CON PENDIENTES',  val: pendientes,        ic:'#F59E0B', bg:'#FEF9C3', Icon: AlertTriangle },
-          { label:'ESTE MES',        val: lista.filter(v => v.periodo_mes === mesActual).length, ic:'#7C3AED', bg:'#EDE9FE', Icon: Clock },
+          { label:'CON PENDIENTES',  val: pendientes,        ic:'#059669', bg:'#ECFDF5', Icon: AlertTriangle },
+          { label:'ESTE MES',        val: lista.filter(v => v.periodo_mes === mesActual).length, ic:'#0D9488', bg:'#CCFBF1', Icon: Clock },
         ].map(({ label, val, ic, bg, Icon }) => (
           <div key={label} className="kpi-card">
             <div className="kpi-icon" style={{ background: bg }}><Icon size={16} style={{ color: ic }}/></div>
@@ -129,8 +129,8 @@ export default function SeguridadSocial() {
 
       {/* Alerta normativa */}
       <div style={{ background:'#FFFBEB', border:'1px solid #FDE68A', borderRadius:8, padding:'10px 14px', flexShrink:0, display:'flex', gap:10, alignItems:'flex-start' }}>
-        <Shield size={14} style={{ color:'#D97706', flexShrink:0, marginTop:1 }}/>
-        <p style={{ margin:0, fontSize:12, color:'#78350F', lineHeight:1.6 }}>
+        <Shield size={14} style={{ color:'#047857', flexShrink:0, marginTop:1 }}/>
+        <p style={{ margin:0, fontSize:12, color:'#064E3B', lineHeight:1.6 }}>
           <strong>Art. 23 Ley 1150/2007 + Decreto 1273/2018:</strong> La entidad debe verificar mensualmente el pago de aportes a seguridad social (salud 12.5%, pensión 16%, ARL según clase de riesgo) sobre el IBC. Base mínima: 40% del valor mensual, máx. 25 SMLMV.
         </p>
       </div>
@@ -141,7 +141,7 @@ export default function SeguridadSocial() {
         <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12 }}>
           {CONCEPTOS.map(c => (
             <div key={c.key} style={{ background:'#F8FAFC', border:'1px solid var(--border)', borderRadius:8, padding:'10px 14px' }}>
-              <div style={{ fontSize:12, fontWeight:700, color:'#1e293b', marginBottom:2 }}>{c.label}</div>
+              <div style={{ fontSize:12, fontWeight:700, color:'#064E3B', marginBottom:2 }}>{c.label}</div>
               <div style={{ fontSize:20, fontWeight:800, color:'var(--forest)' }}>{c.porcentaje}</div>
               <div style={{ fontSize:10, color:'#94a3b8', marginTop:2 }}>{c.legal}</div>
             </div>

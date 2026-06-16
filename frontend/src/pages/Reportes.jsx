@@ -13,14 +13,14 @@ const byMonth = [
 ];
 const byType = [
   { name:'Prestación de servicios', value:35, color:'#059669' },
-  { name:'Obra',                    value:25, color:'#f59e0b' },
-  { name:'Suministro',              value:20, color:'#2563EB' },
+  { name:'Obra',                    value:25, color:'#059669' },
+  { name:'Suministro',              value:20, color:'#059669' },
   { name:'Consultoría',             value:20, color:'#8b5cf6' },
 ];
 const byStatus = [
   { name:'Vigente',    value:5, color:'#059669' },
-  { name:'Por Vencer', value:1, color:'#f59e0b' },
-  { name:'Vencido',    value:1, color:'#ef4444' },
+  { name:'Por Vencer', value:1, color:'#059669' },
+  { name:'Vencido',    value:1, color:'#059669' },
 ];
 const reportList = [
   'Reporte General de Contratos','Reporte de Cumplimiento','Reporte Financiero',
@@ -74,8 +74,8 @@ export default function Reportes() {
   const kpis = [
     { label:'TOTAL CONTRATOS',    val:'36',   sub:'+15% vs mes anterior',    Icon:FileText,   bg:'#D1FAE5', ic:'#059669', bar:'#059669', trend:true },
     { label:'VALOR TOTAL',        val:'$673M', sub:'+8% vs mes anterior',    Icon:DollarSign, bg:'#dcfce7', ic:'#16a34a', bar:'#16a34a', trend:true },
-    { label:'CUMPLIMIENTO PROM.', val:'87%',  sub:'+18.4% este trimestre',   Icon:BarChart3,  bg:'#FEE2E2', ic:'#DC2626', bar:'#DC2626', trend:true },
-    { label:'DOCS. PROCESADOS',   val:'124',  sub:'Este mes',                Icon:FileText,   bg:'#f3e8ff', ic:'#7c3aed', bar:'#7c3aed', trend:false },
+    { label:'CUMPLIMIENTO PROM.', val:'87%',  sub:'+18.4% este trimestre',   Icon:BarChart3,  bg:'#D1FAE5', ic:'#064E3B', bar:'#064E3B', trend:true },
+    { label:'DOCS. PROCESADOS',   val:'124',  sub:'Este mes',                Icon:FileText,   bg:'#F0FDFA', ic:'#0D9488', bar:'#0D9488', trend:false },
   ];
 
   return (

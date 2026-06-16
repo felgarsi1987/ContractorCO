@@ -35,16 +35,16 @@ export default function Dashboard() {
 
   const kpis = [
     { label:'Contratos Activos',  value:stats?.contratos_activos??'—',          sub:'En ejecución',     Icon:FileText,   ic:'#059669', bg:'#D1FAE5', bar:'#059669' },
-    { label:'Por Vencer',         value:stats?.contratos_proximos_vencer??'—',  sub:'Próximos 30 días', Icon:Calendar,   ic:'#F59E0B', bg:'#FEF9C3', bar:'#F59E0B' },
-    { label:'Docs. Pendientes',   value:stats?.documentos_vencidos??'—',        sub:'Acción requerida', Icon:FolderOpen, ic:'#DC2626', bg:'#FEE2E2', bar:'#DC2626' },
-    { label:'Contratistas',       value:stats?.contratistas_activos??'—',       sub:'Registrados',      Icon:Users,      ic:'#2563EB', bg:'#DBEAFE', bar:'#2563EB' },
+    { label:'Por Vencer',         value:stats?.contratos_proximos_vencer??'—',  sub:'Próximos 30 días', Icon:Calendar,   ic:'#059669', bg:'#ECFDF5', bar:'#059669' },
+    { label:'Docs. Pendientes',   value:stats?.documentos_vencidos??'—',        sub:'Acción requerida', Icon:FolderOpen, ic:'#064E3B', bg:'#D1FAE5', bar:'#064E3B' },
+    { label:'Contratistas',       value:stats?.contratistas_activos??'—',       sub:'Registrados',      Icon:Users,      ic:'#059669', bg:'#D1FAE5', bar:'#059669' },
   ];
 
   const compliance = [
     { type:'Prestación de servicios', pct:87, color:'#059669' },
-    { type:'Obra',                    pct:72, color:'#F59E0B' },
-    { type:'Suministro',              pct:61, color:'#2563EB' },
-    { type:'Consultoría',             pct:95, color:'#7C3AED' },
+    { type:'Obra',                    pct:72, color:'#059669' },
+    { type:'Suministro',              pct:61, color:'#059669' },
+    { type:'Consultoría',             pct:95, color:'#0D9488' },
   ];
 
   if (loading) return (
@@ -176,7 +176,7 @@ export default function Dashboard() {
             <div>
               {alertas.map(a => (
                 <div key={a.id} className="alert-row" style={{ cursor:'pointer' }} onClick={() => navigate('/alertas')}>
-                  <AlertCircle size={13} style={{ color:'#F59E0B', flexShrink:0, marginTop:2 }}/>
+                  <AlertCircle size={13} style={{ color:'#059669', flexShrink:0, marginTop:2 }}/>
                   <div style={{ flex:1, minWidth:0 }}>
                     <div style={{ fontSize:11, fontWeight:600, color:'var(--forest)' }}>
                       {a.contratos?.numero_contrato || 'Sistema'}

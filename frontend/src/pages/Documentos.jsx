@@ -36,7 +36,7 @@ export default function Documentos() {
           <div style={{ display:'flex', gap:4, flexWrap:'wrap' }}>
             {TIPOS.map(t => (
               <button key={t} className="btn btn-secondary btn-sm"
-                style={filter===(t==='Todos'?'':t)?{background:'#dbeafe',color:'#1d4ed8',borderColor:'#bfdbfe'}:{}}
+                style={filter===(t==='Todos'?'':t)?{background:'#D1FAE5',color:'#047857',borderColor:'#A7F3D0'}:{}}
                 onClick={()=>setFilter(t==='Todos'?'':t)}>
                 {t}
               </button>
@@ -66,8 +66,8 @@ export default function Documentos() {
                   <tr key={d.id}>
                     <td>
                       <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                        <div style={{ padding:5, borderRadius:6, background:'#dbeafe' }}>
-                          <FileText size={13} color="#3b82f6"/>
+                        <div style={{ padding:5, borderRadius:6, background:'#D1FAE5' }}>
+                          <FileText size={13} color="#10B981"/>
                         </div>
                         <span style={{ fontSize:12, fontWeight:500 }}>{d.nombre}</span>
                       </div>

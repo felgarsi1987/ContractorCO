@@ -277,7 +277,7 @@ export default function ContratoDetalle() {
                     <tr key={d.id}>
                       <td style={{ color:'var(--emerald)', fontWeight:500, fontSize:12 }}>{d.nombre}</td>
                       <td className="td-muted">{d.categoria?.replace(/_/g,' ')}</td>
-                      <td style={{ color:d.estado_vence==='vencido'?'#DC2626':d.estado_vence==='proximo'?'#F59E0B':undefined, fontWeight:d.estado_vence!=='vigente'?600:400, fontSize:12 }}>
+                      <td style={{ color:d.estado_vence==='vencido'?'#064E3B':d.estado_vence==='proximo'?'#059669':undefined, fontWeight:d.estado_vence!=='vigente'?600:400, fontSize:12 }}>
                         {d.fecha_vencimiento?new Date(d.fecha_vencimiento).toLocaleDateString('es-CO'):'—'}
                       </td>
                       <td><SemTag s={d.estado_vence}/></td>

@@ -134,8 +134,8 @@ export default function Garantias() {
         {[
           { label: 'TOTAL PÓLIZAS',   val: stats.total,     ic: '#059669', bg: '#D1FAE5', bar: '#059669' },
           { label: 'VIGENTES',        val: stats.vigentes,  ic: '#059669', bg: '#D1FAE5', bar: '#059669' },
-          { label: 'POR VENCER',      val: stats.porVencer, ic: '#F59E0B', bg: '#FEF9C3', bar: '#F59E0B' },
-          { label: 'VENCIDAS',        val: stats.vencidas,  ic: '#DC2626', bg: '#FEE2E2', bar: '#DC2626' },
+          { label: 'POR VENCER',      val: stats.porVencer, ic: '#059669', bg: '#ECFDF5', bar: '#059669' },
+          { label: 'VENCIDAS',        val: stats.vencidas,  ic: '#064E3B', bg: '#D1FAE5', bar: '#064E3B' },
         ].map(({ label, val, ic, bg, bar }) => (
           <div key={label} className="kpi-card">
             <div className="kpi-icon" style={{ background: bg }}>
@@ -234,14 +234,14 @@ export default function Garantias() {
                             </div>
                           </div>
                           {(g.dias_para_vencer <= 30 && g.estado !== 'vencida') && (
-                            <div style={{ marginTop: 12, padding: '8px 12px', background: '#FEF9C3', borderRadius: 8, borderLeft: '3px solid #F59E0B', display: 'flex', alignItems: 'center', gap: 8, fontSize: 12 }}>
-                              <AlertTriangle size={14} style={{ color: '#F59E0B', flexShrink: 0 }}/>
-                              <span style={{ color: '#78350F' }}>Esta póliza vence en <strong>{g.dias_para_vencer} días</strong>. Gestiona la renovación con la aseguradora antes del vencimiento para evitar incumplimiento del Art. 2.2.1.2.3.1 Decreto 1082/15.</span>
+                            <div style={{ marginTop: 12, padding: '8px 12px', background: '#ECFDF5', borderRadius: 8, borderLeft: '3px solid #059669', display: 'flex', alignItems: 'center', gap: 8, fontSize: 12 }}>
+                              <AlertTriangle size={14} style={{ color: '#059669', flexShrink: 0 }}/>
+                              <span style={{ color: '#064E3B' }}>Esta póliza vence en <strong>{g.dias_para_vencer} días</strong>. Gestiona la renovación con la aseguradora antes del vencimiento para evitar incumplimiento del Art. 2.2.1.2.3.1 Decreto 1082/15.</span>
                             </div>
                           )}
                           {g.estado === 'vencida' && (
-                            <div style={{ marginTop: 12, padding: '8px 12px', background: '#FEE2E2', borderRadius: 8, borderLeft: '3px solid #DC2626', display: 'flex', alignItems: 'center', gap: 8, fontSize: 12 }}>
-                              <AlertTriangle size={14} style={{ color: '#DC2626', flexShrink: 0 }}/>
+                            <div style={{ marginTop: 12, padding: '8px 12px', background: '#D1FAE5', borderRadius: 8, borderLeft: '3px solid #064E3B', display: 'flex', alignItems: 'center', gap: 8, fontSize: 12 }}>
+                              <AlertTriangle size={14} style={{ color: '#064E3B', flexShrink: 0 }}/>
                               <span style={{ color: '#7F1D1D' }}><strong>Póliza vencida.</strong> El contrato puede estar incurso en causal de incumplimiento. Exige renovación inmediata y notifica al ordenador del gasto.</span>
                             </div>
                           )}

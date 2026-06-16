@@ -8,10 +8,10 @@ import { supabase } from '../lib/supabase';
 
 const priorityStyle = (tipo) => {
   if (tipo?.includes('vencido') || tipo?.includes('_5'))
-    return { icon:<XCircle size={14} color="#dc2626"/>, bg:'#fee2e2', label:'Crítica', badgeCls:'badge-red' };
+    return { icon:<XCircle size={14} color="#064E3B"/>, bg:'#D1FAE5', label:'Crítica', badgeCls:'badge-red' };
   if (tipo?.includes('_15'))
-    return { icon:<AlertCircle size={14} color="#F59E0B"/>, bg:'#FEF9C3', label:'Alta', badgeCls:'badge-orange' };
-  return { icon:<Clock size={14} color="#f59e0b"/>, bg:'#fefce8', label:'Media', badgeCls:'badge-gray' };
+    return { icon:<AlertCircle size={14} color="#059669"/>, bg:'#ECFDF5', label:'Alta', badgeCls:'badge-orange' };
+  return { icon:<Clock size={14} color="#059669"/>, bg:'#F0FDF4', label:'Media', badgeCls:'badge-gray' };
 };
 
 export default function Alertas() {
@@ -103,7 +103,7 @@ export default function Alertas() {
               </div>
               <div style={{ flex:1, minWidth:0 }}>
                 <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:2, flexWrap:'wrap' }}>
-                  <span style={{ fontSize:12, fontWeight:600, color:'#1e293b' }}>{a.contratos?.numero_contrato || 'Sistema'}</span>
+                  <span style={{ fontSize:12, fontWeight:600, color:'#064E3B' }}>{a.contratos?.numero_contrato || 'Sistema'}</span>
                   <span className={`badge ${badgeCls}`}>{label}</span>
                   {a.leida && <span className="badge badge-green">Resuelta</span>}
                   {a.enviado_email && <span className="badge badge-blue" style={{ display:'flex', alignItems:'center', gap:3 }}><Mail size={9}/> Email enviado</span>}

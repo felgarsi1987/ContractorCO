@@ -6,9 +6,9 @@ import toast from 'react-hot-toast';
 
 const DEMO = [
   { rol: 'Admin',        email: 'admin@contractorco.gov.co',    pass: 'Admin2025*', color: '#059669' },
-  { rol: 'Supervisor',   email: 'p.suarez@contractorco.gov.co', pass: 'Super2025*', color: '#2563EB' },
-  { rol: 'Auditor',      email: 'auditor@contraloria.gov.co',   pass: 'Audit2025*', color: '#7C3AED' },
-  { rol: 'Contratista',  email: 'contratista@demo.co',          pass: 'Demo1234!',  color: '#D97706' },
+  { rol: 'Supervisor',   email: 'p.suarez@contractorco.gov.co', pass: 'Super2025*', color: '#059669' },
+  { rol: 'Auditor',      email: 'auditor@contraloria.gov.co',   pass: 'Audit2025*', color: '#0D9488' },
+  { rol: 'Contratista',  email: 'contratista@demo.co',          pass: 'Demo1234!',  color: '#047857' },
 ];
 
 const FEATURES = [
@@ -104,6 +104,7 @@ export default function Login() {
   const [form, setForm]         = useState({ email: '', password: '' });
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading]   = useState(false);
+  const [demoLoading, setDemoLoading] = useState('');
   const [err, setErr]           = useState('');
   const [mounted, setMounted]   = useState(false);
 
@@ -112,12 +113,11 @@ export default function Login() {
     return () => cancelAnimationFrame(id);
   }, []);
 
-  const submit = async (e) => {
-    e.preventDefault();
+  const doLogin = async (email, password) => {
     setLoading(true);
     setErr('');
     try {
-      await login(form.email, form.password);
+      await login(email, password);
       navigate('/');
     } catch (ex) {
       const m = ex?.message || 'Error al iniciar sesión';
@@ -130,6 +130,27 @@ export default function Login() {
       toast.error(MAP[m] || m);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const submit = (e) => { e.preventDefault(); doLogin(form.email, form.password); };
+
+  const loginDemo = async (email, pass, rol) => {
+    setDemoLoading(rol);
+    setErr('');
+    try {
+      await login(email, pass);
+      navigate('/');
+    } catch (ex) {
+      const m = ex?.message || 'Error al iniciar sesión';
+      const MAP = {
+        'Invalid login credentials': 'Cuenta demo no configurada aún.',
+        'Too many requests':          'Demasiados intentos. Espera un momento.',
+      };
+      setErr(MAP[m] || m);
+      toast.error(MAP[m] || m);
+    } finally {
+      setDemoLoading('');
     }
   };
 
@@ -233,11 +254,15 @@ export default function Login() {
                   key={email}
                   type="button"
                   className="lc-demo-row"
-                  onClick={() => setForm({ email, password: pass })}
+                  disabled={!!demoLoading || loading}
+                  onClick={() => loginDemo(email, pass, rol)}
                 >
                   <span className="lc-badge" style={{ background: color + '22', color }}>{rol.toUpperCase()}</span>
                   <span className="lc-demo-email">{email}</span>
-                  <span className="lc-demo-arr">↗</span>
+                  {demoLoading === rol
+                    ? <span className="lc-spin" style={{ width:10, height:10, borderWidth:1.5, flexShrink:0 }}/>
+                    : <span className="lc-demo-arr">↗</span>
+                  }
                 </button>
               ))}
             </div>
@@ -461,7 +486,7 @@ const CSS = `
   border-radius: 7px;
   padding: 9px 12px;
   font-size: 12px;
-  color: #fca5a5;
+  color: #6EE7B7;
   animation: fadeUp 200ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 

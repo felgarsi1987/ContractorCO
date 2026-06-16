@@ -52,10 +52,10 @@ export default function Contratistas() {
   useEffect(() => { load(); }, [load]);
 
   const kpis = [
-    { label: 'Total registrados', val: total,                                                    color: '#3b82f6', bg: '#eff6ff' },
+    { label: 'Total registrados', val: total,                                                    color: '#10B981', bg: '#ECFDF5' },
     { label: 'Activos',           val: data.filter(c => c.estado === 'activo').length,            color: '#16a34a', bg: '#f0fdf4' },
-    { label: 'Pendientes',        val: data.filter(c => c.estado === 'suspendido').length,        color: '#DC2626', bg: '#FEE2E2' },
-    { label: 'Jurídicas',         val: data.filter(c => c.tipo_persona === 'juridica').length,    color: '#7c3aed', bg: '#f3e8ff' },
+    { label: 'Pendientes',        val: data.filter(c => c.estado === 'suspendido').length,        color: '#064E3B', bg: '#D1FAE5' },
+    { label: 'Jurídicas',         val: data.filter(c => c.tipo_persona === 'juridica').length,    color: '#0D9488', bg: '#F0FDFA' },
   ];
 
   return (
@@ -114,7 +114,7 @@ export default function Contratistas() {
       <div className="card">
         {error ? (
           <div style={{ padding: 40, textAlign: 'center' }}>
-            <div style={{ color: '#dc2626', fontSize: 13, marginBottom: 12 }}>{error}</div>
+            <div style={{ color: '#064E3B', fontSize: 13, marginBottom: 12 }}>{error}</div>
             <button className="btn btn-primary btn-sm" onClick={load}>Reintentar</button>
           </div>
         ) : loading ? (
@@ -141,11 +141,11 @@ export default function Contratistas() {
                     <tr key={c.id}>
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div style={{ width: 28, height: 28, borderRadius: '50%', background: c.tipo_persona === 'natural' ? '#dbeafe' : '#f3e8ff', color: c.tipo_persona === 'natural' ? '#1d4ed8' : '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>
+                          <div style={{ width: 28, height: 28, borderRadius: '50%', background: c.tipo_persona === 'natural' ? '#D1FAE5' : '#F0FDFA', color: c.tipo_persona === 'natural' ? '#047857' : '#0D9488', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>
                             {(c.nombres || c.razon_social || '?')[0].toUpperCase()}
                           </div>
                           <div>
-                            <div style={{ fontWeight: 500, fontSize: 12, color: '#1e293b' }}>
+                            <div style={{ fontWeight: 500, fontSize: 12, color: '#064E3B' }}>
                               {c.nombres || ''} {c.apellidos || ''}{c.razon_social ? c.razon_social : ''}
                             </div>
                             {c.email && <div style={{ fontSize: 10, color: '#94a3b8' }}>{c.email}</div>}
@@ -163,7 +163,7 @@ export default function Contratistas() {
                       <td className="td-muted">{c.telefono || '—'}</td>
                       <td className="td-muted">{c.municipio ? `${c.municipio}${c.departamento ? ', ' + c.departamento : ''}` : '—'}</td>
                       <td>
-                        <span style={{ width: 24, height: 24, borderRadius: '50%', background: activos > 0 ? '#dbeafe' : '#f1f5f9', color: activos > 0 ? '#1d4ed8' : '#94a3b8', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700 }}>
+                        <span style={{ width: 24, height: 24, borderRadius: '50%', background: activos > 0 ? '#D1FAE5' : '#f1f5f9', color: activos > 0 ? '#047857' : '#94a3b8', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700 }}>
                           {activos}
                         </span>
                       </td>
@@ -176,7 +176,7 @@ export default function Contratistas() {
                         <div style={{ display: 'flex', gap: 2 }}>
                           <button className="btn-icon" title="Ver contratos" onClick={e=>{e.stopPropagation();navigate('/contratos?contratista_id='+c.id);}}><Eye size={13}/></button>
                           <button className="btn-icon" title="Editar" onClick={e=>{e.stopPropagation();setEditando(c);setModal(true);}}><Edit size={13}/></button>
-                          <button className="btn-icon" title="Suspender" style={{ color:'#DC2626' }} onClick={e=>{e.stopPropagation();setConfirmSuspender(c.id);}}><Trash2 size={13}/></button>
+                          <button className="btn-icon" title="Suspender" style={{ color:'#064E3B' }} onClick={e=>{e.stopPropagation();setConfirmSuspender(c.id);}}><Trash2 size={13}/></button>
                         </div>
                       </td>
                     </tr>
@@ -273,7 +273,7 @@ function ModalNuevoContratista({ onClose, onCreated }) {
         {/* Steps indicator */}
         <div style={{ padding: '10px 20px 0', display: 'flex', gap: 8 }}>
           {[1,2].map(s => (
-            <div key={s} style={{ flex: 1, height: 3, borderRadius: 99, background: s <= step ? '#3b82f6' : '#e2e8f0', cursor: 'pointer' }} onClick={() => s < step && setStep(s)}/>
+            <div key={s} style={{ flex: 1, height: 3, borderRadius: 99, background: s <= step ? '#10B981' : '#e2e8f0', cursor: 'pointer' }} onClick={() => s < step && setStep(s)}/>
           ))}
         </div>
 
@@ -285,7 +285,7 @@ function ModalNuevoContratista({ onClose, onCreated }) {
                 <div style={{ display: 'flex', gap: 8 }}>
                   {[['natural','👤 Persona Natural'],['juridica','🏢 Persona Jurídica']].map(([v,l]) => (
                     <button key={v} type="button"
-                      style={{ flex: 1, padding: '8px', borderRadius: 6, border: `2px solid ${form.tipo_persona===v?'#3b82f6':'#e2e8f0'}`, background: form.tipo_persona===v?'#eff6ff':'#fff', color: form.tipo_persona===v?'#1d4ed8':'#475569', fontSize: 12, fontWeight: 500, cursor: 'pointer' }}
+                      style={{ flex: 1, padding: '8px', borderRadius: 6, border: `2px solid ${form.tipo_persona===v?'#10B981':'#e2e8f0'}`, background: form.tipo_persona===v?'#ECFDF5':'#fff', color: form.tipo_persona===v?'#047857':'#475569', fontSize: 12, fontWeight: 500, cursor: 'pointer' }}
                       onClick={() => set('tipo_persona', v)}>
                       {l}
                     </button>

@@ -112,9 +112,9 @@ export default function PAA() {
       {/* KPIs */}
       <div className="grid-4" style={{ flexShrink:0 }}>
         {[
-          { label:'VALOR TOTAL PAA',   val: fM(valorTotal),      ic:'#0D9488', bg:'#CCFBF1', Icon:CalendarDays },
+          { label:'VALOR TOTAL PAA',   val: fM(valorTotal),      ic:'#7C3AED', bg:'#EDE9FE', Icon:CalendarDays },
           { label:'VALOR CONTRATADO',  val: fM(valorContratado), ic:'#059669', bg:'#D1FAE5', Icon:CheckCircle },
-          { label:'PLANEADOS',         val: planeados,           ic:'#0D9488', bg:'#EEF2FF', Icon:TrendingUp },
+          { label:'PLANEADOS',         val: planeados,           ic:'#7C3AED', bg:'#EEF2FF', Icon:TrendingUp },
           { label:'EN PROCESO',        val: enProceso,           ic:'#047857', bg:'#ECFDF5', Icon:AlertTriangle },
         ].map(({ label, val, ic, bg, Icon }) => (
           <div key={label} className="kpi-card">
@@ -177,7 +177,7 @@ export default function PAA() {
                   </div>
                 </div>
                 <div style={{ textAlign:'right', flexShrink:0 }}>
-                  <div style={{ fontSize:14, fontWeight:800, color:'#0D9488' }}>{fCOP(item.valor_estimado)}</div>
+                  <div style={{ fontSize:14, fontWeight:800, color:'#7C3AED' }}>{fCOP(item.valor_estimado)}</div>
                   {item.duracion_estimada_meses && <div style={{ fontSize:10, color:'#94a3b8' }}>{item.duracion_estimada_meses} meses</div>}
                 </div>
                 {abierto ? <ChevronUp size={14} color="#94a3b8"/> : <ChevronDown size={14} color="#94a3b8"/>}

@@ -75,7 +75,7 @@ export default function Reportes() {
     { label:'TOTAL CONTRATOS',    val:'36',   sub:'+15% vs mes anterior',    Icon:FileText,   bg:'#D1FAE5', ic:'#059669', bar:'#059669', trend:true },
     { label:'VALOR TOTAL',        val:'$673M', sub:'+8% vs mes anterior',    Icon:DollarSign, bg:'#dcfce7', ic:'#16a34a', bar:'#16a34a', trend:true },
     { label:'CUMPLIMIENTO PROM.', val:'87%',  sub:'+18.4% este trimestre',   Icon:BarChart3,  bg:'#D1FAE5', ic:'#064E3B', bar:'#064E3B', trend:true },
-    { label:'DOCS. PROCESADOS',   val:'124',  sub:'Este mes',                Icon:FileText,   bg:'#F0FDFA', ic:'#0D9488', bar:'#0D9488', trend:false },
+    { label:'DOCS. PROCESADOS',   val:'124',  sub:'Este mes',                Icon:FileText,   bg:'#F0FDFA', ic:'#7C3AED', bar:'#7C3AED', trend:false },
   ];
 
   return (

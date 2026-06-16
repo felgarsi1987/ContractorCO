@@ -94,8 +94,8 @@ export default function ChecklistBuilder({ items = [], onChange, tipo = 'mensual
                     style={{
                       fontSize:9, fontWeight:700, padding:'2px 6px', borderRadius:4,
                       border:'none', cursor:'pointer', flexShrink:0,
-                      background: item.obligatorio ? '#D1FAE5' : '#D1FAE5',
-                      color:      item.obligatorio ? '#991b1b' : '#065f46',
+                      background: item.obligatorio ? '#DDD6FE' : '#F1F5F9',
+                      color:      item.obligatorio ? '#5B21B6' : '#64748B',
                     }}>
                     {item.obligatorio ? 'Obligatorio' : 'Opcional'}
                   </button>
@@ -112,7 +112,7 @@ export default function ChecklistBuilder({ items = [], onChange, tipo = 'mensual
             {/* Eliminar */}
             {!readOnly && (
               <button onClick={() => eliminar(idx)} title="Quitar documento"
-                style={{ background:'none', border:'none', cursor:'pointer', color:'#064E3B', padding:2, flexShrink:0, marginTop:1 }}>
+                style={{ background:'none', border:'none', cursor:'pointer', color:'#5B21B6', padding:2, flexShrink:0, marginTop:1 }}>
                 <X size={13}/>
               </button>
             )}

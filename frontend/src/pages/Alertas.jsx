@@ -8,10 +8,10 @@ import { supabase } from '../lib/supabase';
 
 const priorityStyle = (tipo) => {
   if (tipo?.includes('vencido') || tipo?.includes('_5'))
-    return { icon:<XCircle size={14} color="#064E3B"/>, bg:'#D1FAE5', label:'Crítica', badgeCls:'badge-red' };
+    return { icon:<XCircle size={14} color="#5B21B6"/>, bg:'#DDD6FE', label:'Crítica', badgeCls:'badge-red' };
   if (tipo?.includes('_15'))
-    return { icon:<AlertCircle size={14} color="#059669"/>, bg:'#ECFDF5', label:'Alta', badgeCls:'badge-orange' };
-  return { icon:<Clock size={14} color="#059669"/>, bg:'#F0FDF4', label:'Media', badgeCls:'badge-gray' };
+    return { icon:<AlertCircle size={14} color="#7C3AED"/>, bg:'#EDE9FE', label:'Alta', badgeCls:'badge-orange' };
+  return { icon:<Clock size={14} color="#64748B"/>, bg:'#F1F5F9', label:'Media', badgeCls:'badge-gray' };
 };
 
 export default function Alertas() {

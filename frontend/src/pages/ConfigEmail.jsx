@@ -148,7 +148,7 @@ export default function ConfigEmail() {
         {[
           { label:'TIPOS ACTIVOS',    val:`${totalHab}/${TIPOS_EMAIL.length}`, ic:'#059669', bg:'#D1FAE5', Icon:Mail },
           { label:'EMAILS ENVIADOS',  val:totalEnv,   ic:'#059669', bg:'#D1FAE5', Icon:Send },
-          { label:'ERRORES',          val:totalError, ic:'#064E3B', bg:'#D1FAE5', Icon:XCircle },
+          { label:'ERRORES',          val:totalError, ic:'#5B21B6', bg:'#DDD6FE', Icon:XCircle },
           { label:'CONFIGURANDO',     val: contratoSel === 'global' ? 'Global' : 'Por contrato', ic:'#047857', bg:'#ECFDF5', Icon:ToggleRight },
         ].map(({ label, val, ic, bg, Icon }) => (
           <div key={label} className="kpi-card">

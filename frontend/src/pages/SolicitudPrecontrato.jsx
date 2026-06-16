@@ -181,7 +181,7 @@ export default function SolicitudPrecontrato() {
           { label:'PENDIENTES',  val:totalPend, ic:'#047857', bg:'#ECFDF5', Icon:Clock },
           { label:'EN REVISIÓN', val:totalRev,  ic:'#059669', bg:'#D1FAE5', Icon:UserCheck },
           { label:'COMPLETADAS', val:totalComp, ic:'#059669', bg:'#D1FAE5', Icon:CheckCircle },
-          { label:'VENCIDAS',    val:totalVenc, ic:'#064E3B', bg:'#D1FAE5', Icon:AlertTriangle },
+          { label:'VENCIDAS',    val:totalVenc, ic:'#5B21B6', bg:'#DDD6FE', Icon:AlertTriangle },
         ].map(({ label, val, ic, bg, Icon }) => (
           <div key={label} className="kpi-card">
             <div className="kpi-icon" style={{ background:bg }}><Icon size={16} style={{ color:ic }}/></div>
@@ -226,7 +226,7 @@ export default function SolicitudPrecontrato() {
               <div onClick={() => setExpandido(abierto ? null : sol.id)}
                 style={{ display:'flex', alignItems:'center', gap:12, padding:'13px 16px', cursor:'pointer' }}>
                 {/* Avatar contratista */}
-                <div style={{ width:36, height:36, borderRadius:'50%', background:'linear-gradient(135deg,#0D9488,#A78BFA)', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontSize:13, fontWeight:700, flexShrink:0 }}>
+                <div style={{ width:36, height:36, borderRadius:'50%', background:'linear-gradient(135deg,#7C3AED,#A78BFA)', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontSize:13, fontWeight:700, flexShrink:0 }}>
                   {ctNombre.charAt(0).toUpperCase() || <User size={14}/>}
                 </div>
 
@@ -234,7 +234,7 @@ export default function SolicitudPrecontrato() {
                   <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:3, flexWrap:'wrap' }}>
                     <span style={{ fontSize:13, fontWeight:700, color:'#064E3B' }}>{sol.titulo}</span>
                     <span className={`badge ${cfg.cls}`}>{cfg.label}</span>
-                    <span className="badge" style={{ background:'#CCFBF1', color:'#0D9488', fontSize:9, fontWeight:700 }}>Precontractual</span>
+                    <span className="badge" style={{ background:'#EDE9FE', color:'#7C3AED', fontSize:9, fontWeight:700 }}>Precontractual</span>
                   </div>
                   <div style={{ fontSize:11, color:'#64748b', display:'flex', gap:12, flexWrap:'wrap' }}>
                     <span>Contratista: <strong>{ctNombre}</strong></span>
@@ -246,7 +246,7 @@ export default function SolicitudPrecontrato() {
                 <div style={{ textAlign:'right', flexShrink:0 }}>
                   <div style={{ fontSize:12, fontWeight:700, color: pct === 100 ? '#059669' : '#475569' }}>{aprobados}/{total} aprobados</div>
                   <div style={{ width:80, height:4, background:'#E2E8F0', borderRadius:99, overflow:'hidden', marginTop:4 }}>
-                    <div style={{ height:'100%', width:`${pct}%`, background: pct === 100 ? '#059669' : '#0D9488', borderRadius:99, transition:'width .4s' }}/>
+                    <div style={{ height:'100%', width:`${pct}%`, background: pct === 100 ? '#059669' : '#7C3AED', borderRadius:99, transition:'width .4s' }}/>
                   </div>
                 </div>
                 {abierto ? <ChevronUp size={14} color="#94a3b8"/> : <ChevronDown size={14} color="#94a3b8"/>}
@@ -412,7 +412,7 @@ export default function SolicitudPrecontrato() {
               <div style={{ display:'flex', gap:8, justifyContent:'flex-end' }}>
                 <button className="btn btn-secondary" onClick={() => { setModal(false); resetForm(); }}>Cancelar</button>
                 <button className="btn btn-primary" onClick={guardar} disabled={guardando}
-                  style={{ background:'#0D9488', borderColor:'#0D9488' }}>
+                  style={{ background:'#7C3AED', borderColor:'#7C3AED' }}>
                   {guardando ? 'Creando...' : `Crear y notificar (${form.checklist.length} docs)`}
                 </button>
               </div>

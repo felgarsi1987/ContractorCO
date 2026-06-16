@@ -22,7 +22,7 @@ export default function Auditoria() {
     { label:'Acciones Hoy',   val:data.filter(r=>r.timestamp?.slice(0,10)===new Date().toISOString().slice(0,10)).length, Icon:FileText, bg:'#D1FAE5', ic:'#10B981', sub:'Actividades registradas' },
     { label:'Usuarios Activos', val: new Set(data.map(r=>r.usuario_id)).size, Icon:User, bg:'#dcfce7', ic:'#16a34a', sub:'Usuarios únicos' },
     { label:'Eventos Críticos', val:data.filter(r=>r.accion==='eliminar').length, Icon:Shield, bg:'#ECFDF5', ic:'#059669', sub:'Esta semana' },
-    { label:'Retención',        val:90, Icon:Calendar, bg:'#F0FDFA', ic:'#0D9488', sub:'Días de historial' },
+    { label:'Retención',        val:90, Icon:Calendar, bg:'#F0FDFA', ic:'#7C3AED', sub:'Días de historial' },
   ];
 
   return (

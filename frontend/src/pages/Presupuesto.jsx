@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { presupuesto as presDB, contratos as contratosDB } from '../lib/db';
 
 const TIPO_CONFIG = {
-  cdp: { label:'CDP', full:'Certificado de Disponibilidad Presupuestal', color:'#0D9488', bg:'#CCFBF1', legal:'Art. 71 Decreto 111/1996', desc:'Acredita que existe apropiación disponible para comprometer el gasto' },
+  cdp: { label:'CDP', full:'Certificado de Disponibilidad Presupuestal', color:'#7C3AED', bg:'#EDE9FE', legal:'Art. 71 Decreto 111/1996', desc:'Acredita que existe apropiación disponible para comprometer el gasto' },
   rp:  { label:'RP',  full:'Registro Presupuestal',                       color:'#059669', bg:'#D1FAE5', legal:'Art. 71 Decreto 111/1996', desc:'Garantiza que los recursos quedan reservados para el pago del contrato' },
   op:  { label:'OP',  full:'Orden de Pago',                               color:'#047857', bg:'#ECFDF5', legal:'Art. 36 Decreto 111/1996', desc:'Instrucción de pago al tesorero sobre los recursos apropiados' },
 };
@@ -82,10 +82,10 @@ export default function Presupuesto() {
       {/* KPIs */}
       <div className="grid-4" style={{ flexShrink:0 }}>
         {[
-          { label:'TOTAL CDP',    val:`$${(valorCDP/1e6).toFixed(1)}M`, ic:'#0D9488', bg:'#CCFBF1', Icon:Wallet },
+          { label:'TOTAL CDP',    val:`$${(valorCDP/1e6).toFixed(1)}M`, ic:'#7C3AED', bg:'#EDE9FE', Icon:Wallet },
           { label:'TOTAL RP',     val:`$${(valorRP/1e6).toFixed(1)}M`,  ic:'#059669', bg:'#D1FAE5', Icon:Wallet },
           { label:'ÓRDENES PAGO', val: lista.filter(i=>i.tipo==='op').length, ic:'#047857', bg:'#ECFDF5', Icon:Wallet },
-          { label:'SIN RP',       val: lista.filter(i=>i.tipo==='cdp' && !lista.some(r=>r.tipo==='rp'&&r.cdp_id===i.id)).length, ic:'#064E3B', bg:'#D1FAE5', Icon:Wallet },
+          { label:'SIN RP',       val: lista.filter(i=>i.tipo==='cdp' && !lista.some(r=>r.tipo==='rp'&&r.cdp_id===i.id)).length, ic:'#5B21B6', bg:'#DDD6FE', Icon:Wallet },
         ].map(({ label, val, ic, bg, Icon }) => (
           <div key={label} className="kpi-card">
             <div className="kpi-icon" style={{ background: bg }}><Icon size={16} style={{ color: ic }}/></div>
@@ -162,7 +162,7 @@ export default function Presupuesto() {
                     <td className="td-muted">{item.fecha_expedicion}</td>
                     <td>
                       {cdpVinculado
-                        ? <span style={{ fontSize:10, color:'#0D9488', display:'flex', alignItems:'center', gap:4 }}><Link2 size={10}/> CDP {cdpVinculado.numero}</span>
+                        ? <span style={{ fontSize:10, color:'#7C3AED', display:'flex', alignItems:'center', gap:4 }}><Link2 size={10}/> CDP {cdpVinculado.numero}</span>
                         : <span className="td-muted">—</span>
                       }
                     </td>

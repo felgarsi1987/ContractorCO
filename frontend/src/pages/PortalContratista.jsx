@@ -9,10 +9,10 @@ import { solicitudes as solicitudesDB, notificaciones as notifDB, mensajes as me
 import { supabase } from '../lib/supabase';
 
 const ESTADO_CONFIG = {
-  pendiente:   { label:'Pendiente',   cls:'badge-orange', color:'#047857' },
-  en_revision: { label:'En revisión', cls:'badge-blue',   color:'#059669' },
+  pendiente:   { label:'Pendiente',   cls:'badge-orange', color:'#7C3AED' },
+  en_revision: { label:'En revisión', cls:'badge-blue',   color:'#64748B' },
   completa:    { label:'Completa',    cls:'badge-green',  color:'#059669' },
-  vencida:     { label:'Vencida',     cls:'badge-red',    color:'#064E3B' },
+  vencida:     { label:'Vencida',     cls:'badge-red',    color:'#5B21B6' },
 };
 const ITEM_CONFIG = {
   pendiente: { label:'Pendiente', cls:'badge-gray' },
@@ -153,9 +153,9 @@ export default function PortalContratista() {
       <div className="grid-4" style={{ flexShrink:0 }}>
         {[
           { label:'CONTRATOS',           val: solicitudes.reduce((acc, s) => { const id = s.contrato_id; return acc.includes(id) ? acc : [...acc, id]; }, []).length, ic:'#059669', bg:'#D1FAE5', Icon:FileText },
-          { label:'DOCS PENDIENTES',     val: solicsPendientes, ic:'#047857', bg:'#ECFDF5', Icon:Clock },
+          { label:'DOCS PENDIENTES',     val: solicsPendientes, ic:'#7C3AED', bg:'#EDE9FE', Icon:Clock },
           { label:'SOLICITUDES LISTAS',  val: solicsCompletas,  ic:'#059669', bg:'#D1FAE5', Icon:CheckCircle },
-          { label:'NOTIFICACIONES',      val: noLeidas,         ic:'#059669', bg:'#D1FAE5', Icon:Bell },
+          { label:'NOTIFICACIONES',      val: noLeidas,         ic:'#64748B', bg:'#F1F5F9', Icon:Bell },
         ].map(({ label, val, ic, bg, Icon }) => (
           <div key={label} className="kpi-card">
             <div className="kpi-icon" style={{ background:bg }}><Icon size={16} style={{ color:ic }}/></div>
@@ -201,7 +201,7 @@ export default function PortalContratista() {
                     </div>
                     <div style={{ fontSize:11, color:'#64748b' }}>
                       Contrato: <strong>{contrato?.numero_contrato || '—'}</strong>
-                      {sol.fecha_limite && <> · Límite: <strong style={{ color: new Date(sol.fecha_limite) < new Date() ? '#064E3B' : '#475569' }}>{sol.fecha_limite}</strong></>}
+                      {sol.fecha_limite && <> · Límite: <strong style={{ color: new Date(sol.fecha_limite) < new Date() ? '#5B21B6' : '#475569' }}>{sol.fecha_limite}</strong></>}
                     </div>
                   </div>
                   <div style={{ textAlign:'right', flexShrink:0 }}>
@@ -330,7 +330,7 @@ export default function PortalContratista() {
         <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
             <div style={{ fontSize:11, fontWeight:800, color:'#94a3b8', letterSpacing:'.08em' }}>
-              NOTIFICACIONES {noLeidas > 0 && <span style={{ background:'#064E3B', color:'#fff', borderRadius:99, padding:'1px 6px', fontSize:9, fontWeight:700, marginLeft:4 }}>{noLeidas}</span>}
+              NOTIFICACIONES {noLeidas > 0 && <span style={{ background:'#7C3AED', color:'#fff', borderRadius:99, padding:'1px 6px', fontSize:9, fontWeight:700, marginLeft:4 }}>{noLeidas}</span>}
             </div>
             {noLeidas > 0 && (
               <button onClick={marcarTodasLeidas} style={{ fontSize:10, color:'#059669', background:'none', border:'none', cursor:'pointer', fontWeight:600 }}>

@@ -86,7 +86,7 @@ function SideLink({ to, label, Icon, badge, alertCount }) {
         <Icon size={15} style={{ flexShrink:0 }}/>
         <span style={{ flex:1 }}>{label}</span>
         {badge && alertCount > 0 && (
-          <span style={{ background:'#064E3B', color:'#fff', fontSize:10, fontWeight:700, padding:'1px 6px', borderRadius:99, lineHeight:1.4 }}>
+          <span style={{ background:'#7C3AED', color:'#fff', fontSize:10, fontWeight:700, padding:'1px 6px', borderRadius:99, lineHeight:1.4 }}>
             {alertCount > 99 ? '99+' : alertCount}
           </span>
         )}
@@ -103,7 +103,7 @@ function HealthBar({ stats }) {
   const vencidos = (stats.contratos_vencidos || 0);
   const proximos = (stats.contratos_proximos_vencer || 0);
   const sanos   = total - vencidos - proximos;
-  const color   = vencidos > 0 ? '#064E3B' : proximos > 0 ? '#047857' : '#34D399';
+  const color   = vencidos > 0 ? '#5B21B6' : proximos > 0 ? '#7C3AED' : '#34D399';
   const label   = vencidos > 0 ? `${vencidos} vencidos` : proximos > 0 ? `${proximos} por vencer` : 'Todo vigente';
 
   return (
@@ -254,7 +254,7 @@ export default function Layout() {
             >
               <Bell size={15} color="rgba(167,243,208,0.7)"/>
               {noLeidas > 0 && (
-                <span style={{ position:'absolute', top:5, right:5, width:6, height:6, borderRadius:'50%', background:'#34D399', border:'1.5px solid #0F4D2F' }}/>
+                <span style={{ position:'absolute', top:5, right:5, width:6, height:6, borderRadius:'50%', background:'#7C3AED', border:'1.5px solid #4C1D95' }}/>
               )}
             </button>
             <button style={{ padding:'6px 8px', borderRadius:6, border:'none', background:'transparent', cursor:'pointer' }}>

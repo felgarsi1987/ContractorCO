@@ -105,9 +105,9 @@ export default function Inhabilidades() {
       <div className="grid-4" style={{ flexShrink:0 }}>
         {[
           { label:'TOTAL CONSULTAS',  val:total,         ic:'#059669', bg:'#D1FAE5', Icon:Shield },
-          { label:'INHABILITADOS',    val:inhabilitados, ic:'#064E3B', bg:'#D1FAE5', Icon:AlertTriangle },
+          { label:'INHABILITADOS',    val:inhabilitados, ic:'#5B21B6', bg:'#DDD6FE', Icon:AlertTriangle },
           { label:'POR VENCER (30D)', val:porVencer,     ic:'#047857', bg:'#ECFDF5', Icon:Clock },
-          { label:'VENCIDAS',         val:vencidas,      ic:'#0D9488', bg:'#CCFBF1', Icon:AlertTriangle },
+          { label:'VENCIDAS',         val:vencidas,      ic:'#7C3AED', bg:'#EDE9FE', Icon:AlertTriangle },
         ].map(({ label, val, ic, bg, Icon }) => (
           <div key={label} className="kpi-card">
             <div className="kpi-icon" style={{ background: bg }}><Icon size={16} style={{ color: ic }}/></div>
@@ -262,7 +262,7 @@ export default function Inhabilidades() {
                 <label className="form-label">Resultado *</label>
                 <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
                   {Object.entries(RESULTADO_CONFIG).map(([v, cfg]) => {
-                    const colorMap = { 'badge-green':'#059669', 'badge-red':'#064E3B', 'badge-orange':'#047857', 'badge-purple':'#0D9488' };
+                    const colorMap = { 'badge-green':'#059669', 'badge-red':'#064E3B', 'badge-orange':'#047857', 'badge-purple':'#7C3AED' };
                     const color = colorMap[cfg.cls] || '#64748b';
                     const active = form.resultado === v;
                     return (

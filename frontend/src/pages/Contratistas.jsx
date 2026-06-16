@@ -52,10 +52,10 @@ export default function Contratistas() {
   useEffect(() => { load(); }, [load]);
 
   const kpis = [
-    { label: 'Total registrados', val: total,                                                    color: '#10B981', bg: '#ECFDF5' },
-    { label: 'Activos',           val: data.filter(c => c.estado === 'activo').length,            color: '#16a34a', bg: '#f0fdf4' },
-    { label: 'Pendientes',        val: data.filter(c => c.estado === 'suspendido').length,        color: '#064E3B', bg: '#D1FAE5' },
-    { label: 'Jurídicas',         val: data.filter(c => c.tipo_persona === 'juridica').length,    color: '#0D9488', bg: '#F0FDFA' },
+    { label: 'Total registrados', val: total,                                                    color: '#64748B', bg: '#F1F5F9' },
+    { label: 'Activos',           val: data.filter(c => c.estado === 'activo').length,            color: '#059669', bg: '#D1FAE5' },
+    { label: 'Pendientes',        val: data.filter(c => c.estado === 'suspendido').length,        color: '#7C3AED', bg: '#EDE9FE' },
+    { label: 'Jurídicas',         val: data.filter(c => c.tipo_persona === 'juridica').length,    color: '#7C3AED', bg: '#EDE9FE' },
   ];
 
   return (
@@ -141,7 +141,7 @@ export default function Contratistas() {
                     <tr key={c.id}>
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div style={{ width: 28, height: 28, borderRadius: '50%', background: c.tipo_persona === 'natural' ? '#D1FAE5' : '#F0FDFA', color: c.tipo_persona === 'natural' ? '#047857' : '#0D9488', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>
+                          <div style={{ width: 28, height: 28, borderRadius: '50%', background: c.tipo_persona === 'natural' ? '#F1F5F9' : '#EDE9FE', color: c.tipo_persona === 'natural' ? '#64748B' : '#7C3AED', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>
                             {(c.nombres || c.razon_social || '?')[0].toUpperCase()}
                           </div>
                           <div>
@@ -163,7 +163,7 @@ export default function Contratistas() {
                       <td className="td-muted">{c.telefono || '—'}</td>
                       <td className="td-muted">{c.municipio ? `${c.municipio}${c.departamento ? ', ' + c.departamento : ''}` : '—'}</td>
                       <td>
-                        <span style={{ width: 24, height: 24, borderRadius: '50%', background: activos > 0 ? '#D1FAE5' : '#f1f5f9', color: activos > 0 ? '#047857' : '#94a3b8', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700 }}>
+                        <span style={{ width: 24, height: 24, borderRadius: '50%', background: activos > 0 ? '#D1FAE5' : '#f1f5f9', color: activos > 0 ? '#059669' : '#94a3b8', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700 }}>
                           {activos}
                         </span>
                       </td>
@@ -176,7 +176,7 @@ export default function Contratistas() {
                         <div style={{ display: 'flex', gap: 2 }}>
                           <button className="btn-icon" title="Ver contratos" onClick={e=>{e.stopPropagation();navigate('/contratos?contratista_id='+c.id);}}><Eye size={13}/></button>
                           <button className="btn-icon" title="Editar" onClick={e=>{e.stopPropagation();setEditando(c);setModal(true);}}><Edit size={13}/></button>
-                          <button className="btn-icon" title="Suspender" style={{ color:'#064E3B' }} onClick={e=>{e.stopPropagation();setConfirmSuspender(c.id);}}><Trash2 size={13}/></button>
+                          <button className="btn-icon" title="Suspender" style={{ color:'#5B21B6' }} onClick={e=>{e.stopPropagation();setConfirmSuspender(c.id);}}><Trash2 size={13}/></button>
                         </div>
                       </td>
                     </tr>

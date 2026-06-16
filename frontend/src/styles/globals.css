@@ -31,19 +31,19 @@
   --text-muted:    #6B7280;   /* texto apagado — gris neutro */
   --text-subtle:   #9CA3AF;   /* placeholders */
 
-  /* Semáforo — espectro monocromático verde */
-  --ok:            #059669;   /* éxito / vigente   — emerald puro */
+  /* Semáforo — Paleta B: verde + violeta + pizarra */
+  --ok:            #059669;   /* éxito / vigente    — emerald */
   --ok-bg:         #D1FAE5;
-  --warn:          #047857;   /* precaución         — emerald oscuro */
-  --warn-bg:       #ECFDF5;
-  --danger:        #064E3B;   /* crítico / vencido  — forest muy oscuro */
-  --danger-bg:     #F0FDF4;   /* bg más suave para contrastar con --ok-bg */
-  --info:          #10B981;   /* informativo        — emerald medio */
-  --info-bg:       #ECFDF5;
-  --teal:          #0D9488;   /* especial / teal    — categoría distinta */
-  --teal-bg:       #CCFBF1;
-  --purple:        #0D9488;   /* alias → teal */
-  --purple-bg:     #CCFBF1;
+  --warn:          #7C3AED;   /* precaución         — violeta */
+  --warn-bg:       #EDE9FE;
+  --danger:        #5B21B6;   /* crítico / vencido  — violeta oscuro */
+  --danger-bg:     #DDD6FE;
+  --info:          #64748B;   /* informativo        — pizarra */
+  --info-bg:       #F1F5F9;
+  --purple:        #7C3AED;   /* violeta principal */
+  --purple-bg:     #EDE9FE;
+  --purple-dark:   #5B21B6;   /* violeta crítico */
+  --purple-dark-bg:#DDD6FE;
 
   /* Geometría */
   --radius-sm:     6px;

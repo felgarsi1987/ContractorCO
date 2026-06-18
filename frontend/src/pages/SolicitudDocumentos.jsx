@@ -289,7 +289,7 @@ export default function SolicitudDocumentos() {
                 <div style={{ textAlign:'right', flexShrink:0 }}>
                   <div style={{ fontSize:12, fontWeight:700, color: pct === 100 ? '#059669' : '#475569' }}>{aprobados}/{total} aprobados</div>
                   <div style={{ width:80, height:4, background:'#E2E8F0', borderRadius:99, overflow:'hidden', marginTop:4 }}>
-                    <div style={{ height:'100%', width:`${pct}%`, background: pct === 100 ? '#059669' : '#059669', borderRadius:99, transition:'width .4s' }}/>
+                    <div style={{ height:'100%', width:`${pct}%`, background: pct === 100 ? '#059669' : '#C2410C', borderRadius:99, transition:'width .4s' }}/>
                   </div>
                 </div>
                 {abierto ? <ChevronUp size={14} color="#94a3b8"/> : <ChevronDown size={14} color="#94a3b8"/>}
@@ -360,7 +360,7 @@ export default function SolicitudDocumentos() {
                                 <ThumbsUp size={11}/> Aprobar
                               </button>
                               <button onClick={() => setModalRechazo(item.id)}
-                                className="btn btn-secondary" style={{ padding:'5px 10px', fontSize:11, display:'flex', alignItems:'center', gap:4, borderColor:'#D1FAE5', color:'#059669' }}>
+                                className="btn btn-secondary" style={{ padding:'5px 10px', fontSize:11, display:'flex', alignItems:'center', gap:4, borderColor:'#FDBA74', color:'#9A3412' }}>
                                 <ThumbsDown size={11}/> Rechazar
                               </button>
                             </div>

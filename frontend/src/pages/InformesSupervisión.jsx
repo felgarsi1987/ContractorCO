@@ -134,7 +134,7 @@ export default function InformesSupervisión() {
           const cfg = ESTADO_CONFIG[inf.estado] || ESTADO_CONFIG.borrador;
           const abierto = expandido === inf.id;
           return (
-            <div key={inf.id} className="card" style={{ padding:0, border: inf.requiere_accion ? '1px solid #D1FAE5' : undefined }}>
+            <div key={inf.id} className="card" style={{ padding:0, border: inf.requiere_accion ? '1px solid #FDBA74' : undefined }}>
               <div onClick={() => setExpandido(abierto ? null : inf.id)}
                 style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 16px', cursor:'pointer' }}>
                 <div style={{ flex:1, minWidth:0 }}>

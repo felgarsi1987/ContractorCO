@@ -183,7 +183,7 @@ export default function Inhabilidades() {
                 const proxima = c.vigente_hasta && !vencida && new Date(c.vigente_hasta) < new Date(Date.now() + 30*864e5);
                 const fuente  = FUENTES.find(f => f.value === c.fuente);
                 return (
-                  <div key={c.id} style={{ display:'flex', alignItems:'center', gap:12, padding:'8px 10px', background:'#F8FAFC', borderRadius:7, border: vencida ? '1px solid #A7F3D0' : '1px solid var(--border)' }}>
+                  <div key={c.id} style={{ display:'flex', alignItems:'center', gap:12, padding:'8px 10px', background:'#F8FAFC', borderRadius:7, border: vencida ? '1px solid #FDBA74' : '1px solid var(--border)' }}>
                     <cfg.Icon size={13} style={{ color: cfg.cls.includes('red') ? '#9A3412' : cfg.cls.includes('orange') ? '#C2410C' : '#059669', flexShrink:0 }}/>
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>

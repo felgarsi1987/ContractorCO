@@ -307,7 +307,7 @@ export default function ConfigEmail() {
                         {tipo?.label || h.tipo_email} · {new Date(h.enviado_en).toLocaleString('es-CO', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' })}
                       </div>
                       {h.error_mensaje && (
-                        <div style={{ fontSize:9, color:'#475569', marginTop:2, background:'#D1FAE5', padding:'3px 6px', borderRadius:4 }}>
+                        <div style={{ fontSize:9, color:'#9A3412', marginTop:2, background:'#FFEDD5', padding:'3px 6px', borderRadius:4 }}>
                           {h.error_mensaje.substring(0, 80)}
                         </div>
                       )}

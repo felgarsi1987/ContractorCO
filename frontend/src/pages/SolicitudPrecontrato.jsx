@@ -325,7 +325,7 @@ export default function SolicitudPrecontrato() {
                                 <ThumbsUp size={11}/> Aprobar
                               </button>
                               <button onClick={() => setModalRechazo(item.id)}
-                                className="btn btn-secondary" style={{ padding:'5px 10px', fontSize:11, display:'flex', alignItems:'center', gap:4, borderColor:'#D1FAE5', color:'#059669' }}>
+                                className="btn btn-secondary" style={{ padding:'5px 10px', fontSize:11, display:'flex', alignItems:'center', gap:4, borderColor:'#FDBA74', color:'#9A3412' }}>
                                 <ThumbsDown size={11}/> Rechazar
                               </button>
                             </div>
@@ -356,7 +356,7 @@ export default function SolicitudPrecontrato() {
             <div style={{ padding:'0 24px 24px', display:'flex', flexDirection:'column', gap:16 }}>
 
               {/* Info normativa */}
-              <div style={{ background:'#F5F3FF', border:'1px solid #FED7AA', borderRadius:8, padding:'10px 14px', fontSize:11, color:'#9A3412' }}>
+              <div style={{ background:'#FFEDD5', border:'1px solid #FED7AA', borderRadius:8, padding:'10px 14px', fontSize:11, color:'#9A3412' }}>
                 <strong>Art. 8 Ley 80/93</strong> — Antes de celebrar cualquier contrato, la entidad debe verificar que el contratista no esté inhabilitado o incapacitado para contratar con el Estado.
               </div>
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Eye, Edit, Trash2, Filter, Mail, Phone } from 'lucide-react';
+import { Plus, Eye, Edit, Trash2, Mail, Phone } from 'lucide-react';
 import { supervisores as supDB } from '../lib/db';
 import toast from 'react-hot-toast';
 
@@ -22,7 +22,6 @@ export default function Supervisores() {
       <div className="page-hdr">
         <div><h1>Supervisores</h1><p>Gestión de supervisores de contratos</p></div>
         <div className="hdr-actions">
-          <button className="btn btn-secondary btn-sm"><Filter size={12}/> Filtros</button>
           <button className="btn btn-primary" onClick={()=>setModal(true)}><Plus size={13}/> Nuevo Supervisor</button>
         </div>
       </div>

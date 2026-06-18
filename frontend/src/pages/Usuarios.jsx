@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Filter, Mail, Shield, X } from 'lucide-react';
+import { Plus, Edit, Mail, Shield, X } from 'lucide-react';
 import { usuarios as usuariosDB } from '../lib/db';
 import toast from 'react-hot-toast';
 
@@ -12,6 +12,7 @@ const roleBadge = (r) => {
 export default function Usuarios() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filtroRol, setFiltroRol] = useState('');
   const [modal, setModal] = useState(false);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ nombre:'', email:'', rol:'supervisor', activo:true });
@@ -54,7 +55,7 @@ export default function Usuarios() {
   const kpis = [
     { label:'Usuarios Totales',  val:data.length,                               bg:'#D1FAE5', ic:'#059669', sub:'Registrados' },
     { label:'Usuarios Activos',  val:data.filter(u=>u.activo).length,           bg:'#D1FAE5', ic:'#059669', sub:'Con acceso' },
-    { label:'Administradores',   val:data.filter(u=>u.rol==='admin').length,     bg:'#F0FDFA', ic:'#C2410C', sub:'Permisos completos' },
+    { label:'Administradores',   val:data.filter(u=>u.rol==='admin').length,     bg:'#FFEDD5', ic:'#C2410C', sub:'Permisos completos' },
     { label:'Supervisores',      val:data.filter(u=>u.rol==='supervisor').length,bg:'#D1FAE5', ic:'#059669', sub:'Usuarios operativos' },
   ];
 
@@ -63,7 +64,15 @@ export default function Usuarios() {
       <div className="page-hdr">
         <div><h1>Usuarios</h1><p>Gestión de usuarios y permisos del sistema</p></div>
         <div className="hdr-actions">
-          <button className="btn btn-secondary btn-sm"><Filter size={12}/> Filtros</button>
+          <div style={{ display:'flex', gap:4 }}>
+            {['todos','admin','supervisor','auditor','contratista'].map(r => (
+              <button key={r} className="btn btn-secondary btn-sm"
+                style={filtroRol===(r==='todos'?'':r)?{background:'#D1FAE5',color:'#059669',borderColor:'#A7F3D0'}:{}}
+                onClick={()=>setFiltroRol(r==='todos'?'':r)}>
+                {r.charAt(0).toUpperCase()+r.slice(1)}
+              </button>
+            ))}
+          </div>
           <button className="btn btn-primary" onClick={openNew}><Plus size={13}/> Nuevo Usuario</button>
         </div>
       </div>
@@ -88,7 +97,7 @@ export default function Usuarios() {
           <table className="data-table">
             <thead><tr><th>Usuario</th><th>Rol</th><th>Último Acceso</th><th>Estado</th><th></th></tr></thead>
             <tbody>
-              {data.map(u => (
+              {(filtroRol ? data.filter(u=>u.rol===filtroRol) : data).map(u => (
                 <tr key={u.id}>
                   <td>
                     <div style={{ display:'flex', alignItems:'center', gap:8 }}>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Shield, User, FileText, Calendar, Clock, Filter } from 'lucide-react';
+import { Shield, User, FileText, Calendar, Clock } from 'lucide-react';
 import { auditoria as auditoriaDB } from '../lib/db';
 
 const actionBadge = (a) => {
@@ -8,9 +8,12 @@ const actionBadge = (a) => {
 };
 
 export default function Auditoria() {
-  const [data,    setData]    = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [page,    setPage]    = useState(1);
+  const [data,         setData]         = useState([]);
+  const [loading,      setLoading]      = useState(true);
+  const [page,         setPage]         = useState(1);
+  const [filtroAccion, setFiltroAccion] = useState('');
+
+  const ACCIONES = ['todas','crear','actualizar','eliminar','consultar','login','logout'];
 
   const load = useCallback(() => {
     setLoading(true);
@@ -29,7 +32,15 @@ export default function Auditoria() {
     <div className="page">
       <div className="page-hdr">
         <div><h1>Auditoría</h1><p>Registro de actividades y trazabilidad del sistema</p></div>
-        <button className="btn btn-secondary btn-sm"><Filter size={12}/> Filtros Avanzados</button>
+        <div style={{ display:'flex', gap:4, flexWrap:'wrap' }}>
+          {ACCIONES.map(a => (
+            <button key={a} className="btn btn-secondary btn-sm"
+              style={filtroAccion===(a==='todas'?'':a)?{background:'#D1FAE5',color:'#059669',borderColor:'#A7F3D0'}:{}}
+              onClick={()=>setFiltroAccion(a==='todas'?'':a)}>
+              {a.charAt(0).toUpperCase()+a.slice(1)}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="grid-4" style={{ flexShrink:0 }}>
@@ -56,7 +67,7 @@ export default function Auditoria() {
             <table className="data-table">
               <thead><tr><th>Acción</th><th>Detalle</th><th>Usuario</th><th>Tabla</th><th>IP</th><th>Fecha / Hora</th></tr></thead>
               <tbody>
-                {data.map(r => (
+                {(filtroAccion ? data.filter(r=>r.accion===filtroAccion) : data).map(r => (
                   <tr key={r.id}>
                     <td>
                       <div style={{ display:'flex', alignItems:'center', gap:6 }}>

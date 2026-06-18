@@ -106,7 +106,6 @@ export default function Contratistas() {
             onKeyDown={e => e.key === 'Enter' && load()}
           />
         </div>
-        <button className="btn btn-secondary btn-sm"><Filter size={12}/> Filtros</button>
         <span style={{ fontSize: 12, color: '#64748b' }}>{total} registros</span>
       </div>
 

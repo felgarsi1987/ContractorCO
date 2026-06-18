@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Shield, Plus, AlertTriangle, CheckCircle, Clock, Search, X, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { inhabilidades as inhabDB, contratistas as contratistasDB } from '../lib/db';
+import SearchSelect from '../components/ui/SearchSelect';
 
 const FUENTES = [
   { value:'procuraduria_siri', label:'Procuraduría — SIRI',   url:'https://siri.procuraduria.gov.co',       desc:'Sistema de Información de Registro de Sanciones' },
@@ -227,10 +228,13 @@ export default function Inhabilidades() {
 
               <div className="form-group">
                 <label className="form-label">Contratista *</label>
-                <select className="form-select" value={form.contratista_id} onChange={e => setForm(f => ({ ...f, contratista_id: e.target.value }))}>
-                  <option value="">Seleccionar contratista...</option>
-                  {contratistas.map(c => <option key={c.id} value={c.id}>{c.nombres} {c.apellidos} — {c.cedula || c.nit}</option>)}
-                </select>
+                <SearchSelect
+                  value={form.contratista_id}
+                  onChange={v => setForm(f => ({ ...f, contratista_id: v }))}
+                  options={contratistas.map(c => ({ value: c.id, label: `${c.nombres} ${c.apellidos || ''}`.trim(), sublabel: c.cedula || c.nit }))}
+                  placeholder="Seleccionar contratista..."
+                  searchPlaceholder="Buscar por nombre o cédula..."
+                />
               </div>
 
               <div className="form-group">

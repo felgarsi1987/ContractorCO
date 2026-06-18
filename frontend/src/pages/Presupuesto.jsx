@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Wallet, Plus, X, Link2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { presupuesto as presDB, contratos as contratosDB } from '../lib/db';
+import SearchSelect from '../components/ui/SearchSelect';
 
 const TIPO_CONFIG = {
   cdp: { label:'CDP', full:'Certificado de Disponibilidad Presupuestal', color:'#C2410C', bg:'#FFEDD5', legal:'Art. 71 Decreto 111/1996', desc:'Acredita que existe apropiación disponible para comprometer el gasto' },
@@ -122,10 +123,14 @@ export default function Presupuesto() {
             className={filtroTipo === v ? 'btn btn-primary' : 'btn btn-secondary'}
             style={{ padding:'5px 14px', fontSize:11 }}>{l}</button>
         ))}
-        <select className="form-select" style={{ maxWidth:260 }} value={filtroContrato} onChange={e => setFiltroContrato(e.target.value)}>
-          <option value="">Todos los contratos</option>
-          {contratos.map(c => <option key={c.id} value={c.id}>{c.numero_contrato}</option>)}
-        </select>
+        <SearchSelect
+          value={filtroContrato}
+          onChange={setFiltroContrato}
+          options={contratos.map(c => ({ value: c.id, label: c.numero_contrato, sublabel: c.objeto?.substring(0,40) }))}
+          placeholder="Todos los contratos"
+          searchPlaceholder="Buscar contrato..."
+          style={{ maxWidth: 280 }}
+        />
       </div>
 
       {/* Tabla */}
@@ -236,10 +241,13 @@ export default function Presupuesto() {
                 </div>
                 <div className="form-group">
                   <label className="form-label">Contrato asociado</label>
-                  <select className="form-select" value={form.contrato_id} onChange={e => setForm(f => ({ ...f, contrato_id: e.target.value }))}>
-                    <option value="">Sin contrato (pre-contractual)</option>
-                    {contratos.map(c => <option key={c.id} value={c.id}>{c.numero_contrato}</option>)}
-                  </select>
+                  <SearchSelect
+                    value={form.contrato_id}
+                    onChange={v => setForm(f => ({ ...f, contrato_id: v }))}
+                    options={contratos.map(c => ({ value: c.id, label: c.numero_contrato, sublabel: c.objeto?.substring(0,50) }))}
+                    placeholder="Sin contrato (pre-contractual)"
+                    searchPlaceholder="Buscar contrato..."
+                  />
                 </div>
                 {form.tipo === 'rp' && (
                   <div className="form-group">

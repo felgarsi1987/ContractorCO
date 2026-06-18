@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { contratos as contratosDB, contratistas as contratistasDB, supervisores as supervisoresDB } from '../../lib/db'
 import toast from 'react-hot-toast'
+import SearchSelect from '../ui/SearchSelect'
 
 const TIPOS = [
   { value:'prestacion_servicios', label:'Prestación de Servicios' },
@@ -22,7 +23,7 @@ export default function ModalNuevoContrato({ onClose, onCreated }) {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    contratistasDB.listar({ limit: 100 }).then(r => setContratistas(r.data || []))
+    contratistasDB.listar({ limit: 500 }).then(r => setContratistas(r.data || []))
     supervisoresDB.listar().then(r => setSupervisores(r || []))
   }, [])
 
@@ -75,21 +76,32 @@ export default function ModalNuevoContrato({ onClose, onCreated }) {
             </div>
             <div className="field">
               <label>Contratista *</label>
-              <select className="select" style={{width:'100%'}} value={form.contratista_id} onChange={e=>set('contratista_id',e.target.value)}>
-                <option value="">Seleccionar...</option>
-                {contratistas.map(c => (
-                  <option key={c.id} value={c.id}>{c.nombres} {c.apellidos || c.razon_social || ''}</option>
-                ))}
-              </select>
+              <SearchSelect
+                value={form.contratista_id}
+                onChange={v => set('contratista_id', v)}
+                options={contratistas.map(c => ({
+                  value: c.id,
+                  label: `${c.nombres} ${c.apellidos || c.razon_social || ''}`.trim(),
+                  sublabel: c.cedula || c.nit,
+                }))}
+                placeholder="Seleccionar contratista..."
+                searchPlaceholder="Buscar por nombre o cédula..."
+              />
             </div>
             <div className="field">
               <label>Supervisor</label>
-              <select className="select" style={{width:'100%'}} value={form.supervisor_id} onChange={e=>set('supervisor_id',e.target.value)}>
-                <option value="">Sin asignar</option>
-                {supervisores.map(s => (
-                  <option key={s.id} value={s.id}>{s.usuario?.nombre || s.nombre}</option>
-                ))}
-              </select>
+              <SearchSelect
+                value={form.supervisor_id}
+                onChange={v => set('supervisor_id', v)}
+                options={[{ value: '', label: 'Sin asignar', sublabel: '' }, ...supervisores.map(s => ({
+                  value: s.id,
+                  label: s.usuario?.nombre || s.nombre || '',
+                  sublabel: s.dependencia || '',
+                }))]}
+                placeholder="Sin asignar"
+                searchPlaceholder="Buscar supervisor..."
+                clearable={true}
+              />
             </div>
             <div className="field">
               <label>Valor inicial (COP) *</label>

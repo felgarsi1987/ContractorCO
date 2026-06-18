@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { FileText, Download, Eye, Upload, Search, X } from 'lucide-react';
 import { documentos as docsDB, contratos as contratosDB } from '../lib/db';
 import toast from 'react-hot-toast';
+import SearchSelect from '../components/ui/SearchSelect';
 
 const TIPOS = ['Todos','Contrato','Documento Legal','Póliza','Acta','Informe'];
 const CATS  = ['Contrato','Documento Legal','Póliza','Acta','Informe','Otro'];
@@ -168,11 +169,13 @@ export default function Documentos() {
 
               <div className="field">
                 <label>Contrato (opcional)</label>
-                <select className="select-field" value={form.contrato_id}
-                  onChange={e=>setForm(f=>({...f,contrato_id:e.target.value}))}>
-                  <option value="">Sin contrato asociado</option>
-                  {contratos.map(c => <option key={c.id} value={c.id}>{c.numero_contrato}</option>)}
-                </select>
+                <SearchSelect
+                  value={form.contrato_id}
+                  onChange={v => setForm(f => ({ ...f, contrato_id: v }))}
+                  options={contratos.map(c => ({ value: c.id, label: c.numero_contrato, sublabel: c.objeto?.substring(0,50) }))}
+                  placeholder="Sin contrato asociado"
+                  searchPlaceholder="Buscar contrato..."
+                />
               </div>
 
               <div className="field">

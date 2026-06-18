@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { DollarSign, Plus, CheckCircle, XCircle, Clock, AlertTriangle, X, Shield } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { pagos as pagosDB, contratos as contratosDB } from '../lib/db';
+import SearchSelect from '../components/ui/SearchSelect';
 
 const REQUISITOS = [
   { key:'paz_salvo_ss',      label:'Paz y salvo seguridad social',        legal:'Art. 23 Ley 1150/07 + Art. 50 Ley 789/02' },
@@ -240,10 +241,13 @@ export default function Pagos() {
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
                 <div className="form-group" style={{ gridColumn:'1/-1' }}>
                   <label className="form-label">Contrato *</label>
-                  <select className="form-select" value={form.contrato_id} onChange={e => setForm(f => ({ ...f, contrato_id: e.target.value }))}>
-                    <option value="">Seleccionar contrato...</option>
-                    {contratos.map(c => <option key={c.id} value={c.id}>{c.numero_contrato} — {c.objeto?.substring(0,50)}</option>)}
-                  </select>
+                  <SearchSelect
+                    value={form.contrato_id}
+                    onChange={v => setForm(f => ({ ...f, contrato_id: v }))}
+                    options={contratos.map(c => ({ value: c.id, label: c.numero_contrato, sublabel: c.objeto?.substring(0,60) }))}
+                    placeholder="Seleccionar contrato..."
+                    searchPlaceholder="Buscar por número u objeto..."
+                  />
                 </div>
                 <div className="form-group">
                   <label className="form-label">N° pago</label>

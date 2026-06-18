@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Heart, Plus, CheckCircle, XCircle, AlertTriangle, Clock, X, Shield } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { seguridadSocial as ssDB, contratos as contratosDB } from '../lib/db';
+import SearchSelect from '../components/ui/SearchSelect';
 
 const RIESGOS_ARL = [
   { value: 'I',   label: 'Clase I — Riesgo mínimo',  tarifa: '0.522%' },
@@ -151,10 +152,14 @@ export default function SeguridadSocial() {
 
       {/* Filtro */}
       <div style={{ display:'flex', gap:8, flexShrink:0 }}>
-        <select className="form-select" style={{ maxWidth:320 }} value={filtroContrato} onChange={e => setFiltroContrato(e.target.value)}>
-          <option value="">Todos los contratos</option>
-          {contratos.map(c => <option key={c.id} value={c.id}>{c.numero_contrato} — {c.objeto?.substring(0,40)}</option>)}
-        </select>
+        <SearchSelect
+          value={filtroContrato}
+          onChange={setFiltroContrato}
+          options={contratos.map(c => ({ value: c.id, label: c.numero_contrato, sublabel: c.objeto?.substring(0,50) }))}
+          placeholder="Todos los contratos"
+          searchPlaceholder="Buscar contrato..."
+          style={{ maxWidth: 340 }}
+        />
       </div>
 
       {/* Tabla */}
@@ -231,10 +236,13 @@ export default function SeguridadSocial() {
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
                 <div className="form-group" style={{ gridColumn:'1/-1' }}>
                   <label className="form-label">Contrato *</label>
-                  <select className="form-select" value={form.contrato_id} onChange={e => setForm(f => ({ ...f, contrato_id: e.target.value }))}>
-                    <option value="">Seleccionar contrato...</option>
-                    {contratos.map(c => <option key={c.id} value={c.id}>{c.numero_contrato} — {c.objeto?.substring(0,50)}</option>)}
-                  </select>
+                  <SearchSelect
+                    value={form.contrato_id}
+                    onChange={v => setForm(f => ({ ...f, contrato_id: v }))}
+                    options={contratos.map(c => ({ value: c.id, label: c.numero_contrato, sublabel: c.objeto?.substring(0,60) }))}
+                    placeholder="Seleccionar contrato..."
+                    searchPlaceholder="Buscar por número u objeto..."
+                  />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Mes *</label>

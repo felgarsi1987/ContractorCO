@@ -7,6 +7,7 @@ import {
 import toast from 'react-hot-toast';
 import { solicitudes as solicitudesDB, contratos as contratosDB, mensajes as mensajesDB } from '../lib/db';
 import { emailService, emailPrefs } from '../lib/emailService';
+import SearchSelect from '../components/ui/SearchSelect';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import ChecklistBuilder from '../components/ChecklistBuilder';
@@ -433,10 +434,13 @@ export default function SolicitudDocumentos() {
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
                 <div className="form-group" style={{ gridColumn:'1/-1' }}>
                   <label className="form-label">Contrato *</label>
-                  <select className="form-select" value={form.contrato_id} onChange={e => setForm(f => ({ ...f, contrato_id: e.target.value }))}>
-                    <option value="">Seleccionar contrato...</option>
-                    {contratos.map(c => <option key={c.id} value={c.id}>{c.numero_contrato} — {c.objeto?.substring(0,50)}</option>)}
-                  </select>
+                  <SearchSelect
+                    value={form.contrato_id}
+                    onChange={v => setForm(f => ({ ...f, contrato_id: v }))}
+                    options={contratos.map(c => ({ value: c.id, label: c.numero_contrato, sublabel: c.objeto?.substring(0,60) }))}
+                    placeholder="Seleccionar contrato..."
+                    searchPlaceholder="Buscar por número u objeto..."
+                  />
                 </div>
 
                 <div className="form-group" style={{ gridColumn:'1/-1' }}>

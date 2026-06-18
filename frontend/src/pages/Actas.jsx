@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FileText, Plus, AlertTriangle, CheckCircle, Clock, X, User } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
+import SearchSelect from '../components/ui/SearchSelect';
 
 const TIPO_LABEL = {
   inicio:      'Acta de Inicio',
@@ -337,10 +338,13 @@ export default function Actas() {
               {/* Contrato */}
               <div className="form-group">
                 <label className="form-label">Contrato *</label>
-                <select className="form-select" value={form.contrato_id} onChange={e => setForm(f => ({ ...f, contrato_id: e.target.value }))} required>
-                  <option value="">— Selecciona un contrato —</option>
-                  {contratos.map(c => <option key={c.id} value={c.id}>{c.numero_contrato} · {c.objeto?.slice(0, 50)}</option>)}
-                </select>
+                <SearchSelect
+                  value={form.contrato_id}
+                  onChange={v => setForm(f => ({ ...f, contrato_id: v }))}
+                  options={contratos.map(c => ({ value: c.id, label: c.numero_contrato, sublabel: c.objeto?.slice(0, 60) }))}
+                  placeholder="— Selecciona un contrato —"
+                  searchPlaceholder="Buscar por número u objeto..."
+                />
                 {contratoSeleccionado && form.tipo_acta === 'liquidacion' && (
                   <div style={{ marginTop: 6, padding: '6px 10px', background: '#F5F5F4', borderRadius: 6, fontSize: 11, color: '#78716C' }}>
                     ⚠ Plazo máximo de liquidación: {new Date(new Date(contratoSeleccionado.fecha_fin).setMonth(new Date(contratoSeleccionado.fecha_fin).getMonth() + 4)).toLocaleDateString('es-CO')} (4 meses desde terminación)

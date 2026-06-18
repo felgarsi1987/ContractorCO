@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { solicitudes as solicitudesDB, contratistas as contratistasDB } from '../lib/db';
+import SearchSelect from '../components/ui/SearchSelect';
 import { emailService, emailPrefs } from '../lib/emailService';
 import { useAuth } from '../context/AuthContext';
 import ChecklistBuilder from '../components/ChecklistBuilder';
@@ -362,15 +363,17 @@ export default function SolicitudPrecontrato() {
 
               <div className="form-group">
                 <label className="form-label">Contratista a verificar *</label>
-                <select className="form-select" value={form.contratista_id}
-                  onChange={e => setForm(f => ({ ...f, contratista_id: e.target.value }))}>
-                  <option value="">Seleccionar contratista...</option>
-                  {contratistas.map(c => (
-                    <option key={c.id} value={c.id}>
-                      {c.nombres} {c.apellidos || ''} {c.cedula ? `· CC ${c.cedula}` : ''} {c.nit ? `· NIT ${c.nit}` : ''}
-                    </option>
-                  ))}
-                </select>
+                <SearchSelect
+                  value={form.contratista_id}
+                  onChange={v => setForm(f => ({ ...f, contratista_id: v }))}
+                  options={contratistas.map(c => ({
+                    value: c.id,
+                    label: `${c.nombres} ${c.apellidos || ''}`.trim(),
+                    sublabel: c.cedula ? `CC ${c.cedula}` : c.nit ? `NIT ${c.nit}` : '',
+                  }))}
+                  placeholder="Seleccionar contratista..."
+                  searchPlaceholder="Buscar por nombre o cédula..."
+                />
               </div>
 
               <div className="form-group">

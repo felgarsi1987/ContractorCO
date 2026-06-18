@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Shield, Plus, AlertTriangle, CheckCircle, Clock, X, ChevronDown } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
+import SearchSelect from '../components/ui/SearchSelect';
 
 const TIPO_LABEL = {
   cumplimiento:            'Cumplimiento',
@@ -269,10 +270,13 @@ export default function Garantias() {
               {/* Contrato */}
               <div className="form-group">
                 <label className="form-label">Contrato *</label>
-                <select className="form-select" value={form.contrato_id} onChange={e => setForm(f => ({ ...f, contrato_id: e.target.value }))} required>
-                  <option value="">— Selecciona un contrato —</option>
-                  {contratos.map(c => <option key={c.id} value={c.id}>{c.numero_contrato} · {c.objeto?.slice(0, 50)}</option>)}
-                </select>
+                <SearchSelect
+                  value={form.contrato_id}
+                  onChange={v => setForm(f => ({ ...f, contrato_id: v }))}
+                  options={contratos.map(c => ({ value: c.id, label: c.numero_contrato, sublabel: c.objeto?.slice(0, 60) }))}
+                  placeholder="— Selecciona un contrato —"
+                  searchPlaceholder="Buscar por número u objeto..."
+                />
               </div>
 
               {/* Tipo */}

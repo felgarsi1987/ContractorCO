@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Eye, Edit, Trash2, Filter, Download, Plus, CheckCircle, Search, Users, UserCheck, Clock } from 'lucide-react';
+import { Eye, Edit, Trash2, Download, Plus, CheckCircle, Search, Users, UserCheck, Clock } from 'lucide-react';
 import { contratistas as contratistasDB } from '../lib/db';
 import toast from 'react-hot-toast';
 import ConfirmModal from '../components/ui/ConfirmModal';

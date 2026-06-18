@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Eye, Edit, Trash2, Mail, Phone } from 'lucide-react';
+import { Plus, Eye, Edit, Trash2, Mail, Phone, Search } from 'lucide-react';
 import { supervisores as supDB } from '../lib/db';
 import toast from 'react-hot-toast';
 
@@ -7,12 +7,24 @@ export default function Supervisores() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(false);
+  const [buscar, setBuscar] = useState('');
+  const [filtroEstado, setFiltroEstado] = useState('');
 
   const load = () => {
     setLoading(true);
     supDB.listar().then(r => setData(r||[])).finally(()=>setLoading(false));
   };
   useEffect(() => { load(); }, []);
+
+  const dataFiltrada = data.filter(s => {
+    const nombre = (s.usuario?.nombre || s.nombre || '').toLowerCase();
+    const cargo  = (s.cargo || '').toLowerCase();
+    const dep    = (s.dependencia || '').toLowerCase();
+    const q      = buscar.toLowerCase();
+    const coincide = !buscar || nombre.includes(q) || cargo.includes(q) || dep.includes(q);
+    const activo   = !filtroEstado || (filtroEstado === 'activo' ? s.activo : !s.activo);
+    return coincide && activo;
+  });
 
   const total = data.length;
   const totalContratos = data.reduce((s,d) => s + (d.contratos_activos?.length||parseInt(d.contratos_activos||0)||0), 0);
@@ -22,6 +34,17 @@ export default function Supervisores() {
       <div className="page-hdr">
         <div><h1>Supervisores</h1><p>Gestión de supervisores de contratos</p></div>
         <div className="hdr-actions">
+          <div className="search-wrap" style={{ maxWidth: 260 }}>
+            <Search size={14}/>
+            <input className="search-input" placeholder="Buscar supervisor..."
+              value={buscar} onChange={e => setBuscar(e.target.value)}/>
+          </div>
+          <div className="tab-group">
+            {[['','Todos'],['activo','Activos'],['inactivo','Inactivos']].map(([k,l]) => (
+              <button key={k} className={`tab-btn ${filtroEstado===k?'active':''}`}
+                onClick={() => setFiltroEstado(k)}>{l}</button>
+            ))}
+          </div>
           <button className="btn btn-primary" onClick={()=>setModal(true)}><Plus size={13}/> Nuevo Supervisor</button>
         </div>
       </div>
@@ -51,7 +74,11 @@ export default function Supervisores() {
           <table className="data-table">
             <thead><tr><th>Nombre</th><th>Especialidad</th><th>Contacto</th><th>Contratos Asignados</th><th>Activos</th><th>Estado</th><th></th></tr></thead>
             <tbody>
-              {data.map(s => (
+              {dataFiltrada.length === 0 ? (
+                <tr><td colSpan={7} style={{ textAlign:'center', padding:40, color:'#94a3b8', fontSize:12 }}>
+                  {buscar ? `Sin resultados para "${buscar}"` : 'Sin supervisores registrados.'}
+                </td></tr>
+              ) : dataFiltrada.map(s => (
                 <tr key={s.id}>
                   <td>
                     <div style={{ display:'flex', alignItems:'center', gap:8 }}>
@@ -84,12 +111,19 @@ export default function Supervisores() {
                       {s.contratos_activos?.length||0}
                     </span>
                   </td>
-                  <td><span className="badge badge-green">{s.activo ? 'Activo':'Inactivo'}</span></td>
+                  <td><span className={`badge ${s.activo ? 'badge-green' : 'badge-orange'}`}>{s.activo ? 'Activo':'Inactivo'}</span></td>
                   <td>
                     <div style={{ display:'flex', gap:2 }}>
                       <button className="btn-icon" title="Ver contratos" onClick={()=>window.location='/contratos?supervisor='+s.id}><Eye size={13}/></button>
                       <button className="btn-icon" title="Editar"><Edit size={13}/></button>
-                      <button className="btn-icon" title="Desactivar" style={{ color:'#9A3412' }}><Trash2 size={13}/></button>
+                      <button className="btn-icon" title="Desactivar" style={{ color:'#9A3412' }}
+                        onClick={async () => {
+                          if (!window.confirm('¿Desactivar este supervisor?')) return;
+                          try {
+                            await supDB.actualizar(s.id, { activo: false });
+                            toast.success('Supervisor desactivado'); load();
+                          } catch { toast.error('Error al desactivar'); }
+                        }}><Trash2 size={13}/></button>
                     </div>
                   </td>
                 </tr>

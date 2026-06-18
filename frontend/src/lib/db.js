@@ -307,6 +307,17 @@ export const supervisores = {
     if (error) throw error
     return data
   },
+
+  actualizar: async (id, campos) => {
+    const { data, error } = await supabase
+      .from('supervisores')
+      .update(campos)
+      .eq('id', id)
+      .select()
+      .single()
+    if (error) throw error
+    return data
+  },
 }
 
 // ── AUDITORIA ─────────────────────────────────────────────────

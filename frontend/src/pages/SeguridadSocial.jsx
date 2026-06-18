@@ -80,14 +80,20 @@ export default function SeguridadSocial() {
     }
     setGuardando(true);
     try {
+      const mes  = String(form.periodo_mes).padStart(2, '0');
+      const anio = parseInt(form.periodo_anio);
       await ssDB.crear({
-        ...form,
-        periodo_mes:   parseInt(form.periodo_mes),
-        periodo_anio:  parseInt(form.periodo_anio),
-        valor_ibc:     parseFloat(form.valor_ibc) || 0,
-        salud_valor:   parseFloat(form.salud_valor)   || aportes.salud,
-        pension_valor: parseFloat(form.pension_valor) || aportes.pension,
-        arl_valor:     parseFloat(form.arl_valor)     || aportes.arl,
+        contrato_id:       form.contrato_id,
+        periodo:           `${anio}-${mes}-01`,
+        ibc:               parseFloat(form.valor_ibc) || 0,
+        clase_riesgo:      form.clase_riesgo_arl,
+        aporte_salud:      parseFloat(form.salud_valor)   || aportes.salud,
+        aporte_pension:    parseFloat(form.pension_valor) || aportes.pension,
+        aporte_arl:        parseFloat(form.arl_valor)     || aportes.arl,
+        salud_verificado:  form.salud_verificado,
+        pension_verificado: form.pension_verificado,
+        arl_verificado:    form.arl_verificado,
+        observaciones:     form.observaciones || null,
       });
       toast.success('Verificación registrada');
       setModal(false);
@@ -98,6 +104,12 @@ export default function SeguridadSocial() {
 
   const totalCompletos = lista.filter(v => v.salud_verificado && v.pension_verificado && v.arl_verificado).length;
   const pendientes     = lista.filter(v => !v.salud_verificado || !v.pension_verificado || !v.arl_verificado).length;
+
+  const fPeriodo = (periodo) => {
+    if (!periodo) return '—';
+    const d = new Date(periodo + 'T00:00:00');
+    return `${MESES[d.getMonth()]} ${d.getFullYear()}`;
+  };
 
   return (
     <div className="page">
@@ -117,7 +129,7 @@ export default function SeguridadSocial() {
           { label:'TOTAL PERÍODOS',  val: lista.length,      ic:'#059669', bg:'#D1FAE5', Icon: Heart },
           { label:'COMPLETOS',       val: totalCompletos,    ic:'#059669', bg:'#D1FAE5', Icon: CheckCircle },
           { label:'CON PENDIENTES',  val: pendientes,        ic:'#C2410C', bg:'#FFEDD5', Icon: AlertTriangle },
-          { label:'ESTE MES',        val: lista.filter(v => v.periodo_mes === mesActual).length, ic:'#C2410C', bg:'#FFEDD5', Icon: Clock },
+          { label:'ESTE MES',        val: lista.filter(v => { if (!v.periodo) return false; const d = new Date(v.periodo + 'T00:00:00'); return d.getFullYear() === anioActual && d.getMonth() + 1 === mesActual; }).length, ic:'#C2410C', bg:'#FFEDD5', Icon: Clock },
         ].map(({ label, val, ic, bg, Icon }) => (
           <div key={label} className="kpi-card">
             <div className="kpi-icon" style={{ background: bg }}><Icon size={16} style={{ color: ic }}/></div>
@@ -192,21 +204,21 @@ export default function SeguridadSocial() {
                 return (
                   <tr key={v.id}>
                     <td className="td-strong">{v.contratos?.numero_contrato || '—'}</td>
-                    <td style={{ fontSize:12 }}>{MESES[(v.periodo_mes || 1) - 1]} {v.periodo_anio}</td>
-                    <td style={{ fontSize:12, fontWeight:600, color:'#059669' }}>{fCOP(v.valor_ibc)}</td>
+                    <td style={{ fontSize:12 }}>{fPeriodo(v.periodo)}</td>
+                    <td style={{ fontSize:12, fontWeight:600, color:'#059669' }}>{fCOP(v.ibc)}</td>
                     <td>
-                      <div style={{ fontSize:11, color:'#475569', marginBottom:3 }}>{fCOP(v.salud_valor)}</div>
+                      <div style={{ fontSize:11, color:'#475569', marginBottom:3 }}>{fCOP(v.aporte_salud)}</div>
                       <EstadoBadge verificado={v.salud_verificado}/>
                     </td>
                     <td>
-                      <div style={{ fontSize:11, color:'#475569', marginBottom:3 }}>{fCOP(v.pension_valor)}</div>
+                      <div style={{ fontSize:11, color:'#475569', marginBottom:3 }}>{fCOP(v.aporte_pension)}</div>
                       <EstadoBadge verificado={v.pension_verificado}/>
                     </td>
                     <td>
-                      <div style={{ fontSize:11, color:'#475569', marginBottom:3 }}>{fCOP(v.arl_valor)}</div>
+                      <div style={{ fontSize:11, color:'#475569', marginBottom:3 }}>{fCOP(v.aporte_arl)}</div>
                       <EstadoBadge verificado={v.arl_verificado}/>
                     </td>
-                    <td className="td-muted">{v.numero_planilla || '—'}</td>
+                    <td className="td-muted">{v.soporte_url ? <a href={v.soporte_url} target="_blank" rel="noreferrer" style={{ color:'#059669', fontSize:11 }}>Ver soporte</a> : '—'}</td>
                     <td>
                       {completo
                         ? <span className="badge badge-green">✓ Completo</span>

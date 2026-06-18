@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Mail, ToggleLeft, ToggleRight, Clock, Send, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
+import { Mail, ToggleLeft, ToggleRight, Send, CheckCircle, XCircle, RefreshCw, X } from 'lucide-react';
+import SearchSelect from '../components/ui/SearchSelect';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { emailPrefs, emailHistorial, TIPOS_EMAIL, emailService } from '../lib/emailService';
@@ -22,6 +23,8 @@ export default function ConfigEmail() {
   const [enviando, setEnviando]       = useState(false);
   const [testEmail, setTestEmail]     = useState('');
   const [testTipo, setTestTipo]       = useState('nueva_solicitud');
+  const [histFechaDesde, setHistFechaDesde] = useState('');
+  const [histFechaHasta, setHistFechaHasta] = useState('');
 
   useEffect(() => {
     cargar();
@@ -168,19 +171,30 @@ export default function ConfigEmail() {
           {/* Selector de alcance */}
           <div className="card" style={{ padding:'14px 16px' }}>
             <div style={{ fontSize:11, fontWeight:800, color:'#94a3b8', letterSpacing:'.08em', marginBottom:10 }}>ALCANCE DE LA CONFIGURACIÓN</div>
-            <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+            <div style={{ display:'flex', gap:8, alignItems:'center', flexWrap:'wrap' }}>
               <button onClick={() => setContratoSel('global')}
                 className={contratoSel === 'global' ? 'btn btn-primary' : 'btn btn-secondary'}
-                style={{ fontSize:11, padding:'5px 12px' }}>
+                style={{ fontSize:11, padding:'5px 12px', flexShrink:0 }}>
                 Global (todos los contratos)
               </button>
-              {contratos.map(c => (
-                <button key={c.id} onClick={() => setContratoSel(c.id)}
-                  className={contratoSel === c.id ? 'btn btn-primary' : 'btn btn-secondary'}
-                  style={{ fontSize:11, padding:'5px 12px' }}>
-                  {c.numero_contrato}
-                </button>
-              ))}
+              {contratoSel !== 'global' ? (
+                <div style={{ display:'flex', alignItems:'center', gap:6, padding:'4px 10px', background:'#D1FAE5', border:'1px solid #A7F3D0', borderRadius:20, fontSize:11, fontWeight:600, color:'#065f46' }}>
+                  {contratos.find(c=>c.id===contratoSel)?.numero_contrato || 'Contrato seleccionado'}
+                  <button onClick={() => setContratoSel('global')} style={{ background:'none', border:'none', cursor:'pointer', padding:1, color:'#059669', display:'flex' }}>
+                    <X size={12}/>
+                  </button>
+                </div>
+              ) : (
+                <div style={{ flex:1, maxWidth:320 }}>
+                  <SearchSelect
+                    value={contratoSel === 'global' ? '' : contratoSel}
+                    onChange={v => setContratoSel(v || 'global')}
+                    options={contratos.map(c => ({ value: c.id, label: c.numero_contrato, sublabel: c.objeto?.substring(0,50) }))}
+                    placeholder="Configurar contrato específico..."
+                    searchPlaceholder="Buscar por N° o nombre..."
+                  />
+                </div>
+              )}
             </div>
             <div style={{ fontSize:10, color:'#94a3b8', marginTop:8 }}>
               {contratoSel === 'global'
@@ -276,11 +290,25 @@ export default function ConfigEmail() {
 
           {/* Historial */}
           <div className="card" style={{ padding:'14px 16px' }}>
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8 }}>
               <div style={{ fontSize:11, fontWeight:800, color:'#94a3b8', letterSpacing:'.08em' }}>HISTORIAL DE ENVÍOS</div>
               <button onClick={cargar} style={{ background:'none', border:'none', cursor:'pointer', color:'#94a3b8' }}>
                 <RefreshCw size={13}/>
               </button>
+            </div>
+            <div style={{ display:'flex', gap:6, marginBottom:12 }}>
+              <input type="date" className="form-input" style={{ fontSize:11, padding:'4px 8px', flex:1 }}
+                value={histFechaDesde} onChange={e => setHistFechaDesde(e.target.value)}
+                title="Desde"/>
+              <input type="date" className="form-input" style={{ fontSize:11, padding:'4px 8px', flex:1 }}
+                value={histFechaHasta} onChange={e => setHistFechaHasta(e.target.value)}
+                title="Hasta"/>
+              {(histFechaDesde || histFechaHasta) && (
+                <button style={{ background:'none', border:'none', cursor:'pointer', color:'#94a3b8', flexShrink:0 }}
+                  onClick={() => { setHistFechaDesde(''); setHistFechaHasta(''); }}>
+                  <X size={13}/>
+                </button>
+              )}
             </div>
             {loading ? (
               <div style={{ textAlign:'center', color:'#94a3b8', fontSize:11, padding:'20px 0' }}>Cargando...</div>
@@ -289,7 +317,11 @@ export default function ConfigEmail() {
                 <Mail size={20} style={{ margin:'0 auto 8px', display:'block', opacity:.2 }}/>
                 Sin historial aún
               </div>
-            ) : historial.map(h => {
+            ) : historial.filter(h => {
+              if (histFechaDesde && h.enviado_en < histFechaDesde) return false;
+              if (histFechaHasta && h.enviado_en.slice(0,10) > histFechaHasta) return false;
+              return true;
+            }).map(h => {
               const { cls, icon } = ESTADO_HIST[h.estado] || ESTADO_HIST.enviado;
               const tipo = TIPOS_EMAIL.find(t => t.key === h.tipo_email);
               return (

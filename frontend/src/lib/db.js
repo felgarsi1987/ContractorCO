@@ -503,8 +503,7 @@ export const seguridadSocial = {
     let q = supabase
       .from('verificaciones_ss')
       .select('*, contratos(numero_contrato, objeto)')
-      .order('periodo_anio', { ascending: false })
-      .order('periodo_mes',  { ascending: false })
+      .order('periodo', { ascending: false })
     if (contrato_id) q = q.eq('contrato_id', contrato_id)
     const { data, error } = await q
     if (error) throw error

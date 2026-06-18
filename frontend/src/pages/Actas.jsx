@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FileText, Plus, AlertTriangle, CheckCircle, Clock, X, User } from 'lucide-react';
+import { FileText, Plus, AlertTriangle, CheckCircle, Clock, X, User, Search } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
 import SearchSelect from '../components/ui/SearchSelect';
@@ -53,6 +53,7 @@ export default function Actas() {
   const [saving,     setSaving]     = useState(false);
   const [form,       setForm]       = useState(EMPTY);
   const [filtroTipo, setFiltroTipo] = useState('');
+  const [buscar,     setBuscar]     = useState('');
 
   useEffect(() => { cargar(); }, []);
 
@@ -145,7 +146,17 @@ export default function Actas() {
     return false;
   });
 
-  const filtradas = filtroTipo ? actas.filter(a => a.tipo_acta === filtroTipo) : actas;
+  const filtradas = actas.filter(a => {
+    if (filtroTipo && a.tipo_acta !== filtroTipo) return false;
+    if (buscar) {
+      const q = buscar.toLowerCase();
+      return (a.contratos?.numero_contrato || '').toLowerCase().includes(q) ||
+             (TIPO_LABEL[a.tipo_acta] || '').toLowerCase().includes(q) ||
+             (a.numero_acta || '').toLowerCase().includes(q) ||
+             (a.descripcion || '').toLowerCase().includes(q);
+    }
+    return true;
+  });
 
   const stats = Object.fromEntries(
     ['inicio', 'suspension', 'reinicio', 'terminacion', 'liquidacion'].map(t => [t, actas.filter(a => a.tipo_acta === t).length])
@@ -179,6 +190,23 @@ export default function Actas() {
           </div>
         </div>
       )}
+
+      {/* Búsqueda */}
+      <div className="search-wrap" style={{ maxWidth: 360, flexShrink: 0 }}>
+        <Search size={14}/>
+        <input
+          className="search-input"
+          placeholder="N° contrato, N° acta o descripción..."
+          value={buscar}
+          onChange={e => setBuscar(e.target.value)}
+        />
+        {buscar && (
+          <button style={{ background:'none', border:'none', cursor:'pointer', padding:2, color:'#94a3b8' }}
+            onClick={() => setBuscar('')}>
+            <X size={13}/>
+          </button>
+        )}
+      </div>
 
       {/* KPIs por tipo */}
       <div style={{ display: 'flex', gap: 8, flexShrink: 0, flexWrap: 'wrap' }}>

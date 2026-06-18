@@ -21,8 +21,8 @@ export default function Documentos() {
 
   const load = useCallback(() => {
     setLoading(true);
-    docsDB.listar({ categoria: filter||undefined }).then(r=>setData(r||[])).finally(()=>setLoading(false));
-  }, [filter]);
+    docsDB.listar().then(r=>setData(r||[])).finally(()=>setLoading(false));
+  }, []);
   useEffect(() => { load(); }, [load]);
 
   useEffect(() => {
@@ -31,7 +31,22 @@ export default function Documentos() {
     }
   }, [upload]);
 
-  const filtered = buscar ? data.filter(d=>d.nombre?.toLowerCase().includes(buscar.toLowerCase())) : data;
+  const CAT_KEYS = {
+    'Contrato':        'contrato',
+    'Documento Legal': 'documento_legal',
+    'Póliza':     'poliza',
+    'Acta':            'acta',
+    'Informe':         'informe',
+  };
+  const filtered = data.filter(d => {
+    if (filter) {
+      const dbCat = (d.categoria || '').toLowerCase().replace(/[\s_-]/g,'');
+      const fl    = (CAT_KEYS[filter] || filter).toLowerCase().replace(/[\s_-]/g,'');
+      if (!dbCat.includes(fl) && !fl.includes(dbCat)) return false;
+    }
+    if (buscar && !d.nombre?.toLowerCase().includes(buscar.toLowerCase())) return false;
+    return true;
+  });
 
   const statusStyle = (s) => {
     if (s==='vigente')  return 'badge badge-green';

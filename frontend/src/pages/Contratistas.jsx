@@ -230,16 +230,26 @@ export default function Contratistas() {
   );
 }
 
-function ModalNuevoContratista({ onClose, onCreated }) {
+function ModalNuevoContratista({ onClose, onCreated, inicial }) {
   const [form, setForm] = useState({
-    nombres: '', apellidos: '', cedula: '', nit: '',
-    tipo_persona: 'natural', razon_social: '',
-    telefono: '', email: '', municipio: '', departamento: '',
-    banco: '', numero_cuenta: '', tipo_cuenta: 'ahorros',
+    nombres:      inicial?.nombres      || '',
+    apellidos:    inicial?.apellidos    || '',
+    cedula:       inicial?.cedula       || '',
+    nit:          inicial?.nit          || '',
+    tipo_persona: inicial?.tipo_persona || 'natural',
+    razon_social: inicial?.razon_social || '',
+    telefono:     inicial?.telefono     || '',
+    email:        inicial?.email        || '',
+    municipio:    inicial?.municipio    || '',
+    departamento: inicial?.departamento || '',
+    banco:        inicial?.banco        || '',
+    numero_cuenta: inicial?.numero_cuenta || '',
+    tipo_cuenta:  inicial?.tipo_cuenta  || 'ahorros',
   });
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const editando = !!inicial;
 
   const submit = async () => {
     if (!form.nombres) return toast.error('El nombre es requerido');
@@ -247,8 +257,13 @@ function ModalNuevoContratista({ onClose, onCreated }) {
     if (form.tipo_persona === 'juridica' && !form.nit) return toast.error('El NIT es requerido');
     setLoading(true);
     try {
-      await contratistasDB.crear(form);
-      toast.success('Contratista registrado correctamente');
+      if (editando) {
+        await contratistasDB.actualizar(inicial.id, form);
+        toast.success('Contratista actualizado correctamente');
+      } else {
+        await contratistasDB.crear(form);
+        toast.success('Contratista registrado correctamente');
+      }
       onCreated();
       onClose();
     } catch (e) {
@@ -263,7 +278,7 @@ function ModalNuevoContratista({ onClose, onCreated }) {
       <div className="modal" style={{ maxWidth: 580 }}>
         <div className="modal-header">
           <div>
-            <h3>Nuevo Contratista</h3>
+            <h3>{editando ? 'Editar Contratista' : 'Nuevo Contratista'}</h3>
             <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>Paso {step} de 2</div>
           </div>
           <button className="btn-icon" onClick={onClose}>✕</button>
@@ -363,7 +378,7 @@ function ModalNuevoContratista({ onClose, onCreated }) {
                 Siguiente →
               </button>
             : <button className="btn btn-primary" onClick={submit} disabled={loading}>
-                {loading ? 'Guardando...' : '✓ Registrar Contratista'}
+                {loading ? 'Guardando...' : editando ? '✓ Guardar Cambios' : '✓ Registrar Contratista'}
               </button>
           }
         </div>

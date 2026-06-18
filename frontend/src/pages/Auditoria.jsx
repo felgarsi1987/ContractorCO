@@ -17,8 +17,8 @@ export default function Auditoria() {
 
   const load = useCallback(() => {
     setLoading(true);
-    auditoriaDB.listar({ page, limit:50 }).then(r=>setData(r||[])).finally(()=>setLoading(false));
-  }, [page]);
+    auditoriaDB.listar({ page, limit:50, accion: filtroAccion||undefined }).then(r=>setData(r||[])).finally(()=>setLoading(false));
+  }, [page, filtroAccion]);
   useEffect(() => { load(); }, [load]);
 
   const kpis = [

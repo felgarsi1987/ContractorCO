@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Eye, Edit, Filter, Download, Plus, FileText } from 'lucide-react';
+import { Eye, Edit, Filter, Download, Plus, FileText, Search, X } from 'lucide-react';
 import { contratos as contratosDB } from '../lib/db';
 import FiltroPanel from '../components/ui/FiltroPanel';
 import { exportarCSV, formatCOP } from '../utils/export';
@@ -101,7 +101,20 @@ export default function Contratos() {
             </button>
           ))}
         </div>
-        <div className="spacer"/>
+        <div className="search-wrap" style={{ flex:1, maxWidth:300 }}>
+          <Search size={14}/>
+          <input
+            className="search-input"
+            placeholder="N° contrato, contratista u objeto..."
+            value={buscar}
+            onChange={e => {
+              const n = new URLSearchParams(sp);
+              e.target.value ? n.set('buscar', e.target.value) : n.delete('buscar');
+              setSp(n); setPage(1);
+            }}
+          />
+          {buscar && <button style={{ background:'none', border:'none', cursor:'pointer', padding:2, color:'#94a3b8' }} onClick={() => { const n = new URLSearchParams(sp); n.delete('buscar'); setSp(n); setPage(1); }}><X size={13}/></button>}
+        </div>
         <button className="btn btn-secondary btn-sm" onClick={() => setShowFiltros(true)}
           style={Object.keys(filtros).some(k=>filtros[k]) ? { borderColor:'var(--emerald)', color:'var(--emerald)' } : {}}>
           <Filter size={12}/>

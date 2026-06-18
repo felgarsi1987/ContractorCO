@@ -4,12 +4,14 @@ import { useAuth } from '../context/AuthContext';
 import { Eye, EyeOff, Users, Shield, BarChart2, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const DEMO = [
-  { rol: 'Admin',        email: 'admin@contractorco.gov.co',    pass: 'Admin2025*', color: '#059669' },
-  { rol: 'Supervisor',   email: 'p.suarez@contractorco.gov.co', pass: 'Super2025*', color: '#C2410C' },
-  { rol: 'Auditor',      email: 'auditor@contraloria.gov.co',   pass: 'Audit2025*', color: '#9A3412' },
-  { rol: 'Contratista',  email: 'contratista@demo.co',          pass: 'Demo1234!',  color: '#78716C' },
-];
+const SHOW_DEMO = process.env.REACT_APP_SHOW_DEMO === 'true';
+
+const DEMO = SHOW_DEMO ? [
+  { rol: 'Admin',        email: process.env.REACT_APP_DEMO_ADMIN_EMAIL  || '', pass: process.env.REACT_APP_DEMO_ADMIN_PASS  || '', color: '#059669' },
+  { rol: 'Supervisor',   email: process.env.REACT_APP_DEMO_SUPER_EMAIL  || '', pass: process.env.REACT_APP_DEMO_SUPER_PASS  || '', color: '#C2410C' },
+  { rol: 'Auditor',      email: process.env.REACT_APP_DEMO_AUDIT_EMAIL  || '', pass: process.env.REACT_APP_DEMO_AUDIT_PASS  || '', color: '#9A3412' },
+  { rol: 'Contratista',  email: process.env.REACT_APP_DEMO_CONT_EMAIL   || '', pass: process.env.REACT_APP_DEMO_CONT_PASS   || '', color: '#78716C' },
+] : [];
 
 const FEATURES = [
   { Icon: Users,     title: 'Gestión eficiente',       desc: 'Administra contratistas, supervisores y actividades en un solo lugar.' },
@@ -244,8 +246,8 @@ export default function Login() {
               </button>
             </form>
 
-            {/* Demo credentials */}
-            <div className="lc-demo">
+            {/* Demo credentials — only rendered when SHOW_DEMO=true */}
+            {SHOW_DEMO && <div className="lc-demo">
               <div className="lc-demo-hdr">
                 <span>🔒</span> Acceso de demostración
               </div>
@@ -265,7 +267,7 @@ export default function Login() {
                   }
                 </button>
               ))}
-            </div>
+            </div>}
 
           </div>
         </div>

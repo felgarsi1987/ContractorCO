@@ -149,7 +149,7 @@ export default function ConfigEmail() {
           { label:'TIPOS ACTIVOS',    val:`${totalHab}/${TIPOS_EMAIL.length}`, ic:'#059669', bg:'#D1FAE5', Icon:Mail },
           { label:'EMAILS ENVIADOS',  val:totalEnv,   ic:'#059669', bg:'#D1FAE5', Icon:Send },
           { label:'ERRORES',          val:totalError, ic:'#9A3412', bg:'#FED7AA', Icon:XCircle },
-          { label:'CONFIGURANDO',     val: contratoSel === 'global' ? 'Global' : 'Por contrato', ic:'#047857', bg:'#ECFDF5', Icon:ToggleRight },
+          { label:'CONFIGURANDO',     val: contratoSel === 'global' ? 'Global' : 'Por contrato', ic:'#78716C', bg:'#F5F5F4', Icon:ToggleRight },
         ].map(({ label, val, ic, bg, Icon }) => (
           <div key={label} className="kpi-card">
             <div className="kpi-icon" style={{ background:bg }}><Icon size={16} style={{ color:ic }}/></div>
@@ -199,7 +199,7 @@ export default function ConfigEmail() {
                 <button onClick={() => toggleTodos(true)}
                   className="btn btn-secondary" style={{ fontSize:10, padding:'4px 10px' }}>Activar todos</button>
                 <button onClick={() => toggleTodos(false)}
-                  className="btn btn-secondary" style={{ fontSize:10, padding:'4px 10px', color:'#064E3B', borderColor:'#A7F3D0' }}>Desactivar todos</button>
+                  className="btn btn-secondary" style={{ fontSize:10, padding:'4px 10px', color:'#059669', borderColor:'#D1FAE5' }}>Desactivar todos</button>
               </div>
             </div>
 
@@ -209,8 +209,8 @@ export default function ConfigEmail() {
                 return (
                   <div key={t.key} style={{
                     display:'flex', alignItems:'center', gap:12, padding:'12px 14px',
-                    background: on ? '#F0FDF4' : '#F8FAFC',
-                    border:`1px solid ${on ? '#BBF7D0' : '#E2E8F0'}`,
+                    background: on ? '#D1FAE5' : '#F8FAFC',
+                    border:`1px solid ${on ? '#A7F3D0' : '#E2E8F0'}`,
                     borderRadius:8, transition:'all .15s'
                   }}>
                     <span style={{ fontSize:20, flexShrink:0 }}>{t.icon}</span>
@@ -298,7 +298,7 @@ export default function ConfigEmail() {
                     <span style={{ fontSize:14, flexShrink:0 }}>{tipo?.icon || '📧'}</span>
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:2 }}>
-                        <span style={{ fontSize:11, fontWeight:600, color:'#064E3B', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
+                        <span style={{ fontSize:11, fontWeight:600, color:'#475569', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
                           {h.para.substring(0, 28)}{h.para.length > 28 ? '…' : ''}
                         </span>
                         <span className={`badge ${cls}`} style={{ display:'flex', alignItems:'center', gap:3, flexShrink:0 }}>{icon} {h.estado}</span>
@@ -307,7 +307,7 @@ export default function ConfigEmail() {
                         {tipo?.label || h.tipo_email} · {new Date(h.enviado_en).toLocaleString('es-CO', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' })}
                       </div>
                       {h.error_mensaje && (
-                        <div style={{ fontSize:9, color:'#064E3B', marginTop:2, background:'#F0FDF4', padding:'3px 6px', borderRadius:4 }}>
+                        <div style={{ fontSize:9, color:'#475569', marginTop:2, background:'#D1FAE5', padding:'3px 6px', borderRadius:4 }}>
                           {h.error_mensaje.substring(0, 80)}
                         </div>
                       )}

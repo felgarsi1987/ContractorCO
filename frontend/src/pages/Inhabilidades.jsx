@@ -106,7 +106,7 @@ export default function Inhabilidades() {
         {[
           { label:'TOTAL CONSULTAS',  val:total,         ic:'#059669', bg:'#D1FAE5', Icon:Shield },
           { label:'INHABILITADOS',    val:inhabilitados, ic:'#9A3412', bg:'#FED7AA', Icon:AlertTriangle },
-          { label:'POR VENCER (30D)', val:porVencer,     ic:'#047857', bg:'#ECFDF5', Icon:Clock },
+          { label:'POR VENCER (30D)', val:porVencer,     ic:'#C2410C', bg:'#FFEDD5', Icon:Clock },
           { label:'VENCIDAS',         val:vencidas,      ic:'#C2410C', bg:'#FFEDD5', Icon:AlertTriangle },
         ].map(({ label, val, ic, bg, Icon }) => (
           <div key={label} className="kpi-card">
@@ -120,7 +120,7 @@ export default function Inhabilidades() {
 
       {/* Alerta inhabilitados */}
       {inhabilitados > 0 && (
-        <div style={{ background:'#F0FDF4', border:'1px solid #A7F3D0', borderRadius:8, padding:'12px 16px', flexShrink:0, fontSize:12, color:'#991B1B', lineHeight:1.6 }}>
+        <div style={{ background:'#F5F5F4', border:'1px solid #D6D3D1', borderRadius:8, padding:'12px 16px', flexShrink:0, fontSize:12, color:'#9A3412', lineHeight:1.6 }}>
           <strong>⛔ ALERTA — Art. 8 Ley 80/93:</strong> Hay {inhabilitados} contratista(s) con inhabilidades activas. La celebración de contratos con personas inhabilitadas constituye causal de nulidad absoluta y puede generar responsabilidad disciplinaria y fiscal.
         </div>
       )}
@@ -169,7 +169,7 @@ export default function Inhabilidades() {
                 {(contratista?.nombres || '?')[0]}
               </div>
               <div style={{ flex:1 }}>
-                <div style={{ fontSize:13, fontWeight:600, color:'#064E3B' }}>{contratista?.nombres} {contratista?.apellidos}</div>
+                <div style={{ fontSize:13, fontWeight:600, color:'#1F2937' }}>{contratista?.nombres} {contratista?.apellidos}</div>
                 <div style={{ fontSize:11, color:'#64748b' }}>{contratista?.cedula || contratista?.nit} · {contratista?.tipo_persona === 'juridica' ? 'Persona jurídica' : 'Persona natural'}</div>
               </div>
               <SemaforoContratista consultas={cs}/>
@@ -184,10 +184,10 @@ export default function Inhabilidades() {
                 const fuente  = FUENTES.find(f => f.value === c.fuente);
                 return (
                   <div key={c.id} style={{ display:'flex', alignItems:'center', gap:12, padding:'8px 10px', background:'#F8FAFC', borderRadius:7, border: vencida ? '1px solid #A7F3D0' : '1px solid var(--border)' }}>
-                    <cfg.Icon size={13} style={{ color: cfg.cls.includes('red') ? '#064E3B' : cfg.cls.includes('orange') ? '#047857' : '#059669', flexShrink:0 }}/>
+                    <cfg.Icon size={13} style={{ color: cfg.cls.includes('red') ? '#9A3412' : cfg.cls.includes('orange') ? '#C2410C' : '#059669', flexShrink:0 }}/>
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
-                        <span style={{ fontSize:12, color:'#064E3B', fontWeight:500 }}>{fuente?.label || c.fuente}</span>
+                        <span style={{ fontSize:12, color:'#1F2937', fontWeight:500 }}>{fuente?.label || c.fuente}</span>
                         <span className={`badge ${cfg.cls}`}>{cfg.label}</span>
                         {vencida && <span className="badge badge-red">Vencida</span>}
                         {proxima && <span className="badge badge-orange">Vence pronto</span>}
@@ -196,7 +196,7 @@ export default function Inhabilidades() {
                     </div>
                     <div style={{ textAlign:'right', fontSize:10, color:'#94a3b8', flexShrink:0 }}>
                       <div>Consultado: {c.fecha_consulta}</div>
-                      {c.vigente_hasta && <div style={{ color: vencida ? '#064E3B' : proxima ? '#047857' : '#94a3b8' }}>Vigente hasta: {c.vigente_hasta}</div>}
+                      {c.vigente_hasta && <div style={{ color: vencida ? '#9A3412' : proxima ? '#C2410C' : '#94a3b8' }}>Vigente hasta: {c.vigente_hasta}</div>}
                     </div>
                   </div>
                 );
@@ -221,7 +221,7 @@ export default function Inhabilidades() {
               <button className="btn-icon" onClick={() => setModal(false)}><X size={16}/></button>
             </div>
             <div style={{ padding:'0 24px 24px', display:'flex', flexDirection:'column', gap:14 }}>
-              <div style={{ background:'#F0FDF4', border:'1px solid #A7F3D0', borderRadius:8, padding:'10px 14px', fontSize:11, color:'#991B1B', lineHeight:1.6 }}>
+              <div style={{ background:'#F5F5F4', border:'1px solid #D6D3D1', borderRadius:8, padding:'10px 14px', fontSize:11, color:'#9A3412', lineHeight:1.6 }}>
                 <strong>Art. 8 Ley 80/93:</strong> Antes de suscribir cualquier contrato, la entidad debe verificar que el contratista no se encuentre incurso en inhabilidades o incompatibilidades.
               </div>
 
@@ -262,7 +262,7 @@ export default function Inhabilidades() {
                 <label className="form-label">Resultado *</label>
                 <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
                   {Object.entries(RESULTADO_CONFIG).map(([v, cfg]) => {
-                    const colorMap = { 'badge-green':'#059669', 'badge-red':'#064E3B', 'badge-orange':'#047857', 'badge-purple':'#C2410C' };
+                    const colorMap = { 'badge-green':'#059669', 'badge-red':'#9A3412', 'badge-orange':'#C2410C', 'badge-purple':'#C2410C' };
                     const color = colorMap[cfg.cls] || '#64748b';
                     const active = form.resultado === v;
                     return (

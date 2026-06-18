@@ -23,13 +23,13 @@ const fCOP = v => `$${Number(v||0).toLocaleString('es-CO')}`;
 
 function RequisitoBadge({ cumplido, label, legal }) {
   return (
-    <div style={{ display:'flex', alignItems:'flex-start', gap:8, padding:'8px 10px', background: cumplido ? '#F0FDF4' : '#F0FDF4', border:`1px solid ${cumplido ? '#BBF7D0' : '#A7F3D0'}`, borderRadius:6 }}>
+    <div style={{ display:'flex', alignItems:'flex-start', gap:8, padding:'8px 10px', background: cumplido ? '#D1FAE5' : '#FFEDD5', border:`1px solid ${cumplido ? '#A7F3D0' : '#FED7AA'}`, borderRadius:6 }}>
       {cumplido
         ? <CheckCircle size={13} style={{ color:'#059669', flexShrink:0, marginTop:1 }}/>
-        : <XCircle    size={13} style={{ color:'#064E3B', flexShrink:0, marginTop:1 }}/>
+        : <XCircle    size={13} style={{ color:'#C2410C', flexShrink:0, marginTop:1 }}/>
       }
       <div>
-        <div style={{ fontSize:11, fontWeight:600, color: cumplido ? '#065F46' : '#991B1B' }}>{label}</div>
+        <div style={{ fontSize:11, fontWeight:600, color: cumplido ? '#059669' : '#9A3412' }}>{label}</div>
         <div style={{ fontSize:10, color:'#94a3b8', marginTop:1 }}>{legal}</div>
       </div>
     </div>
@@ -126,7 +126,7 @@ export default function Pagos() {
       <div className="grid-4" style={{ flexShrink:0 }}>
         {[
           { label:'TOTAL PAGOS',   val: total,      ic:'#059669', bg:'#D1FAE5', Icon:DollarSign },
-          { label:'PENDIENTES',    val: pendientes, ic:'#047857', bg:'#ECFDF5', Icon:Clock },
+          { label:'PENDIENTES',    val: pendientes, ic:'#C2410C', bg:'#FFEDD5', Icon:Clock },
           { label:'PAGADOS',       val: pagados,    ic:'#059669', bg:'#D1FAE5', Icon:CheckCircle },
           { label:'VALOR PAGADO',  val: `$${(valorTotal/1e6).toFixed(1)}M`, ic:'#C2410C', bg:'#FFEDD5', Icon:DollarSign },
         ].map(({ label, val, ic, bg, Icon }) => (
@@ -141,8 +141,8 @@ export default function Pagos() {
 
       {/* Alerta normativa */}
       <div style={{ background:'#FFFBEB', border:'1px solid #FDE68A', borderRadius:8, padding:'10px 14px', flexShrink:0, display:'flex', gap:10, alignItems:'flex-start' }}>
-        <Shield size={14} style={{ color:'#047857', flexShrink:0, marginTop:1 }}/>
-        <p style={{ margin:0, fontSize:11, color:'#064E3B', lineHeight:1.6 }}>
+        <Shield size={14} style={{ color:'#78716C', flexShrink:0, marginTop:1 }}/>
+        <p style={{ margin:0, fontSize:11, color:'#78716C', lineHeight:1.6 }}>
           <strong>Art. 23 Ley 1150/2007:</strong> Ningún pago podrá realizarse sin verificar previamente el cumplimiento de aportes a seguridad social (salud, pensión y ARL). La entidad responde solidariamente por los aportes no pagados.
         </p>
       </div>
@@ -170,11 +170,11 @@ export default function Pagos() {
           const req = pago.requisitos_verificados || {};
           const requisitosCompletos = REQUISITOS.every(r => req[r.key]);
           return (
-            <div key={pago.id} className="card" style={{ padding:0, border: !requisitosCompletos ? '1px solid #A7F3D0' : undefined }}>
+            <div key={pago.id} className="card" style={{ padding:0, border: !requisitosCompletos ? '1px solid #D1FAE5' : undefined }}>
               <div style={{ display:'flex', alignItems:'center', gap:14, padding:'14px 16px' }}>
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:4, flexWrap:'wrap' }}>
-                    <span style={{ color:'#064E3B', fontSize:13, fontWeight:600 }}>
+                    <span style={{ color:'#1F2937', fontSize:13, fontWeight:600 }}>
                       Pago #{pago.numero_pago} — {pago.contratos?.numero_contrato || '—'}
                     </span>
                     <span className={`badge ${cfg.cls}`}>{cfg.label}</span>
@@ -277,7 +277,7 @@ export default function Pagos() {
                   VERIFICACIÓN DE REQUISITOS PREVIOS — ART. 23 LEY 1150/2007 *
                 </div>
                 {!requisitosOk && (
-                  <div style={{ background:'#F0FDF4', border:'1px solid #A7F3D0', borderRadius:6, padding:'8px 12px', marginBottom:10, fontSize:11, color:'#991B1B' }}>
+                  <div style={{ background:'#FFEDD5', border:'1px solid #FED7AA', borderRadius:6, padding:'8px 12px', marginBottom:10, fontSize:11, color:'#9A3412' }}>
                     ⚠ Todos los requisitos deben estar verificados antes de procesar el pago
                   </div>
                 )}
@@ -288,7 +288,7 @@ export default function Pagos() {
                         onChange={e => setForm(f => ({ ...f, requisitos: { ...f.requisitos, [r.key]: e.target.checked } }))}
                         style={{ accentColor:'var(--forest)', marginTop:1, flexShrink:0 }}/>
                       <div>
-                        <div style={{ fontSize:11, color:'#064E3B', fontWeight:500 }}>{r.label}</div>
+                        <div style={{ fontSize:11, color:'#475569', fontWeight:500 }}>{r.label}</div>
                         <div style={{ fontSize:10, color:'#94a3b8' }}>{r.legal}</div>
                       </div>
                     </label>

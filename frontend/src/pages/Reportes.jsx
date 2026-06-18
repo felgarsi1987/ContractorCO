@@ -104,11 +104,11 @@ export default function Reportes() {
               <div className="kpi-icon" style={{ background:bg }}>
                 <Icon size={16} style={{ color:ic }}/>
               </div>
-              {trend && <TrendingUp size={13} style={{ color:'#10B981', marginTop:2 }}/>}
+              {trend && <TrendingUp size={13} style={{ color:'#059669', marginTop:2 }}/>}
             </div>
             <div className="kpi-label">{label}</div>
             <div className="kpi-value">{val}</div>
-            <div className="kpi-sub" style={{ color: trend ? '#16a34a' : '#6B7280' }}>{sub}</div>
+            <div className="kpi-sub" style={{ color: trend ? '#059669' : '#6B7280' }}>{sub}</div>
             <div className="kpi-card-bar" style={{ background:bar }}/>
           </div>
         ))}

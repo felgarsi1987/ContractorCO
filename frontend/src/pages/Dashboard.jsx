@@ -79,7 +79,7 @@ export default function Dashboard() {
               <div className="kpi-icon" style={{ background:bg }}>
                 <Icon size={16} style={{ color:ic }}/>
               </div>
-              <TrendingUp size={13} style={{ color:'#10B981', marginTop:2 }}/>
+              <TrendingUp size={13} style={{ color:'#059669', marginTop:2 }}/>
             </div>
             <div className="kpi-label">{label}</div>
             <div className="kpi-value">{value}</div>
@@ -189,7 +189,7 @@ export default function Dashboard() {
               ))}
               {alertas.length === 0 && (
                 <div style={{ padding:20, textAlign:'center', color:'#9CA3AF', fontSize:12 }}>
-                  <CheckCircle size={18} style={{ margin:'0 auto 6px', display:'block', color:'#10B981' }}/>
+                  <CheckCircle size={18} style={{ margin:'0 auto 6px', display:'block', color:'#059669' }}/>
                   Sin alertas pendientes
                 </div>
               )}

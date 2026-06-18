@@ -19,10 +19,10 @@ export default function Auditoria() {
   useEffect(() => { load(); }, [load]);
 
   const kpis = [
-    { label:'Acciones Hoy',   val:data.filter(r=>r.timestamp?.slice(0,10)===new Date().toISOString().slice(0,10)).length, Icon:FileText, bg:'#D1FAE5', ic:'#10B981', sub:'Actividades registradas' },
-    { label:'Usuarios Activos', val: new Set(data.map(r=>r.usuario_id)).size, Icon:User, bg:'#dcfce7', ic:'#16a34a', sub:'Usuarios únicos' },
-    { label:'Eventos Críticos', val:data.filter(r=>r.accion==='eliminar').length, Icon:Shield, bg:'#ECFDF5', ic:'#059669', sub:'Esta semana' },
-    { label:'Retención',        val:90, Icon:Calendar, bg:'#F0FDFA', ic:'#C2410C', sub:'Días de historial' },
+    { label:'Acciones Hoy',   val:data.filter(r=>r.timestamp?.slice(0,10)===new Date().toISOString().slice(0,10)).length, Icon:FileText, bg:'#D1FAE5', ic:'#059669', sub:'Actividades registradas' },
+    { label:'Usuarios Activos', val: new Set(data.map(r=>r.usuario_id)).size, Icon:User, bg:'#D1FAE5', ic:'#059669', sub:'Usuarios únicos' },
+    { label:'Eventos Críticos', val:data.filter(r=>r.accion==='eliminar').length, Icon:Shield, bg:'#FED7AA', ic:'#9A3412', sub:'Esta semana' },
+    { label:'Retención',        val:90, Icon:Calendar, bg:'#F5F5F4', ic:'#78716C', sub:'Días de historial' },
   ];
 
   return (
@@ -39,7 +39,7 @@ export default function Auditoria() {
               <div style={{ padding:6, borderRadius:6, background:bg }}><Icon size={14} style={{ color:ic }}/></div>
               <span style={{ fontSize:10, fontWeight:600, color:'#64748b', letterSpacing:'.06em', textTransform:'uppercase' }}>{label}</span>
             </div>
-            <div style={{ fontSize:22, fontWeight:600, color:'#064E3B' }}>{val}</div>
+            <div style={{ fontSize:22, fontWeight:600, color:'#1F2937' }}>{val}</div>
             <div style={{ fontSize:11, color:'#64748b', marginTop:2 }}>{sub}</div>
           </div>
         ))}

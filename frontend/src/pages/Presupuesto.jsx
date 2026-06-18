@@ -6,7 +6,7 @@ import { presupuesto as presDB, contratos as contratosDB } from '../lib/db';
 const TIPO_CONFIG = {
   cdp: { label:'CDP', full:'Certificado de Disponibilidad Presupuestal', color:'#C2410C', bg:'#FFEDD5', legal:'Art. 71 Decreto 111/1996', desc:'Acredita que existe apropiación disponible para comprometer el gasto' },
   rp:  { label:'RP',  full:'Registro Presupuestal',                       color:'#059669', bg:'#D1FAE5', legal:'Art. 71 Decreto 111/1996', desc:'Garantiza que los recursos quedan reservados para el pago del contrato' },
-  op:  { label:'OP',  full:'Orden de Pago',                               color:'#047857', bg:'#ECFDF5', legal:'Art. 36 Decreto 111/1996', desc:'Instrucción de pago al tesorero sobre los recursos apropiados' },
+  op:  { label:'OP',  full:'Orden de Pago',                               color:'#78716C', bg:'#F5F5F4', legal:'Art. 36 Decreto 111/1996', desc:'Instrucción de pago al tesorero sobre los recursos apropiados' },
 };
 
 const FUENTES = ['Recursos propios','SGP','SGR','Crédito','Cofinanciación','Recursos de capital','Otros'];
@@ -84,7 +84,7 @@ export default function Presupuesto() {
         {[
           { label:'TOTAL CDP',    val:`$${(valorCDP/1e6).toFixed(1)}M`, ic:'#C2410C', bg:'#FFEDD5', Icon:Wallet },
           { label:'TOTAL RP',     val:`$${(valorRP/1e6).toFixed(1)}M`,  ic:'#059669', bg:'#D1FAE5', Icon:Wallet },
-          { label:'ÓRDENES PAGO', val: lista.filter(i=>i.tipo==='op').length, ic:'#047857', bg:'#ECFDF5', Icon:Wallet },
+          { label:'ÓRDENES PAGO', val: lista.filter(i=>i.tipo==='op').length, ic:'#78716C', bg:'#F5F5F4', Icon:Wallet },
           { label:'SIN RP',       val: lista.filter(i=>i.tipo==='cdp' && !lista.some(r=>r.tipo==='rp'&&r.cdp_id===i.id)).length, ic:'#9A3412', bg:'#FED7AA', Icon:Wallet },
         ].map(({ label, val, ic, bg, Icon }) => (
           <div key={label} className="kpi-card">
@@ -102,7 +102,7 @@ export default function Presupuesto() {
           <div key={k} className="card" style={{ padding:'12px 14px' }}>
             <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:6 }}>
               <span className="badge" style={{ background: cfg.bg, color: cfg.color, fontWeight:800 }}>{cfg.label}</span>
-              <span style={{ fontSize:11, fontWeight:600, color:'#064E3B' }}>{cfg.full}</span>
+              <span style={{ fontSize:11, fontWeight:600, color:'#1F2937' }}>{cfg.full}</span>
             </div>
             <p style={{ margin:0, fontSize:11, color:'#64748b', lineHeight:1.5 }}>{cfg.desc}</p>
             <div style={{ fontSize:10, color:'#94a3b8', marginTop:4 }}>{cfg.legal}</div>
@@ -111,7 +111,7 @@ export default function Presupuesto() {
       </div>
 
       {/* Alerta normativa */}
-      <div style={{ background:'#ECFDF5', border:'1px solid #A7F3D0', borderRadius:8, padding:'10px 14px', flexShrink:0, fontSize:11, color:'#065F46', lineHeight:1.6 }}>
+      <div style={{ background:'#F5F5F4', border:'1px solid #D6D3D1', borderRadius:8, padding:'10px 14px', flexShrink:0, fontSize:11, color:'#78716C', lineHeight:1.6 }}>
         <strong>Art. 71 Decreto 111/1996:</strong> Ningún compromiso del Presupuesto General de la Nación puede adquirirse sin la expedición previa del CDP. El RP afecta el presupuesto en el momento de la suscripción del contrato y garantiza los recursos para el pago.
       </div>
 

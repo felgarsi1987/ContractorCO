@@ -114,7 +114,7 @@ export default function Contratistas() {
       <div className="card">
         {error ? (
           <div style={{ padding: 40, textAlign: 'center' }}>
-            <div style={{ color: '#064E3B', fontSize: 13, marginBottom: 12 }}>{error}</div>
+            <div style={{ color: '#9A3412', fontSize: 13, marginBottom: 12 }}>{error}</div>
             <button className="btn btn-primary btn-sm" onClick={load}>Reintentar</button>
           </div>
         ) : loading ? (
@@ -145,7 +145,7 @@ export default function Contratistas() {
                             {(c.nombres || c.razon_social || '?')[0].toUpperCase()}
                           </div>
                           <div>
-                            <div style={{ fontWeight: 500, fontSize: 12, color: '#064E3B' }}>
+                            <div style={{ fontWeight: 500, fontSize: 12, color: '#1F2937' }}>
                               {c.nombres || ''} {c.apellidos || ''}{c.razon_social ? c.razon_social : ''}
                             </div>
                             {c.email && <div style={{ fontSize: 10, color: '#94a3b8' }}>{c.email}</div>}
@@ -273,7 +273,7 @@ function ModalNuevoContratista({ onClose, onCreated }) {
         {/* Steps indicator */}
         <div style={{ padding: '10px 20px 0', display: 'flex', gap: 8 }}>
           {[1,2].map(s => (
-            <div key={s} style={{ flex: 1, height: 3, borderRadius: 99, background: s <= step ? '#10B981' : '#e2e8f0', cursor: 'pointer' }} onClick={() => s < step && setStep(s)}/>
+            <div key={s} style={{ flex: 1, height: 3, borderRadius: 99, background: s <= step ? '#059669' : '#e2e8f0', cursor: 'pointer' }} onClick={() => s < step && setStep(s)}/>
           ))}
         </div>
 
@@ -285,7 +285,7 @@ function ModalNuevoContratista({ onClose, onCreated }) {
                 <div style={{ display: 'flex', gap: 8 }}>
                   {[['natural','👤 Persona Natural'],['juridica','🏢 Persona Jurídica']].map(([v,l]) => (
                     <button key={v} type="button"
-                      style={{ flex: 1, padding: '8px', borderRadius: 6, border: `2px solid ${form.tipo_persona===v?'#10B981':'#e2e8f0'}`, background: form.tipo_persona===v?'#ECFDF5':'#fff', color: form.tipo_persona===v?'#047857':'#475569', fontSize: 12, fontWeight: 500, cursor: 'pointer' }}
+                      style={{ flex: 1, padding: '8px', borderRadius: 6, border: `2px solid ${form.tipo_persona===v?'#059669':'#e2e8f0'}`, background: form.tipo_persona===v?'#D1FAE5':'#fff', color: form.tipo_persona===v?'#059669':'#475569', fontSize: 12, fontWeight: 500, cursor: 'pointer' }}
                       onClick={() => set('tipo_persona', v)}>
                       {l}
                     </button>
@@ -328,7 +328,7 @@ function ModalNuevoContratista({ onClose, onCreated }) {
 
           {step === 2 && (
             <div className="grid-2">
-              <div style={{ gridColumn: 'span 2', padding: '8px 12px', background: '#f0fdf4', borderRadius: 6, fontSize: 12, color: '#16a34a', fontWeight: 500 }}>
+              <div style={{ gridColumn: 'span 2', padding: '8px 12px', background: '#D1FAE5', borderRadius: 6, fontSize: 12, color: '#059669', fontWeight: 500 }}>
                 ✓ Datos bancarios para pagos y desembolsos
               </div>
               <div className="field">

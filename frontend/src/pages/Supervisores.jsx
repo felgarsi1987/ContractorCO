@@ -36,7 +36,7 @@ export default function Supervisores() {
         ].map(({ label, val }) => (
           <div key={label} className="card" style={{ padding:'12px 16px' }}>
             <div style={{ fontSize:10, fontWeight:600, color:'#64748b', letterSpacing:'.06em', textTransform:'uppercase', marginBottom:6 }}>{label}</div>
-            <div style={{ fontSize:24, fontWeight:600, color:'#047857' }}>{val}</div>
+            <div style={{ fontSize:24, fontWeight:600, color:'#059669' }}>{val}</div>
           </div>
         ))}
       </div>
@@ -56,7 +56,7 @@ export default function Supervisores() {
                 <tr key={s.id}>
                   <td>
                     <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                      <div style={{ width:28, height:28, borderRadius:'50%', background:'#047857', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:600, flexShrink:0 }}>
+                      <div style={{ width:28, height:28, borderRadius:'50%', background:'#059669', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:600, flexShrink:0 }}>
                         {(s.usuario?.nombre||s.nombre||'?').split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase()}
                       </div>
                       <div>
@@ -76,12 +76,12 @@ export default function Supervisores() {
                     </div>
                   </td>
                   <td>
-                    <span style={{ width:24, height:24, borderRadius:'50%', background:'#D1FAE5', color:'#047857', display:'inline-flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:600 }}>
+                    <span style={{ width:24, height:24, borderRadius:'50%', background:'#D1FAE5', color:'#059669', display:'inline-flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:600 }}>
                       {s.contratos_activos?.length||0}
                     </span>
                   </td>
                   <td>
-                    <span style={{ width:24, height:24, borderRadius:'50%', background:'#dcfce7', color:'#16a34a', display:'inline-flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:600 }}>
+                    <span style={{ width:24, height:24, borderRadius:'50%', background:'#D1FAE5', color:'#059669', display:'inline-flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:600 }}>
                       {s.contratos_activos?.length||0}
                     </span>
                   </td>
@@ -90,7 +90,7 @@ export default function Supervisores() {
                     <div style={{ display:'flex', gap:2 }}>
                       <button className="btn-icon" title="Ver contratos" onClick={()=>window.location='/contratos?supervisor='+s.id}><Eye size={13}/></button>
                       <button className="btn-icon" title="Editar"><Edit size={13}/></button>
-                      <button className="btn-icon" title="Desactivar" style={{ color:'#064E3B' }}><Trash2 size={13}/></button>
+                      <button className="btn-icon" title="Desactivar" style={{ color:'#9A3412' }}><Trash2 size={13}/></button>
                     </div>
                   </td>
                 </tr>

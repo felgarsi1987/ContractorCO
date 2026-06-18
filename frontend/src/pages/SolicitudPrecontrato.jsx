@@ -178,7 +178,7 @@ export default function SolicitudPrecontrato() {
 
       <div className="grid-4" style={{ flexShrink:0 }}>
         {[
-          { label:'PENDIENTES',  val:totalPend, ic:'#047857', bg:'#ECFDF5', Icon:Clock },
+          { label:'PENDIENTES',  val:totalPend, ic:'#C2410C', bg:'#FFEDD5', Icon:Clock },
           { label:'EN REVISIÓN', val:totalRev,  ic:'#059669', bg:'#D1FAE5', Icon:UserCheck },
           { label:'COMPLETADAS', val:totalComp, ic:'#059669', bg:'#D1FAE5', Icon:CheckCircle },
           { label:'VENCIDAS',    val:totalVenc, ic:'#9A3412', bg:'#FED7AA', Icon:AlertTriangle },
@@ -232,7 +232,7 @@ export default function SolicitudPrecontrato() {
 
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:3, flexWrap:'wrap' }}>
-                    <span style={{ fontSize:13, fontWeight:700, color:'#064E3B' }}>{sol.titulo}</span>
+                    <span style={{ fontSize:13, fontWeight:700, color:'#1F2937' }}>{sol.titulo}</span>
                     <span className={`badge ${cfg.cls}`}>{cfg.label}</span>
                     <span className="badge" style={{ background:'#FFEDD5', color:'#C2410C', fontSize:9, fontWeight:700 }}>Precontractual</span>
                   </div>
@@ -301,13 +301,13 @@ export default function SolicitudPrecontrato() {
                         }}>
                           <div style={{ flex:1, minWidth:0 }}>
                             <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:item.base_legal ? 2 : 0, flexWrap:'wrap' }}>
-                              <span style={{ fontSize:12, fontWeight:600, color:'#064E3B' }}>{item.nombre}</span>
+                              <span style={{ fontSize:12, fontWeight:600, color:'#1F2937' }}>{item.nombre}</span>
                               <span className={`badge ${icfg.cls}`}>{icfg.label}</span>
                               {!item.obligatorio && <span style={{ fontSize:9, color:'#94a3b8', fontWeight:600 }}>Opcional</span>}
                             </div>
                             {item.base_legal && <div style={{ fontSize:10, color:'#94a3b8', marginBottom:2 }}>{item.base_legal}</div>}
                             {item.comentario_rechazo && (
-                              <div style={{ fontSize:11, color:'#064E3B', marginTop:4, background:'#F0FDF4', padding:'4px 8px', borderRadius:5 }}>
+                              <div style={{ fontSize:11, color:'#78716C', marginTop:4, background:'#F5F5F4', padding:'4px 8px', borderRadius:5 }}>
                                 ✗ {item.comentario_rechazo}
                               </div>
                             )}
@@ -325,7 +325,7 @@ export default function SolicitudPrecontrato() {
                                 <ThumbsUp size={11}/> Aprobar
                               </button>
                               <button onClick={() => setModalRechazo(item.id)}
-                                className="btn btn-secondary" style={{ padding:'5px 10px', fontSize:11, display:'flex', alignItems:'center', gap:4, borderColor:'#A7F3D0', color:'#064E3B' }}>
+                                className="btn btn-secondary" style={{ padding:'5px 10px', fontSize:11, display:'flex', alignItems:'center', gap:4, borderColor:'#D1FAE5', color:'#059669' }}>
                                 <ThumbsDown size={11}/> Rechazar
                               </button>
                             </div>
@@ -440,7 +440,7 @@ export default function SolicitudPrecontrato() {
               </div>
               <div style={{ display:'flex', gap:8, justifyContent:'flex-end' }}>
                 <button className="btn btn-secondary" onClick={() => setModalRechazo(null)}>Cancelar</button>
-                <button className="btn btn-primary" style={{ background:'#064E3B', borderColor:'#064E3B' }} onClick={rechazarItem} disabled={rechazando}>
+                <button className="btn btn-primary" style={{ background:'#9A3412', borderColor:'#9A3412' }} onClick={rechazarItem} disabled={rechazando}>
                   {rechazando ? 'Rechazando...' : 'Rechazar documento'}
                 </button>
               </div>

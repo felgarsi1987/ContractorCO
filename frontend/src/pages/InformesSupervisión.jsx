@@ -10,7 +10,7 @@ const ESTADO_CONFIG = {
 };
 
 function CumplimientoBar({ valor }) {
-  const color = valor >= 80 ? '#059669' : valor >= 50 ? '#047857' : '#064E3B';
+  const color = valor >= 80 ? '#059669' : valor >= 50 ? '#C2410C' : '#9A3412';
   return (
     <div style={{ display:'flex', alignItems:'center', gap:8 }}>
       <div style={{ flex:1, height:6, background:'#E2E8F0', borderRadius:99, overflow:'hidden' }}>
@@ -100,7 +100,7 @@ export default function InformesSupervisión() {
       <div className="grid-4" style={{ flexShrink:0 }}>
         {[
           { label:'TOTAL INFORMES',   val:total,      ic:'#059669', bg:'#D1FAE5', Icon:FileText },
-          { label:'BORRADORES',       val:borradores, ic:'#047857', bg:'#ECFDF5', Icon:Clock },
+          { label:'BORRADORES',       val:borradores, ic:'#78716C', bg:'#F5F5F4', Icon:Clock },
           { label:'APROBADOS',        val:aprobados,  ic:'#059669', bg:'#D1FAE5', Icon:CheckCircle },
           { label:'REQUIEREN ACCIÓN', val:requieren,  ic:'#9A3412', bg:'#FED7AA', Icon:AlertTriangle },
         ].map(({ label, val, ic, bg, Icon }) => (
@@ -134,12 +134,12 @@ export default function InformesSupervisión() {
           const cfg = ESTADO_CONFIG[inf.estado] || ESTADO_CONFIG.borrador;
           const abierto = expandido === inf.id;
           return (
-            <div key={inf.id} className="card" style={{ padding:0, border: inf.requiere_accion ? '1px solid #A7F3D0' : undefined }}>
+            <div key={inf.id} className="card" style={{ padding:0, border: inf.requiere_accion ? '1px solid #D1FAE5' : undefined }}>
               <div onClick={() => setExpandido(abierto ? null : inf.id)}
                 style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 16px', cursor:'pointer' }}>
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:4, flexWrap:'wrap' }}>
-                    <span style={{ color:'#064E3B', fontSize:13, fontWeight:600 }}>
+                    <span style={{ color:'#1F2937', fontSize:13, fontWeight:600 }}>
                       Informe #{inf.numero_informe} — {inf.contratos?.numero_contrato || '—'}
                     </span>
                     <span className={`badge ${cfg.cls}`}>{cfg.label}</span>
@@ -202,7 +202,7 @@ export default function InformesSupervisión() {
               <button className="btn-icon" onClick={() => setModal(false)}><X size={16}/></button>
             </div>
             <div style={{ padding:'0 24px 24px', display:'flex', flexDirection:'column', gap:14 }}>
-              <div style={{ background:'#ECFDF5', border:'1px solid #A7F3D0', borderRadius:8, padding:'10px 14px', fontSize:11, color:'#065F46', lineHeight:1.6 }}>
+              <div style={{ background:'#F5F5F4', border:'1px solid #D6D3D1', borderRadius:8, padding:'10px 14px', fontSize:11, color:'#78716C', lineHeight:1.6 }}>
                 <strong>Obligación legal:</strong> El Art. 83 Ley 1474/2011 establece que el supervisor debe rendir informe mensual sobre la ejecución del contrato, el cumplimiento del objeto, el avance financiero y las novedades presentadas.
               </div>
 
@@ -261,7 +261,7 @@ export default function InformesSupervisión() {
 
               <label style={{ display:'flex', alignItems:'center', gap:8, cursor:'pointer' }}>
                 <input type="checkbox" checked={form.requiere_accion} onChange={e => setForm(f => ({ ...f, requiere_accion: e.target.checked }))}
-                  style={{ accentColor:'#064E3B', width:14, height:14 }}/>
+                  style={{ accentColor:'#059669', width:14, height:14 }}/>
                 <span style={{ color:'#475569', fontSize:12 }}>Requiere acción inmediata de la entidad</span>
               </label>
 

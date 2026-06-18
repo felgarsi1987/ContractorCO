@@ -126,7 +126,7 @@ export default function PortalContratista() {
     return (
       <div className="page" style={{ alignItems:'center', justifyContent:'center' }}>
         <div className="card" style={{ maxWidth:420, textAlign:'center', padding:40 }}>
-          <AlertTriangle size={32} style={{ color:'#047857', margin:'0 auto 12px', display:'block' }}/>
+          <AlertTriangle size={32} style={{ color:'#C2410C', margin:'0 auto 12px', display:'block' }}/>
           <h2 style={{ fontSize:16, marginBottom:8 }}>Perfil de contratista no vinculado</h2>
           <p style={{ fontSize:12, color:'#64748b' }}>
             Tu usuario no está vinculado a un contratista. Contacta al administrador para que vincule tu cuenta.
@@ -190,13 +190,13 @@ export default function PortalContratista() {
             const contrato = sol.contratos;
 
             return (
-              <div key={sol.id} className="card" style={{ padding:0, border: sol.estado === 'vencida' ? '1px solid #A7F3D0' : undefined }}>
+              <div key={sol.id} className="card" style={{ padding:0, border: sol.estado === 'vencida' ? '1px solid #D1FAE5' : undefined }}>
                 <div onClick={() => setExpandido(abierto ? null : sol.id)}
                   style={{ display:'flex', alignItems:'center', gap:12, padding:'13px 16px', cursor:'pointer' }}>
                   <div style={{ width:3, height:40, borderRadius:2, background:cfg.color, flexShrink:0 }}/>
                   <div style={{ flex:1, minWidth:0 }}>
                     <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:3 }}>
-                      <span style={{ fontSize:13, fontWeight:700, color:'#064E3B' }}>{sol.titulo}</span>
+                      <span style={{ fontSize:13, fontWeight:700, color:'#1F2937' }}>{sol.titulo}</span>
                       <span className={`badge ${cfg.cls}`}>{cfg.label}</span>
                     </div>
                     <div style={{ fontSize:11, color:'#64748b' }}>
@@ -207,7 +207,7 @@ export default function PortalContratista() {
                   <div style={{ textAlign:'right', flexShrink:0 }}>
                     <div style={{ fontSize:11, fontWeight:700, color:'#475569' }}>{subidos}/{total}</div>
                     <div style={{ width:64, height:4, background:'#E2E8F0', borderRadius:99, overflow:'hidden', marginTop:3 }}>
-                      <div style={{ height:'100%', width:`${pct}%`, background: pct === 100 ? '#059669' : '#10B981', borderRadius:99 }}/>
+                      <div style={{ height:'100%', width:`${pct}%`, background: pct === 100 ? '#059669' : '#059669', borderRadius:99 }}/>
                     </div>
                   </div>
                   {abierto ? <ChevronUp size={14} color="#94a3b8"/> : <ChevronDown size={14} color="#94a3b8"/>}
@@ -216,7 +216,7 @@ export default function PortalContratista() {
                 {abierto && (
                   <div style={{ borderTop:'1px solid var(--border)', background:'#F8FAFC' }}>
                     {sol.notas && (
-                      <div style={{ padding:'10px 16px', background:'#ECFDF5', borderBottom:'1px solid #D1FAE5', fontSize:11, color:'#065F46' }}>
+                      <div style={{ padding:'10px 16px', background:'#ECFDF5', borderBottom:'1px solid #D1FAE5', fontSize:11, color:'#78716C' }}>
                         <strong>Instrucciones:</strong> {sol.notas}
                       </div>
                     )}
@@ -230,13 +230,13 @@ export default function PortalContratista() {
 
                         return (
                           <div key={item.id} style={{
-                            background:'#fff', border:'1px solid', borderColor: item.estado === 'rechazado' ? '#A7F3D0' : '#E2E8F0',
+                            background:'#fff', border:'1px solid', borderColor: item.estado === 'rechazado' ? '#D1FAE5' : '#E2E8F0',
                             borderRadius:8, padding:'10px 12px'
                           }}>
                             <div style={{ display:'flex', alignItems:'flex-start', gap:10 }}>
                               <div style={{ flex:1, minWidth:0 }}>
                                 <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:item.base_legal ? 2 : 0, flexWrap:'wrap' }}>
-                                  <span style={{ fontSize:12, fontWeight:600, color:'#064E3B' }}>{item.nombre}</span>
+                                  <span style={{ fontSize:12, fontWeight:600, color:'#1F2937' }}>{item.nombre}</span>
                                   <span className={`badge ${icfg.cls}`}>{icfg.label}</span>
                                   {!item.obligatorio && <span style={{ fontSize:9, color:'#94a3b8', fontWeight:600 }}>Opcional</span>}
                                 </div>
@@ -244,7 +244,7 @@ export default function PortalContratista() {
                                 {item.descripcion && <div style={{ fontSize:11, color:'#475569', marginTop:2 }}>{item.descripcion}</div>}
 
                                 {item.comentario_rechazo && (
-                                  <div style={{ fontSize:11, color:'#064E3B', marginTop:6, background:'#F0FDF4', padding:'6px 10px', borderRadius:6 }}>
+                                  <div style={{ fontSize:11, color:'#78716C', marginTop:6, background:'#F5F5F4', padding:'6px 10px', borderRadius:6 }}>
                                     <strong>Motivo rechazo:</strong> {item.comentario_rechazo}
                                   </div>
                                 )}
@@ -301,7 +301,7 @@ export default function PortalContratista() {
                                   </div>
                                   <div>
                                     <div style={{ fontSize:9, color:'#94a3b8' }}>{m.autor?.nombre} · {new Date(m.creado_en).toLocaleString('es-CO',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'})}</div>
-                                    <div style={{ fontSize:11, color:'#064E3B', background:'#F5F5F4', padding:'5px 8px', borderRadius:5 }}>{m.contenido}</div>
+                                    <div style={{ fontSize:11, color:'#78716C', background:'#F5F5F4', padding:'5px 8px', borderRadius:5 }}>{m.contenido}</div>
                                   </div>
                                 </div>
                               ))
@@ -347,7 +347,7 @@ export default function PortalContratista() {
           ) : notifs.map(n => (
             <div key={n.id} className="card" style={{
               padding:'10px 12px',
-              background: n.leida ? '#fff' : '#F0FDF4',
+              background: n.leida ? '#fff' : '#D1FAE5',
               borderLeft: n.leida ? undefined : '3px solid #059669',
               cursor: n.leida ? 'default' : 'pointer'
             }}
@@ -362,7 +362,7 @@ export default function PortalContratista() {
                   {n.tipo?.includes('rechaz') ? '❌' : n.tipo?.includes('aprob') ? '✅' : n.tipo?.includes('pago') ? '💰' : n.tipo?.includes('plazo') ? '⏰' : '📋'}
                 </div>
                 <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ fontSize:11, fontWeight:600, color:'#064E3B', marginBottom:2 }}>{n.titulo}</div>
+                  <div style={{ fontSize:11, fontWeight:600, color:'#1F2937', marginBottom:2 }}>{n.titulo}</div>
                   {n.cuerpo && <div style={{ fontSize:10, color:'#64748b', lineHeight:1.4 }}>{n.cuerpo}</div>}
                   <div style={{ fontSize:9, color:'#94a3b8', marginTop:3 }}>
                     {new Date(n.creado_en).toLocaleString('es-CO', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' })}

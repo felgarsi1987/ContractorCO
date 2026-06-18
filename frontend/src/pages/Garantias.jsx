@@ -135,7 +135,7 @@ export default function Garantias() {
           { label: 'TOTAL PÓLIZAS',   val: stats.total,     ic: '#059669', bg: '#D1FAE5', bar: '#059669' },
           { label: 'VIGENTES',        val: stats.vigentes,  ic: '#059669', bg: '#D1FAE5', bar: '#059669' },
           { label: 'POR VENCER',      val: stats.porVencer, ic: '#C2410C', bg: '#FFEDD5', bar: '#C2410C' },
-          { label: 'VENCIDAS',        val: stats.vencidas,  ic: '#9A3412', bg: '#FED7AA', bar: '#064E3B' },
+          { label: 'VENCIDAS',        val: stats.vencidas,  ic: '#9A3412', bg: '#FED7AA', bar: '#9A3412' },
         ].map(({ label, val, ic, bg, bar }) => (
           <div key={label} className="kpi-card">
             <div className="kpi-icon" style={{ background: bg }}>
@@ -234,15 +234,15 @@ export default function Garantias() {
                             </div>
                           </div>
                           {(g.dias_para_vencer <= 30 && g.estado !== 'vencida') && (
-                            <div style={{ marginTop: 12, padding: '8px 12px', background: '#ECFDF5', borderRadius: 8, borderLeft: '3px solid #059669', display: 'flex', alignItems: 'center', gap: 8, fontSize: 12 }}>
-                              <AlertTriangle size={14} style={{ color: '#059669', flexShrink: 0 }}/>
-                              <span style={{ color: '#064E3B' }}>Esta póliza vence en <strong>{g.dias_para_vencer} días</strong>. Gestiona la renovación con la aseguradora antes del vencimiento para evitar incumplimiento del Art. 2.2.1.2.3.1 Decreto 1082/15.</span>
+                            <div style={{ marginTop: 12, padding: '8px 12px', background: '#FFEDD5', borderRadius: 8, borderLeft: '3px solid #C2410C', display: 'flex', alignItems: 'center', gap: 8, fontSize: 12 }}>
+                              <AlertTriangle size={14} style={{ color: '#C2410C', flexShrink: 0 }}/>
+                              <span style={{ color: '#9A3412' }}>Esta póliza vence en <strong>{g.dias_para_vencer} días</strong>. Gestiona la renovación con la aseguradora antes del vencimiento para evitar incumplimiento del Art. 2.2.1.2.3.1 Decreto 1082/15.</span>
                             </div>
                           )}
                           {g.estado === 'vencida' && (
-                            <div style={{ marginTop: 12, padding: '8px 12px', background: '#D1FAE5', borderRadius: 8, borderLeft: '3px solid #064E3B', display: 'flex', alignItems: 'center', gap: 8, fontSize: 12 }}>
-                              <AlertTriangle size={14} style={{ color: '#064E3B', flexShrink: 0 }}/>
-                              <span style={{ color: '#7F1D1D' }}><strong>Póliza vencida.</strong> El contrato puede estar incurso en causal de incumplimiento. Exige renovación inmediata y notifica al ordenador del gasto.</span>
+                            <div style={{ marginTop: 12, padding: '8px 12px', background: '#FED7AA', borderRadius: 8, borderLeft: '3px solid #9A3412', display: 'flex', alignItems: 'center', gap: 8, fontSize: 12 }}>
+                              <AlertTriangle size={14} style={{ color: '#9A3412', flexShrink: 0 }}/>
+                              <span style={{ color: '#9A3412' }}><strong>Póliza vencida.</strong> El contrato puede estar incurso en causal de incumplimiento. Exige renovación inmediata y notifica al ordenador del gasto.</span>
                             </div>
                           )}
                         </td>
@@ -282,7 +282,7 @@ export default function Garantias() {
                   {Object.entries(TIPO_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                 </select>
                 {form.tipo_garantia && (
-                  <div style={{ marginTop: 6, padding: '6px 10px', background: '#F0FDF4', borderRadius: 6, fontSize: 11, color: '#166534' }}>
+                  <div style={{ marginTop: 6, padding: '6px 10px', background: '#F5F5F4', borderRadius: 6, fontSize: 11, color: '#78716C' }}>
                     📋 {PORCENTAJE_REF[form.tipo_garantia]} — {FUNDAMENTO[form.tipo_garantia]}
                   </div>
                 )}

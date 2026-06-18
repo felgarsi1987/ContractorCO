@@ -52,10 +52,10 @@ export default function Usuarios() {
   };
 
   const kpis = [
-    { label:'Usuarios Totales',  val:data.length,                               bg:'#D1FAE5', ic:'#10B981', sub:'Registrados' },
-    { label:'Usuarios Activos',  val:data.filter(u=>u.activo).length,           bg:'#dcfce7', ic:'#16a34a', sub:'Con acceso' },
+    { label:'Usuarios Totales',  val:data.length,                               bg:'#D1FAE5', ic:'#059669', sub:'Registrados' },
+    { label:'Usuarios Activos',  val:data.filter(u=>u.activo).length,           bg:'#D1FAE5', ic:'#059669', sub:'Con acceso' },
     { label:'Administradores',   val:data.filter(u=>u.rol==='admin').length,     bg:'#F0FDFA', ic:'#C2410C', sub:'Permisos completos' },
-    { label:'Supervisores',      val:data.filter(u=>u.rol==='supervisor').length,bg:'#D1FAE5', ic:'#064E3B', sub:'Usuarios operativos' },
+    { label:'Supervisores',      val:data.filter(u=>u.rol==='supervisor').length,bg:'#D1FAE5', ic:'#059669', sub:'Usuarios operativos' },
   ];
 
   return (
@@ -75,7 +75,7 @@ export default function Usuarios() {
               <div style={{ padding:6, borderRadius:6, background:bg }}><Shield size={14} style={{ color:ic }}/></div>
               <span style={{ fontSize:10, fontWeight:600, color:'#64748b', letterSpacing:'.06em', textTransform:'uppercase' }}>{label}</span>
             </div>
-            <div style={{ fontSize:22, fontWeight:600, color:'#064E3B' }}>{val}</div>
+            <div style={{ fontSize:22, fontWeight:600, color:'#1F2937' }}>{val}</div>
             <div style={{ fontSize:11, color:'#64748b', marginTop:2 }}>{sub}</div>
           </div>
         ))}
@@ -92,7 +92,7 @@ export default function Usuarios() {
                 <tr key={u.id}>
                   <td>
                     <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                      <div style={{ width:28, height:28, borderRadius:'50%', background:'linear-gradient(135deg,#10B981,#047857)', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:600, flexShrink:0 }}>
+                      <div style={{ width:28, height:28, borderRadius:'50%', background:'linear-gradient(135deg,#34D399,#059669)', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:600, flexShrink:0 }}>
                         {u.nombre?.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase() || 'U'}
                       </div>
                       <div>

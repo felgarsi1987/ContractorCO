@@ -129,8 +129,8 @@ export default function SeguridadSocial() {
 
       {/* Alerta normativa */}
       <div style={{ background:'#FFFBEB', border:'1px solid #FDE68A', borderRadius:8, padding:'10px 14px', flexShrink:0, display:'flex', gap:10, alignItems:'flex-start' }}>
-        <Shield size={14} style={{ color:'#047857', flexShrink:0, marginTop:1 }}/>
-        <p style={{ margin:0, fontSize:12, color:'#064E3B', lineHeight:1.6 }}>
+        <Shield size={14} style={{ color:'#78716C', flexShrink:0, marginTop:1 }}/>
+        <p style={{ margin:0, fontSize:12, color:'#78716C', lineHeight:1.6 }}>
           <strong>Art. 23 Ley 1150/2007 + Decreto 1273/2018:</strong> La entidad debe verificar mensualmente el pago de aportes a seguridad social (salud 12.5%, pensión 16%, ARL según clase de riesgo) sobre el IBC. Base mínima: 40% del valor mensual, máx. 25 SMLMV.
         </p>
       </div>
@@ -141,7 +141,7 @@ export default function SeguridadSocial() {
         <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12 }}>
           {CONCEPTOS.map(c => (
             <div key={c.key} style={{ background:'#F8FAFC', border:'1px solid var(--border)', borderRadius:8, padding:'10px 14px' }}>
-              <div style={{ fontSize:12, fontWeight:700, color:'#064E3B', marginBottom:2 }}>{c.label}</div>
+              <div style={{ fontSize:12, fontWeight:700, color:'#475569', marginBottom:2 }}>{c.label}</div>
               <div style={{ fontSize:20, fontWeight:800, color:'var(--forest)' }}>{c.porcentaje}</div>
               <div style={{ fontSize:10, color:'#94a3b8', marginTop:2 }}>{c.legal}</div>
             </div>
@@ -262,8 +262,8 @@ export default function SeguridadSocial() {
               </div>
 
               {form.valor_ibc > 0 && (
-                <div style={{ background:'#F0FDF4', border:'1px solid #BBF7D0', borderRadius:8, padding:'12px 14px' }}>
-                  <div style={{ fontSize:10, fontWeight:700, color:'#166534', letterSpacing:'.06em', marginBottom:8 }}>APORTES CALCULADOS AUTOMÁTICAMENTE</div>
+                <div style={{ background:'#F5F5F4', border:'1px solid #D6D3D1', borderRadius:8, padding:'12px 14px' }}>
+                  <div style={{ fontSize:10, fontWeight:700, color:'#78716C', letterSpacing:'.06em', marginBottom:8 }}>APORTES CALCULADOS AUTOMÁTICAMENTE</div>
                   <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10 }}>
                     {[
                       { k:'salud',   l:'Salud (12.5%)',   v: aportes.salud },
@@ -271,12 +271,12 @@ export default function SeguridadSocial() {
                       { k:'arl',     l:`ARL (${RIESGOS_ARL.find(r => r.value === form.clase_riesgo_arl)?.tarifa})`, v: aportes.arl },
                     ].map(({ k, l, v }) => (
                       <div key={k} style={{ textAlign:'center' }}>
-                        <div style={{ fontSize:10, color:'#16a34a', marginBottom:3 }}>{l}</div>
+                        <div style={{ fontSize:10, color:'#059669', marginBottom:3 }}>{l}</div>
                         <div style={{ fontSize:18, fontWeight:800, color:'#059669' }}>{fCOP(v)}</div>
                       </div>
                     ))}
                   </div>
-                  <div style={{ fontSize:10, color:'#16a34a', marginTop:8, textAlign:'center' }}>
+                  <div style={{ fontSize:10, color:'#059669', marginTop:8, textAlign:'center' }}>
                     Total: {fCOP(aportes.salud + aportes.pension + aportes.arl)}
                   </div>
                 </div>
